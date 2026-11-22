@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SQMC (Standart Quality Mutu Controller) — penentu standar mutu, toleransi, batas cacat, dan peta kendali Shewhart untuk industri manufaktur.">
+<meta name="theme-color" content="#0f3b66">
+<title>SQMC — Standart Quality Mutu Controller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#132231; --ink2:#4a5b6c; --ink3:#7b8a99;
+  --line:#dde3ea; --line2:#eef1f5;
+  --pri:#0f3b66; --pri2:#1d5c99; --pri-soft:#e6eef7;
+  --acc:#0e8a7a; --acc-soft:#e3f4f1;
+  --ok:#2e7d32; --ok-soft:#e8f5e9;
+  --warn:#a86200; --warn-soft:#fff4e0;
+  --bad:#c62828; --bad-soft:#fdecec;
+  --radius:10px; --shadow:0 1px 2px rgba(16,32,48,.06),0 4px 14px rgba(16,32,48,.05);
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--pri2)}
+h1,h2,h3,h4{margin:0;line-height:1.25}
+h2{font-size:1.25rem;font-weight:700}
+h3{font-size:1.02rem;font-weight:600}
+h4{font-size:.92rem;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+p{margin:.35rem 0}
+small,.muted{color:var(--ink3)}
+.mono{font-family:var(--mono)}
+/* ---------- shell ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:var(--pri);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.topbar-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;flex-shrink:0}
+.brand-name{font-weight:700;font-size:1.25rem;letter-spacing:.06em}
+.brand-sub{display:block;font-size:.66rem;font-weight:400;opacity:.8;letter-spacing:.02em;margin-top:-2px}
+.storage-badge{margin-left:auto;font-size:.72rem;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.14);white-space:nowrap}
+.nav{background:#0b2f52;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-in{max-width:1280px;margin:0 auto;display:flex;gap:2px;padding:0 10px}
+.nav a{color:#c9d8e8;text-decoration:none;padding:10px 14px;font-size:.88rem;font-weight:500;white-space:nowrap;border-bottom:3px solid transparent;display:flex;align-items:center;gap:7px}
+.nav a:hover{color:#fff}
+.nav a.active{color:#fff;border-bottom-color:#4fc3b4}
+.nav svg{width:16px;height:16px;opacity:.9}
+main{max-width:1280px;margin:0 auto;padding:20px 18px 60px}
+.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:16px}
+.page-head p{color:var(--ink2);max-width:780px}
+/* ---------- components ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:1000px){.split{grid-template-columns:1fr}}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}main{padding:14px 10px 60px}.card{padding:14px}.brand-sub{display:none}}
+label.f{display:block;font-size:.8rem;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.field{margin-bottom:12px}
+.hint{font-size:.76rem;color:var(--ink3);margin-top:3px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;font:inherit;font-size:.9rem;color:var(--ink);background:#fff;border:1px solid #cdd5de;border-radius:7px;padding:7px 9px;outline:none;transition:border .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(29,92,153,.14)}
+textarea{min-height:90px;font-family:var(--mono);font-size:.82rem}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row > .grow{flex:1;min-width:120px}
+.chk{display:flex;align-items:center;gap:7px;font-size:.87rem;padding:4px 0;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--pri2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #cdd5de;border-radius:99px;padding:5px 11px;font-size:.82rem;cursor:pointer;background:#fff;user-select:none}
+.chip input{display:none}
+.chip.on{background:var(--pri-soft);border-color:var(--pri2);color:var(--pri);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font:inherit;font-size:.86rem;font-weight:600;border-radius:7px;border:1px solid transparent;padding:8px 14px;cursor:pointer;background:var(--pri);color:#fff;transition:background .15s,transform .05s;white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--pri2)}
+.btn:active{transform:translateY(1px)}
+.btn.sec{background:#fff;color:var(--pri);border-color:#c3cfdc}
+.btn.sec:hover{background:var(--pri-soft)}
+.btn.acc{background:var(--acc)}
+.btn.acc:hover{background:#0b7466}
+.btn.danger{background:#fff;color:var(--bad);border-color:#efc4c4}
+.btn.danger:hover{background:var(--bad-soft)}
+.btn.sm{padding:5px 10px;font-size:.78rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.tabs button{font:inherit;font-size:.86rem;font-weight:500;background:none;border:none;border-bottom:2px solid transparent;padding:8px 12px;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.tabs button.on{color:var(--pri);border-bottom-color:var(--pri2);font-weight:600}
+table.t{width:100%;border-collapse:collapse;font-size:.84rem}
+table.t th{background:#f2f5f9;text-align:left;font-weight:600;color:var(--ink2);padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{padding:7px 9px;border-bottom:1px solid var(--line2);vertical-align:top}
+table.t tr:hover td{background:#fafbfd}
+table.t td.num,table.t th.num{text-align:right;font-family:var(--mono);font-size:.8rem}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.tw table.t th:first-child,.tw table.t td:first-child{padding-left:11px}
+.badge{display:inline-block;font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap;letter-spacing:.02em}
+.b-iso{background:#e5eefb;color:#174a8b}.b-sni{background:#fde9e9;color:#a02222}.b-asme{background:#efe8fb;color:#5b2f9e}.b-en{background:#e7f5f0;color:#0d6b55}.b-astm{background:#fdf1e1;color:#8a5200}
+.b-ok{background:var(--ok-soft);color:var(--ok)}.b-warn{background:var(--warn-soft);color:var(--warn)}.b-bad{background:var(--bad-soft);color:var(--bad)}.b-info{background:var(--pri-soft);color:var(--pri)}.b-gray{background:#eef1f4;color:#5b6b7b}
+.alert{border-radius:8px;padding:10px 12px;font-size:.86rem;margin:8px 0;border:1px solid}
+.alert.warn{background:var(--warn-soft);border-color:#f3d39b;color:#6b4000}
+.alert.bad{background:var(--bad-soft);border-color:#f2bcbc;color:#7d1717}
+.alert.ok{background:var(--ok-soft);border-color:#b9dfbb;color:#1d5420}
+.alert.info{background:var(--pri-soft);border-color:#c6d8ee;color:#123e6b}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.kpi .k{font-size:.74rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.kpi .v{font-size:1.45rem;font-weight:700;font-family:var(--mono);margin-top:2px}
+.kpi .s{font-size:.76rem;color:var(--ink2)}
+.empty{text-align:center;padding:30px 14px;color:var(--ink3);border:1.5px dashed var(--line);border-radius:10px}
+.drop{border:2px dashed #b9c7d6;border-radius:10px;padding:22px;text-align:center;color:var(--ink2);background:#fafcfe;cursor:pointer;transition:background .15s,border .15s}
+.drop.over{background:var(--pri-soft);border-color:var(--pri2)}
+.sec-title{display:flex;align-items:center;gap:8px;margin:18px 0 8px}
+.sec-title .n{width:24px;height:24px;border-radius:6px;background:var(--pri);color:#fff;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.disp-accept{color:var(--ok);font-weight:600}.disp-rework{color:var(--warn);font-weight:600}.disp-reject{color:var(--bad);font-weight:600}
+.chart-box{width:100%;min-height:420px}
+.hero{background:linear-gradient(135deg,#0f3b66 0%,#155389 60%,#0e8a7a 140%);color:#fff;border-radius:14px;padding:26px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero h1{font-size:1.7rem;letter-spacing:.04em}
+.hero .sub{opacity:.85;font-size:.9rem}
+.hero p{max-width:700px;opacity:.92}
+.hero .row{margin-top:14px}
+.hero .btn.sec{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)}
+.hero .btn.sec:hover{background:rgba(255,255,255,.22)}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.flow{grid-template-columns:1fr 1fr}}
+.flow .st{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px}
+.flow .st b{display:block;color:var(--pri);font-size:.95rem}
+.flow .st span{font-size:.8rem;color:var(--ink2)}
+.toast-wrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+.toast{background:#132231;color:#fff;padding:9px 16px;border-radius:8px;font-size:.86rem;box-shadow:0 6px 20px rgba(0,0,0,.25);pointer-events:auto;max-width:92vw}
+.toast.err{background:#8e1c1c}.toast.ok{background:#1f5f24}
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,30,.45);z-index:90;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal{background:#fff;border-radius:12px;max-width:520px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.modal .row{justify-content:flex-end;margin-top:14px}
+.list-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
+.list-item .meta{font-size:.78rem;color:var(--ink3)}
+.grid-edit td{padding:3px 4px!important}
+.grid-edit input{padding:5px 6px;font-size:.82rem;min-width:70px}
+.grid-edit input.v{font-family:var(--mono);text-align:right;min-width:74px}
+.foot{font-size:.76rem;color:var(--ink3);text-align:center;padding:20px 10px;border-top:1px solid var(--line);margin-top:20px}
+.pill-step{display:inline-flex;gap:6px;align-items:center;font-size:.78rem;background:var(--acc-soft);color:var(--acc);padding:3px 10px;border-radius:99px;font-weight:600}
+details.acc{border:1px solid var(--line);border-radius:9px;padding:0 12px;margin-bottom:8px;background:#fff}
+details.acc summary{cursor:pointer;padding:11px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc[open] summary{border-bottom:1px solid var(--line2);margin-bottom:8px}
+.formula{font-family:var(--mono);font-size:.82rem;background:#f5f7fa;border:1px solid var(--line);border-radius:7px;padding:9px 11px;overflow-x:auto;white-space:pre}
+.hidden{display:none!important}
+.capgrid{grid-template-columns:1fr 1fr 1.6fr}
+@media(max-width:760px){.capgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#beranda" aria-label="SQMC beranda">
+      <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="1" y="1" width="38" height="38" rx="9" fill="#ffffff" fill-opacity=".12" stroke="#ffffff" stroke-opacity=".35"/>
+        <path d="M7 27 L13 21 L18 24 L24 13 L29 18 L33 10" fill="none" stroke="#4fc3b4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="6" y1="9" x2="34" y2="9" stroke="#ff8a80" stroke-width="1.4" stroke-dasharray="2 2"/>
+        <line x1="6" y1="31" x2="34" y2="31" stroke="#ff8a80" stroke-width="1.4" stroke-dasharray="2 2"/>
+        <line x1="6" y1="20" x2="34" y2="20" stroke="#a5d6a7" stroke-width="1.2"/>
+      </svg>
+      <span><span class="brand-name">SQMC</span><span class="brand-sub">(Standart Quality Mutu Controller)</span></span>
+    </a>
+    <span class="storage-badge" id="storageBadge" title="Lokasi penyimpanan data">Memuat…</span>
+  </div>
+  <nav class="nav" aria-label="Menu utama"><div class="nav-in" id="nav"></div></nav>
+</header>
+
+<main id="app"></main>
+<div class="foot">SQMC v1.0 · Rekomendasi sistem bersifat pendukung keputusan dan wajib diverifikasi QA/QC terhadap dokumen standar resmi edisi terbaru.</div>
+<div class="toast-wrap" id="toasts"></div>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+'use strict';
+/* =====================================================================
+   SQMC — Standart Quality Mutu Controller
+   Single-file app: knowledge base, spec engine, SPC engine, storage, UI.
+   ===================================================================== */
+
+/* ------------------------------ UTIL ------------------------------ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const isNum = (x) => typeof x === 'number' && Number.isFinite(x);
+const sum = (a) => a.reduce((s, v) => s + v, 0);
+const avg = (a) => a.length ? sum(a) / a.length : NaN;
+const sd = (a) => { if (a.length < 2) return NaN; const m = avg(a); return Math.sqrt(sum(a.map(v => (v - m) ** 2)) / (a.length - 1)); };
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+function fmt(x, d = 4) {
+  if (!isNum(x)) return '—';
+  const ax = Math.abs(x);
+  let dd = d;
+  if (ax !== 0 && ax < 0.01) dd = Math.max(d, 6);
+  return x.toLocaleString('id-ID', { maximumFractionDigits: dd, minimumFractionDigits: 0 });
+}
+function fmtFix(x, d = 3) { return isNum(x) ? x.toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—'; }
+function parseNum(v) {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : NaN;
+  if (v === null || v === undefined) return NaN;
+  let s = String(v).trim().replace(/\s/g, '');
+  if (!s) return NaN;
+  const hasDot = s.includes('.'), hasComma = s.includes(',');
+  if (hasDot && hasComma) {
+    if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+    else s = s.replace(/,/g, '');
+  } else if (hasComma) {
+    s = s.replace(',', '.');
+  }
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return parseFloat(s);
+}
+function numOrNull(v) { const n = parseNum(v); return Number.isFinite(n) ? n : null; }
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function dateID(ts) { try { return new Date(ts).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); } catch (e) { return ''; } }
+function slug(s) { return String(s || 'sqmc').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'sqmc'; }
+function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]); }
+
+function toast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type; el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 320); }, 3200);
+}
+function dialog(title, bodyHTML, buttons = [{ label: 'OK', value: true }]) {
+  return new Promise(resolve => {
+    const bg = document.createElement('div');
+    bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><h3>${esc(title)}</h3><div style="margin-top:8px">${bodyHTML}</div><div class="row">${buttons.map((b, i) => `<button class="btn ${b.cls || ''}" data-i="${i}">${esc(b.label)}</button>`).join('')}</div></div>`;
+    bg.addEventListener('click', e => {
+      const b = e.target.closest('button[data-i]');
+      if (b) { const v = buttons[+b.dataset.i].value; bg.remove(); resolve(typeof v === 'function' ? v(bg) : v); }
+      else if (e.target === bg) { bg.remove(); resolve(null); }
+    });
+    document.body.appendChild(bg);
+  });
+}
+const confirmDlg = (t, msg, okLabel = 'Ya, lanjutkan', cls = 'danger') => dialog(t, `<p>${esc(msg)}</p>`, [{ label: 'Batal', value: false, cls: 'sec' }, { label: okLabel, value: true, cls }]);
+
+/* ---------- math: normal distribution, gamma ---------- */
+function erf(x) {
+  // Abramowitz & Stegun 7.1.26 refined with series for small |x|
+  const s = Math.sign(x); x = Math.abs(x);
+  if (x < 0.5) { // Maclaurin series, high precision near 0
+    let t = x, r = x, n = 0;
+    for (n = 1; n < 30; n++) { t *= -x * x / n; r += t / (2 * n + 1); }
+    return s * 2 / Math.sqrt(Math.PI) * r;
+  }
+  // Complementary via continued fraction (Lentz) for accuracy in tails
+  const erfcv = erfcCF(x);
+  return s * (1 - erfcv);
+}
+function erfcCF(x) {
+  // erfc(x) = exp(-x^2)/sqrt(pi) * 1/(x+ 1/2/(x+ 1/(x+ 3/2/(x+ ...))))
+  let f, C, D, delta, a; const tiny = 1e-300;
+  f = x; if (f === 0) f = tiny; C = f; D = 0;
+  for (let i = 1; i < 300; i++) {
+    a = i / 2; D = x + a * D; if (Math.abs(D) < tiny) D = tiny; C = x + a / C; if (Math.abs(C) < tiny) C = tiny;
+    D = 1 / D; delta = C * D; f *= delta; if (Math.abs(delta - 1) < 1e-15) break;
+  }
+  return Math.exp(-x * x) / Math.sqrt(Math.PI) / f;
+}
+const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
+const normPdf = (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function lgamma(z) {
+  const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
+  z -= 1; let x = c[0]; for (let i = 1; i < g + 2; i++) x += c[i] / (z + i);
+  const t = z + g + 0.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+}
+
+/* =====================================================================
+   KNOWLEDGE BASE
+   Catatan: judul & ruang lingkup ditulis ulang (parafrase) oleh SQMC.
+   "year": null berarti edisi belum diverifikasi SQMC → cek katalog resmi.
+   ===================================================================== */
+const ISO_SEARCH = (q) => 'https://www.iso.org/search.html?q=' + encodeURIComponent(q);
+const WEB_SEARCH = (q) => 'https://www.google.com/search?q=' + encodeURIComponent(q);
+const STD = {
+  iso9001: { code: 'ISO 9001', year: 2026, body: 'ISO', cat: 'Sistem Manajemen Mutu', title: 'Sistem manajemen mutu — Persyaratan', scope: 'Kerangka sistem manajemen mutu organisasi: konteks, kepemimpinan, perencanaan berbasis risiko & peluang, pengendalian operasi, evaluasi kinerja, dan peningkatan berkelanjutan (siklus PDCA). Edisi 2026 menggantikan edisi 2015; masa transisi sertifikasi 3 tahun.', use: 'Payung sistem mutu pabrik: prosedur inspeksi, pengendalian produk tidak sesuai (klausul pengendalian keluaran tidak sesuai), tindakan korektif.', url: 'https://www.iso.org/standard/9001' },
+  iso2859: { code: 'ISO 2859-1', year: 2026, body: 'ISO', cat: 'Statistik & Sampling', title: 'Prosedur sampling untuk inspeksi atribut — Bagian 1: Skema sampling berbasis AQL untuk inspeksi lot-demi-lot', scope: 'Menetapkan ukuran sampel dan angka terima/tolak (Ac/Re) berdasarkan ukuran lot, level inspeksi, dan AQL, termasuk aturan perpindahan normal–ketat–longgar. Edisi ke-3 (2026) menambahkan prosedur skip-lot.', use: 'Dasar rencana sampling inspeksi akhir & penerimaan bahan baku di SQMC.', url: 'https://www.iso.org/standard/85464.html' },
+  iso7870: { code: 'ISO 7870-2', year: 2023, body: 'ISO', cat: 'Statistik & Sampling', title: 'Peta kendali — Bagian 2: Peta kendali Shewhart', scope: 'Panduan penggunaan peta kendali Shewhart untuk data variabel (X̄-R, X̄-s, I-MR) dan atribut (p, np, c, u), termasuk batas kendali, pola tidak acak, dan pengantar kapabilitas proses.', use: 'Dasar menu Peta Kendali SQMC.', url: 'https://www.iso.org/standard/78859.html' },
+  iso22514: { code: 'ISO 22514-2', year: null, body: 'ISO', cat: 'Statistik & Sampling', title: 'Metode statistik dalam manajemen proses — Kapabilitas dan kinerja — Bagian 2', scope: 'Metode menghitung indeks kapabilitas & kinerja proses (Cp, Cpk, Pp, Ppk) untuk model proses yang bergantung waktu.', use: 'Dasar analisis kapabilitas pada menu Peta Kendali.', url: ISO_SEARCH('ISO 22514-2') },
+  iso2768: { code: 'ISO 2768-1', year: null, body: 'ISO', cat: 'Dimensi & Toleransi', title: 'Toleransi umum — Bagian 1: Toleransi dimensi linier & sudut tanpa indikasi toleransi individual', scope: 'Kelas toleransi umum f (halus), m (sedang), c (kasar), v (sangat kasar) untuk dimensi hasil permesinan/pemotongan logam.', use: 'Toleransi default dimensi permesinan bila gambar teknik tidak mencantumkan toleransi individual.', url: ISO_SEARCH('ISO 2768-1') },
+  iso8062: { code: 'ISO 8062-3', year: null, body: 'ISO', cat: 'Dimensi & Toleransi', title: 'Spesifikasi geometris produk — Toleransi dimensi & geometri serta allowance permesinan untuk produk cor', scope: 'Grade toleransi dimensi coran (DCTG) dan allowance permesinan (RMAG) untuk benda cor.', use: 'Acuan toleransi dimensi benda cor (fitting besi cor). Nilai DCTG dipilih dari tabel resmi standar.', url: ISO_SEARCH('ISO 8062-3') },
+  iso10012: { code: 'ISO 10012', year: null, body: 'ISO', cat: 'Sistem Manajemen Mutu', title: 'Sistem manajemen pengukuran — Persyaratan untuk proses & peralatan ukur', scope: 'Pengendalian proses pengukuran dan konfirmasi metrologis alat ukur (kalibrasi, ketertelusuran).', use: 'Memastikan data pengukuran yang masuk ke peta kendali valid (alat ukur terkalibrasi).', url: ISO_SEARCH('ISO 10012') },
+  // ----- produk plastik
+  iso1452: { code: 'ISO 1452-3', year: 2009, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik PVC-U untuk suplai air & drainase/pembuangan bertekanan — Bagian 3: Fitting', scope: 'Karakteristik fitting PVC-U untuk jaringan air bertekanan (tertanam maupun di atas tanah), air dingin s.d. 25 °C dan komponen hingga 45 °C. Dikonfirmasi ulang 2019 (masih berlaku).', use: 'Standar produk utama fitting PVC-U bertekanan.', url: 'https://www.iso.org/standard/50363.html' },
+  sni0135: { code: 'SNI 06-0135-1987', year: 1987, body: 'SNI', cat: 'Standar Produk', title: 'Sambungan pipa PVC untuk saluran air minum', scope: 'SNI nasional untuk fitting PVC saluran air minum; digunakan dalam skema sertifikasi produk SNI oleh LSPro.', use: 'Wajib dicek bila produk dipasarkan di Indonesia untuk air minum.', url: 'https://bsn.go.id' },
+  sni0178: { code: 'SNI 06-0178-1987', year: 1987, body: 'SNI', cat: 'Standar Produk', title: 'Sambungan pipa PVC untuk saluran air buangan', scope: 'SNI nasional fitting PVC untuk air limbah/pembuangan.', use: 'Acuan fitting PVC drainase/air limbah di Indonesia.', url: 'https://bsn.go.id' },
+  iso4427: { code: 'ISO 4427-3', year: 2019, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik PE untuk suplai air, drainase & pembuangan bertekanan — Bagian 3: Fitting', scope: 'Fitting PE (electrofusion, spigot butt-fusion, socket fusion, mekanis, fabrikasi) untuk PFA s.d. 25 bar pada suhu referensi 20 °C. Revisi (ISO/DIS) sedang berjalan.', use: 'Standar produk utama fitting HDPE/PE100 air.', url: 'https://www.iso.org/standard/72185.html' },
+  sni4829: { code: 'SNI 4829-3:2015', year: 2015, body: 'SNI', cat: 'Standar Produk', title: 'Sistem perpipaan plastik untuk instalasi air minum — Polietilena (PE) — Bagian 3: Fitting', scope: 'SNI fitting PE air minum; skema sertifikasi LSPro merujuk padanannya ke ISO 4427-3:2019.', use: 'Sertifikasi SNI fitting PE di Indonesia.', url: 'https://bsn.go.id' },
+  iso4437: { code: 'ISO 4437-3', year: null, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik untuk suplai bahan bakar gas — Polietilena (PE) — Bagian 3: Fitting', scope: 'Fitting PE untuk jaringan distribusi gas tertanam.', use: 'Wajib bila fitting PE dipakai untuk gas.', url: ISO_SEARCH('ISO 4437-3') },
+  iso15874: { code: 'ISO 15874-3', year: 2013, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik untuk instalasi air panas & dingin — Polipropilena (PP) — Bagian 3: Fitting', scope: 'Fitting PP (PP-H, PP-B, PP-R, PP-RCT) socket fusion, electrofusion, mekanis, dan dengan insert untuk instalasi dalam gedung. Termasuk Amd 1:2018 & Amd 2:2021.', use: 'Standar produk fitting PP-R/PP-RCT.', url: 'https://www.iso.org/standard/54157.html' },
+  sni15874: { code: 'SNI ISO 15874-3', year: null, body: 'SNI', cat: 'Standar Produk', title: 'Sistem perpipaan air panas & dingin — Polipropilena (PP) — Bagian 3: Fitting (adopsi ISO)', scope: 'Adopsi nasional ISO 15874-3 yang digunakan dalam skema sertifikasi SNI fitting PP.', use: 'Sertifikasi SNI fitting PP-R.', url: 'https://bsn.go.id' },
+  iso15875: { code: 'ISO 15875-3', year: null, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik air panas & dingin — Polietilena ikat-silang (PE-X) — Bagian 3: Fitting', scope: 'Fitting untuk sistem pipa PE-X dalam gedung.', use: 'Standar produk fitting PE-X.', url: ISO_SEARCH('ISO 15875-3') },
+  iso15877: { code: 'ISO 15877-3', year: null, body: 'ISO', cat: 'Standar Produk', title: 'Sistem perpipaan plastik air panas & dingin — PVC terklorinasi (PVC-C) — Bagian 3: Fitting', scope: 'Fitting PVC-C untuk air panas & dingin dalam gedung.', use: 'Standar produk fitting CPVC.', url: ISO_SEARCH('ISO 15877-3') },
+  iso10508: { code: 'ISO 10508', year: null, body: 'ISO', cat: 'Lingkungan & Aplikasi', title: 'Sistem perpipaan plastik air panas & dingin — Panduan klasifikasi dan desain', scope: 'Kelas aplikasi (kombinasi suhu–waktu operasi) untuk sistem air panas/dingin.', use: 'Menentukan kelas aplikasi bila suhu operasi tinggi.', url: ISO_SEARCH('ISO 10508') },
+  // ----- produk logam
+  iso49: { code: 'ISO 49', year: 1994, body: 'ISO', cat: 'Standar Produk', title: 'Fitting besi cor maleabel berulir sesuai ISO 7-1', scope: 'Persyaratan desain & kinerja fitting pipa berulir dari besi cor maleabel (hitam/galvanis). Termasuk Cor 1:1997.', use: 'Standar produk fitting besi cor maleabel (elbow, tee, socket, union, dll).', url: 'https://www.iso.org/standard/3686.html' },
+  rsni139: { code: 'RSNI3 139-2024', year: 2024, body: 'SNI', cat: 'Standar Produk', title: 'Fiting pipa berulir besi cor maleabel hitam (rancangan SNI)', scope: 'Rancangan SNI (RSNI3) yang dipublikasikan BSN untuk jajak pendapat; belum tentu sudah ditetapkan. Pantau status penetapannya.', use: 'Antisipasi regulasi nasional untuk fitting maleabel hitam.', url: 'https://bsn.go.id' },
+  iso2531: { code: 'ISO 2531', year: null, body: 'ISO', cat: 'Standar Produk', title: 'Pipa, fitting, aksesori besi tuang nodular (ductile iron) & sambungannya untuk air', scope: 'Persyaratan pipa & fitting ductile iron untuk aplikasi air.', use: 'Standar produk fitting ductile iron.', url: ISO_SEARCH('ISO 2531') },
+  b169: { code: 'ASME B16.9', year: null, body: 'ASME', cat: 'Standar Produk', title: 'Fitting las tumpul (butt-welding) tempa buatan pabrik', scope: 'Dimensi, toleransi, rating & penandaan fitting butt-weld NPS 1/2 ke atas.', use: 'Standar produk fitting BW baja karbon/stainless.', url: 'https://www.asme.org/codes-standards' },
+  b1611: { code: 'ASME B16.11', year: null, body: 'ASME', cat: 'Standar Produk', title: 'Fitting tempa (forged) socket-weld & berulir', scope: 'Rating, dimensi, toleransi, penandaan & material fitting tempa socket-weld dan threaded.', use: 'Standar produk fitting forged (class 2000/3000/6000/9000).', url: 'https://www.asme.org/codes-standards' },
+  a105: { code: 'ASTM A105', year: null, body: 'ASTM', cat: 'Material', title: 'Tempa baja karbon untuk komponen perpipaan', scope: 'Komposisi kimia, sifat mekanik & perlakuan panas tempa baja karbon.', use: 'Spesifikasi material bahan baku fitting forged.', url: WEB_SEARCH('ASTM A105') },
+  a234: { code: 'ASTM A234', year: null, body: 'ASTM', cat: 'Material', title: 'Fitting perpipaan tempa baja karbon & paduan (mis. WPB) untuk suhu sedang–tinggi', scope: 'Material fitting butt-weld baja karbon/paduan.', use: 'Spesifikasi material fitting BW baja karbon.', url: WEB_SEARCH('ASTM A234 WPB') },
+  a403: { code: 'ASTM A403', year: null, body: 'ASTM', cat: 'Material', title: 'Fitting perpipaan tempa baja tahan karat austenitik', scope: 'Material fitting stainless (WP304/WP316, dll).', use: 'Spesifikasi material fitting BW stainless.', url: WEB_SEARCH('ASTM A403') },
+  iso4144: { code: 'ISO 4144', year: null, body: 'ISO', cat: 'Standar Produk', title: 'Fitting baja tahan karat berulir sesuai ISO 7-1', scope: 'Fitting stainless steel berulir untuk keperluan umum.', use: 'Standar produk fitting stainless berulir.', url: ISO_SEARCH('ISO 4144') },
+  en1254_1: { code: 'EN 1254-1', year: null, body: 'EN', cat: 'Standar Produk', title: 'Tembaga & paduan tembaga — Fitting plumbing — Bagian 1: Fitting ujung kapiler (solder/brazing)', scope: 'Fitting tembaga/paduan tembaga untuk disambung dengan solder kapiler.', use: 'Standar produk fitting tembaga kapiler.', url: WEB_SEARCH('EN 1254-1 fittings capillary') },
+  en1254_2: { code: 'EN 1254-2', year: null, body: 'EN', cat: 'Standar Produk', title: 'Tembaga & paduan tembaga — Fitting plumbing — Bagian 2: Fitting kompresi', scope: 'Fitting kompresi untuk pipa tembaga (umumnya kuningan).', use: 'Standar produk fitting kuningan kompresi. Verifikasi bagian yang sesuai jenis ujung.', url: WEB_SEARCH('EN 1254-2 compression fittings') },
+  // ----- ulir & flange
+  iso7_1: { code: 'ISO 7-1', year: null, body: 'ISO', cat: 'Ulir & Sambungan', title: 'Ulir pipa untuk sambungan kedap tekanan pada ulir — Bagian 1: Dimensi, toleransi & penandaan', scope: 'Ulir pipa tirus (BSPT/R, Rc, Rp) yang kekedapannya dicapai pada ulir.', use: 'Acuan ulir fitting berulir tirus.', url: ISO_SEARCH('ISO 7-1') },
+  iso7_2: { code: 'ISO 7-2', year: null, body: 'ISO', cat: 'Ulir & Sambungan', title: 'Ulir pipa kedap tekanan — Bagian 2: Verifikasi dengan gauge batas', scope: 'Metode pemeriksaan ulir ISO 7-1 menggunakan plug/ring gauge.', use: 'Metode inspeksi ulir (go/no-go).', url: ISO_SEARCH('ISO 7-2') },
+  iso228: { code: 'ISO 228-1', year: null, body: 'ISO', cat: 'Ulir & Sambungan', title: 'Ulir pipa yang kekedapannya tidak dicapai pada ulir — Bagian 1', scope: 'Ulir paralel (G/BSPP) yang memerlukan seal/gasket terpisah.', use: 'Acuan ulir paralel (union, adaptor).', url: ISO_SEARCH('ISO 228-1') },
+  b1201: { code: 'ASME B1.20.1', year: null, body: 'ASME', cat: 'Ulir & Sambungan', title: 'Ulir pipa umum (NPT)', scope: 'Ulir pipa tirus standar Amerika (NPT).', use: 'Acuan ulir NPT.', url: 'https://www.asme.org/codes-standards' },
+  iso7005: { code: 'ISO 7005-1', year: null, body: 'ISO', cat: 'Ulir & Sambungan', title: 'Flange pipa — Bagian 1: Flange baja untuk sistem perpipaan industri & umum', scope: 'Dimensi & rating flange baja.', use: 'Acuan ujung flange logam.', url: ISO_SEARCH('ISO 7005-1') },
+  // ----- pengujian
+  iso1167: { code: 'ISO 1167-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Pipa, fitting & rakitan termoplastik — Ketahanan terhadap tekanan internal — Bagian 1: Metode umum', scope: 'Uji tekanan hidrostatik internal pada suhu & durasi tertentu.', use: 'Uji kekuatan tekanan fitting plastik (parameter uji dari standar produk).', url: ISO_SEARCH('ISO 1167-1') },
+  iso580: { code: 'ISO 580', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Fitting termoplastik injeksi — Metode penilaian visual efek pemanasan (oven test)', scope: 'Mendeteksi tegangan sisa/cacat cetak melalui pemanasan.', use: 'Uji rutin per lot fitting injeksi PVC/PP.', url: ISO_SEARCH('ISO 580') },
+  iso1183: { code: 'ISO 1183-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Plastik — Penentuan densitas plastik non-seluler', scope: 'Metode imersi, piknometer, titrasi.', use: 'Uji incoming bahan baku & produk plastik.', url: ISO_SEARCH('ISO 1183-1') },
+  iso1133: { code: 'ISO 1133-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Plastik — Penentuan laju alir leleh (MFR/MVR)', scope: 'Indeks leleh termoplastik.', use: 'Uji incoming compound PE/PP.', url: ISO_SEARCH('ISO 1133-1') },
+  iso4892: { code: 'ISO 4892-2', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Plastik — Paparan sumber cahaya laboratorium — Bagian 2: Lampu xenon-arc', scope: 'Simulasi pelapukan UV/cuaca.', use: 'Validasi ketahanan UV fitting yang terpapar matahari.', url: ISO_SEARCH('ISO 4892-2') },
+  tr10358: { code: 'ISO/TR 10358', year: null, body: 'ISO', cat: 'Lingkungan & Aplikasi', title: 'Pipa & fitting plastik — Tabel klasifikasi ketahanan kimia gabungan', scope: 'Klasifikasi ketahanan berbagai termoplastik terhadap bahan kimia.', use: 'Evaluasi kecocokan material plastik terhadap fluida kimia.', url: ISO_SEARCH('ISO/TR 10358') },
+  iso6506: { code: 'ISO 6506-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Material logam — Uji kekerasan Brinell — Bagian 1', scope: 'Metode uji kekerasan Brinell.', use: 'Verifikasi perlakuan panas besi cor/baja.', url: ISO_SEARCH('ISO 6506-1') },
+  iso6892: { code: 'ISO 6892-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Material logam — Uji tarik — Bagian 1: Suhu ruang', scope: 'Kekuatan tarik, luluh, elongasi.', use: 'Verifikasi sifat mekanik per heat/batch.', url: ISO_SEARCH('ISO 6892-1') },
+  iso1461: { code: 'ISO 1461', year: null, body: 'ISO', cat: 'Lapisan & Korosi', title: 'Lapisan galvanis celup panas pada produk besi & baja — Spesifikasi & metode uji', scope: 'Ketebalan minimum lapisan seng, penampilan, dan ketentuan perbaikan area tak terlapis.', use: 'Acuan inspeksi fitting galvanis.', url: ISO_SEARCH('ISO 1461') },
+  iso2178: { code: 'ISO 2178', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Lapisan non-magnetik pada substrat magnetik — Pengukuran ketebalan (metode magnetik)', scope: 'Pengukuran tebal lapisan dengan coating thickness gauge.', use: 'Inspeksi tebal galvanis/cat.', url: ISO_SEARCH('ISO 2178') },
+  iso9227: { code: 'ISO 9227', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Uji korosi dalam atmosfer buatan — Uji kabut garam (salt spray)', scope: 'Uji NSS/AASS/CASS untuk ketahanan korosi relatif.', use: 'Validasi lapisan untuk lingkungan laut/korosif.', url: ISO_SEARCH('ISO 9227') },
+  iso3452: { code: 'ISO 3452-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Uji tak rusak — Uji penetran — Bagian 1: Prinsip umum', scope: 'Deteksi retak permukaan dengan cairan penetran.', use: 'Deteksi retak/lap pada fitting tempa & cor.', url: ISO_SEARCH('ISO 3452-1') },
+  iso9934: { code: 'ISO 9934-1', year: null, body: 'ISO', cat: 'Metode Uji', title: 'Uji tak rusak — Uji partikel magnetik — Bagian 1: Prinsip umum', scope: 'Deteksi retak permukaan/dekat permukaan material feromagnetik.', use: 'Deteksi retak fitting baja karbon.', url: ISO_SEARCH('ISO 9934-1') },
+  en10204: { code: 'EN 10204', year: null, body: 'EN', cat: 'Sistem Manajemen Mutu', title: 'Produk logam — Jenis dokumen inspeksi (sertifikat 2.1, 2.2, 3.1, 3.2)', scope: 'Jenis sertifikat inspeksi material (Mill Test Certificate).', use: 'Persyaratan MTC bahan baku logam.', url: WEB_SEARCH('EN 10204 3.1 inspection certificate') },
+  a967: { code: 'ASTM A967', year: null, body: 'ASTM', cat: 'Lapisan & Korosi', title: 'Perlakuan pasivasi kimia untuk komponen baja tahan karat', scope: 'Metode pasivasi & uji verifikasinya.', use: 'Finishing (rework) noda/kontaminasi besi pada stainless.', url: WEB_SEARCH('ASTM A967 passivation') },
+  // ----- lingkungan / korosi
+  iso12944: { code: 'ISO 12944-2', year: 2017, body: 'ISO', cat: 'Lapisan & Korosi', title: 'Cat & pernis — Proteksi korosi struktur baja dengan sistem cat — Bagian 2: Klasifikasi lingkungan', scope: 'Kategori korosivitas atmosfer C1–C5 & CX, serta kategori imersi Im1 (air tawar), Im2 (air laut/payau), Im3 (tanah), Im4 (air laut dengan proteksi katodik).', use: 'Menentukan kategori lingkungan → sistem coating fitting logam.', url: 'https://www.iso.org/standard/64834.html' },
+  iso9223: { code: 'ISO 9223', year: null, body: 'ISO', cat: 'Lapisan & Korosi', title: 'Korosi logam & paduan — Korosivitas atmosfer — Klasifikasi, penentuan & estimasi', scope: 'Klasifikasi korosivitas atmosfer berdasarkan laju korosi/lingkungan.', use: 'Estimasi kategori atmosfer untuk fitting logam di luar ruang.', url: ISO_SEARCH('ISO 9223') },
+  iso21809: { code: 'ISO 21809-1', year: null, body: 'ISO', cat: 'Lapisan & Korosi', title: 'Industri migas — Lapisan eksternal pipa tertanam/terendam — Bagian 1: Lapisan poliolefin (3LPE/3LPP)', scope: 'Lapisan pelindung eksternal pipa transmisi.', use: 'Rujukan proteksi eksternal fitting logam tertanam pada jalur pipa minyak/gas.', url: ISO_SEARCH('ISO 21809-1') },
+  iso15589: { code: 'ISO 15589-1', year: null, body: 'ISO', cat: 'Lapisan & Korosi', title: 'Industri migas — Proteksi katodik sistem pipa — Bagian 1: Pipa darat', scope: 'Desain & pemantauan proteksi katodik pipa tertanam.', use: 'Pertimbangan proteksi katodik untuk jaringan logam tertanam.', url: ISO_SEARCH('ISO 15589-1') },
+  nsf61: { code: 'NSF/ANSI/CAN 61', year: null, body: 'EN', cat: 'Lingkungan & Aplikasi', title: 'Komponen sistem air minum — Efek kesehatan', scope: 'Batas zat terlarut dari material yang kontak dengan air minum (rujukan internasional, bukan ISO).', use: 'Rujukan pembuktian keamanan kontak air minum; tetap patuhi regulasi kualitas air minum Indonesia.', url: WEB_SEARCH('NSF ANSI CAN 61') }
+};
+
+const MATERIALS = {
+  pvcu: { name: 'PVC-U (Unplasticized PVC)', fam: 'plastik', proc: 'injection', tmax: 45, tSoft: false, raw: ['Compound PVC-U siap cetak (resin + stabilizer + pelumas + filler)', 'Resin PVC suspensi + aditif diracik sendiri (dry blend)', 'Lainnya'] },
+  pvcc: { name: 'PVC-C / CPVC', fam: 'plastik', proc: 'injection', tmax: null, raw: ['Compound CPVC siap cetak', 'Lainnya'] },
+  pe100: { name: 'PE (HDPE PE100 / PE80)', fam: 'plastik', proc: 'injection', tmax: 40, tSoft: false, raw: ['Compound PE100 pre-coloured (hitam/biru)', 'Resin PE100 natural + masterbatch', 'Compound PE80', 'Lainnya'] },
+  ppr: { name: 'PP-R / PP-RCT', fam: 'plastik', proc: 'injection', tmax: 70, tSoft: true, raw: ['Granul PP-R (random copolymer)', 'Granul PP-RCT', 'Lainnya'] },
+  pex: { name: 'PE-X (Cross-linked PE) — fitting untuk sistem PE-X', fam: 'plastik', proc: 'injection', tmax: 70, tSoft: true, raw: ['Kuningan DZR (body fitting)', 'PPSU / PVDF (body fitting plastik)', 'Lainnya'] },
+  malleable: { name: 'Besi cor maleabel (hitam / galvanis)', fam: 'cor', proc: 'casting', tmax: null, raw: ['Pig iron + scrap baja (dilebur kupola/induksi)', 'Besi cor putih (white iron) + annealing', 'Lainnya'] },
+  ductile: { name: 'Besi tuang nodular (Ductile iron)', fam: 'cor', proc: 'casting', tmax: null, raw: ['Pig iron + scrap + perlakuan Mg (nodularisasi)', 'Lainnya'] },
+  csForged: { name: 'Baja karbon tempa (ASTM A105)', fam: 'tempa', proc: 'forging', tmax: null, raw: ['Bar/billet baja karbon ASTM A105', 'Lainnya'] },
+  csBW: { name: 'Baja karbon butt-weld (ASTM A234 WPB)', fam: 'tempa', proc: 'forming', tmax: null, raw: ['Pipa seamless baja karbon (dibentuk)', 'Pelat baja karbon (dibentuk & dilas)', 'Lainnya'] },
+  ss304: { name: 'Stainless steel 304/304L', fam: 'stainless', proc: 'forming', tmax: null, raw: ['Bar/billet SS304', 'Pipa seamless/welded SS304', 'Coran investment casting CF8', 'Lainnya'] },
+  ss316: { name: 'Stainless steel 316/316L', fam: 'stainless', proc: 'forming', tmax: null, raw: ['Bar/billet SS316', 'Pipa seamless/welded SS316', 'Coran investment casting CF8M', 'Lainnya'] },
+  copper: { name: 'Tembaga (Cu-DHP)', fam: 'nonferro', proc: 'forming', tmax: null, raw: ['Pipa/strip tembaga Cu-DHP', 'Lainnya'] },
+  brass: { name: 'Kuningan (brass / DZR brass)', fam: 'nonferro', proc: 'forging', tmax: null, raw: ['Batang kuningan CW617N (hot stamping)', 'Batang kuningan DZR CW602N', 'Ingot kuningan (gravity casting)', 'Lainnya'] },
+  other: { name: 'Lainnya (isi manual)', fam: 'lain', proc: 'machining', tmax: null, raw: ['Lainnya'] }
+};
+const FITTING_TYPES = ['Elbow 90°', 'Elbow 45°', 'Tee sama (equal tee)', 'Tee reduksi', 'Socket / coupling', 'Reducer', 'End cap / dop', 'Union', 'Flange / stub-end', 'Nipple', 'Faucet socket / adaptor', 'Lainnya'];
+const JOINTS = {
+  solvent: 'Solvent cement (lem)', rubber: 'Rubber ring (cincin karet)', taper: 'Ulir tirus ISO 7-1 (BSPT/R/Rc)', npt: 'Ulir NPT (ASME B1.20.1)', parallel: 'Ulir paralel ISO 228-1 (G/BSPP)',
+  butt: 'Butt fusion (las panas tumpul)', electro: 'Electrofusion', socketf: 'Socket fusion', bw: 'Butt-weld (las tumpul logam)', sw: 'Socket-weld', flange: 'Flange', press: 'Press / compression'
+};
+const PROCESS = {
+  injection: { name: 'Injection molding (cetak injeksi)', wtol: 2.0 },
+  casting: { name: 'Pengecoran (casting)', wtol: 5.0 },
+  forging: { name: 'Tempa (forging / hot stamping)', wtol: 3.0 },
+  forming: { name: 'Pembentukan (forming) + permesinan', wtol: 3.0 },
+  machining: { name: 'Permesinan dari bar (machining)', wtol: 1.0 },
+  fabrication: { name: 'Fabrikasi las', wtol: 3.0 }
+};
+const ENVS = {
+  soil: 'Tertanam di tanah', fresh: 'Terendam / kontak air tawar', sea: 'Air laut / payau', outdoor: 'Udara terbuka (UV & hujan)', indoor: 'Dalam ruangan / kering', chem: 'Lingkungan kimia / industri'
+};
+const FLUIDS = {
+  potable: 'Air minum', water: 'Air bersih / umum', hot: 'Air panas', waste: 'Air limbah / drainase', gas: 'Gas (bahan bakar)', oil: 'Minyak / BBM', chem: 'Bahan kimia'
+};
+
+/* ISO 2768-1 general tolerances, linear dimensions (± mm) */
+const ISO2768 = {
+  ranges: [[0.5, 3], [3, 6], [6, 30], [30, 120], [120, 400], [400, 1000], [1000, 2000], [2000, 4000]],
+  f: [0.05, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, null],
+  m: [0.1, 0.1, 0.2, 0.3, 0.5, 0.8, 1.2, 2],
+  c: [0.2, 0.3, 0.5, 0.8, 1.2, 2, 3, 4],
+  v: [null, 0.5, 1, 1.5, 2.5, 4, 6, 8]
+};
+function iso2768Tol(nominal, cls) {
+  const n = Math.abs(nominal);
+  if (!(n >= 0.5)) return null;
+  for (let i = 0; i < ISO2768.ranges.length; i++) {
+    const [a, b] = ISO2768.ranges[i];
+    if ((i === 0 ? n >= a : n > a) && n <= b) return ISO2768[cls][i];
+  }
+  return null;
+}
+
+/* ---------- ISO 2859-1 single sampling, normal inspection ---------- */
+const AQL = {
+  letters: 'ABCDEFGHJKLMNPQR'.split(''),
+  sizes: [2, 3, 5, 8, 13, 20, 32, 50, 80, 125, 200, 315, 500, 800, 1250, 2000],
+  aqls: [0.010, 0.015, 0.025, 0.040, 0.065, 0.10, 0.15, 0.25, 0.40, 0.65, 1.0, 1.5, 2.5, 4.0, 6.5, 10],
+  acre: { 14: [0, 1], 17: [1, 2], 18: [2, 3], 19: [3, 4], 20: [5, 6], 21: [7, 8], 22: [10, 11], 23: [14, 15], 24: [21, 22] },
+  lot: [[2, 8], [9, 15], [16, 25], [26, 50], [51, 90], [91, 150], [151, 280], [281, 500], [501, 1200], [1201, 3200], [3201, 10000], [10001, 35000], [35001, 150000], [150001, 500000], [500001, Infinity]],
+  // Tabel kode huruf ukuran sampel: kolom S-1, S-2, S-3, S-4, I, II, III
+  code: [
+    'AAAAAAB', 'AAAAABC', 'AABBBCD', 'ABBCCDE', 'BBCCCEF', 'BBCDDFG', 'BCDEEGH', 'BCDEFHJ',
+    'CCEFGJK', 'CDEGHKL', 'CDFGJLM', 'CDFHKMN', 'DEGJLNP', 'DEGJMPQ', 'DEHKNQR'
+  ],
+  levels: ['S-1', 'S-2', 'S-3', 'S-4', 'I', 'II', 'III']
+};
+function aqlPlan(lotSize, level, aql) {
+  const N = Math.round(lotSize);
+  if (!(N >= 2)) return null;
+  const li = AQL.lot.findIndex(([a, b]) => N >= a && N <= b);
+  const lv = AQL.levels.indexOf(level); if (li < 0 || lv < 0) return null;
+  const letter = AQL.code[li][lv];
+  let j = AQL.letters.indexOf(letter);
+  const i = AQL.aqls.findIndex(a => Math.abs(a - aql) < 1e-9); if (i < 0) return null;
+  let k = i + j, guard = 0, arrow = '';
+  while (!AQL.acre[k] && guard++ < 40) {
+    if (k < 14 || k === 16) { j += (k < 14 ? 14 - k : 1); k = i + j; arrow = arrow || '↓'; }
+    else if (k === 15) { if (j - 1 >= 0) { j -= 1; k = i + j; arrow = arrow || '↑'; } else { j += 2; k = i + j; arrow = arrow || '↓'; } }
+    else if (k > 24) { j -= (k - 24); k = i + j; arrow = arrow || '↑'; }
+    if (j > 15) { j = 15; k = i + j; if (!AQL.acre[k]) return null; }
+  }
+  const [ac, re] = AQL.acre[k];
+  let n = AQL.sizes[j], full = false;
+  if (n >= N) { n = N; full = true; }
+  return { letter, planLetter: AQL.letters[j], n, ac, re, arrow, full };
+}
+
+/* ---------- Defect catalog per material family ---------- */
+// disp: 'reject' | 'rework' | 'accept'   cond: syarat rework
+const DEFECTS = {
+  plastik: [
+    { id: 'crack', name: 'Retak / crack (permukaan atau tembus)', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan (0)', method: 'Scrap. Boleh digiling ulang (regrind) bila bersih & sesuai kebijakan rasio material rework.' },
+    { id: 'short', name: 'Short shot / bagian tidak terisi penuh', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap / regrind. Koreksi parameter injeksi (tekanan, suhu, venting).' },
+    { id: 'leak', name: 'Bocor / gagal uji tekanan hidrostatik', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Tolak; karantina lot & lakukan investigasi akar masalah (8D/RCA).' },
+    { id: 'void', name: 'Void / gelembung internal (pada penampang)', cls: 'Mayor', disp: 'reject', limit: 'Tidak diizinkan pada dinding penahan tekanan', method: 'Scrap. Cek kadar air bahan baku & degassing.' },
+    { id: 'dimsock', name: 'Dimensi socket/spigot di luar toleransi', cls: 'Mayor', disp: 'reject', limit: 'Sesuai tabel standar produk', method: 'Tidak dapat diperbaiki dengan finishing (berisiko merusak sambungan). Tolak.' },
+    { id: 'oven', name: 'Gagal oven test (ISO 580): delaminasi/retak/gelembung', cls: 'Mayor', disp: 'reject', limit: 'Sesuai kriteria standar produk', method: 'Tolak lot terkait; evaluasi tegangan sisa & suhu cetakan.' },
+    { id: 'wlow', name: 'Berat di bawah batas bawah (LSL)', cls: 'Mayor', disp: 'reject', limit: '≥ LSL berat', method: 'Indikasi kekurangan material / dinding tipis. Tolak.' },
+    { id: 'whigh', name: 'Berat di atas batas atas (USL) akibat flash', cls: 'Minor', disp: 'rework', limit: '≤ USL setelah trimming', method: 'Trimming flash, timbang ulang; harus masuk toleransi.', cond: ['dimAfter'] },
+    { id: 'flash', name: 'Flash / sirip di parting line', cls: 'Minor', disp: 'rework', limit: 'Bebas flash pada area sealing/socket', method: 'Trimming / deburring manual atau tumbling.', cond: ['nonSealing', 'dimAfter'] },
+    { id: 'burr', name: 'Burr di ujung / sisa gate', cls: 'Minor', disp: 'rework', limit: 'Rata dengan permukaan', method: 'Potong gate & deburr tanpa mengurangi tebal dinding.', cond: ['wallOK'] },
+    { id: 'sink', name: 'Sink mark (cekungan susut)', cls: 'Minor', disp: 'accept', limit: 'Dangkal & di area non-fungsional (bandingkan limit sample)', method: 'Use-as-is bila dalam batas sampel visual; bila di area sealing → Mayor/Tolak.', cond: ['nonSealing', 'visualOK'] },
+    { id: 'flow', name: 'Weld line / flow mark (visual)', cls: 'Minor', disp: 'accept', limit: 'Visual saja, tanpa retak', method: 'Use-as-is. Bila disertai retak → Kritis.', cond: ['visualOK'] },
+    { id: 'color', name: 'Belang warna / black spec / burn mark ringan', cls: 'Minor', disp: 'accept', limit: 'Maks. sesuai limit sample visual', method: 'Use-as-is bila tidak ada degradasi termal (rapuh, bau). Jika degradasi → tolak.', cond: ['visualOK'] },
+    { id: 'mark', name: 'Penandaan (marking) tidak lengkap / tidak terbaca', cls: 'Minor', disp: 'rework', limit: 'Marking lengkap sesuai standar produk', method: 'Penandaan ulang (hot stamp / print / label).', cond: [] }
+  ],
+  cor: [
+    { id: 'crack', name: 'Retak / hot tear / cold shut', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap (lebur ulang).' },
+    { id: 'leak', name: 'Bocor / porositas tembus (gagal uji kebocoran)', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap. Impregnasi hanya bila diizinkan standar & pelanggan secara tertulis.' },
+    { id: 'poro', name: 'Porositas / blow hole permukaan (tidak tembus)', cls: 'Mayor', disp: 'rework', limit: 'Kedalaman tidak mengurangi tebal dinding minimum', method: 'Perbaikan terbatas (grinding/filling) dengan prosedur tervalidasi + uji kebocoran ulang.', cond: ['nonSealing', 'wallOK', 'approval'] },
+    { id: 'thread', name: 'Ulir cacat / rusak / tidak lolos gauge', cls: 'Mayor', disp: 'rework', limit: 'Lolos plug/ring gauge (ISO 7-2)', method: 'Re-tapping / chasing ulir, lalu cek ulang dengan gauge.', cond: ['dimAfter'] },
+    { id: 'dimover', name: 'Dimensi oversize (material masih bisa dibuang)', cls: 'Mayor', disp: 'rework', limit: 'Setelah permesinan masuk toleransi', method: 'Permesinan ulang (facing/boring) lalu ukur ulang.', cond: ['oversize', 'dimAfter', 'wallOK'] },
+    { id: 'dimunder', name: 'Dimensi undersize / dinding terlalu tipis', cls: 'Mayor', disp: 'reject', limit: '≥ dimensi minimum', method: 'Tidak dapat ditambah material. Tolak.' },
+    { id: 'hard', name: 'Kekerasan / sifat mekanik di luar spesifikasi', cls: 'Mayor', disp: 'rework', limit: 'Sesuai spesifikasi material', method: 'Perlakuan panas ulang (re-annealing) bila prosesnya memungkinkan, lalu uji ulang.', cond: ['approval'] },
+    { id: 'zinc', name: 'Lapisan galvanis tipis / area tak terlapis', cls: 'Mayor', disp: 'rework', limit: 'Tebal min. & luas perbaikan sesuai ISO 1461', method: 'Area kecil: perbaikan sesuai ketentuan ISO 1461; area luas: stripping & galvanis ulang.', cond: [] },
+    { id: 'gate', name: 'Sisa gate/riser, burr, sand inclusion permukaan', cls: 'Minor', disp: 'rework', limit: 'Rata, tidak mengganggu fungsi', method: 'Grinding / shot blasting.', cond: ['wallOK'] },
+    { id: 'rust', name: 'Karat permukaan ringan', cls: 'Minor', disp: 'rework', limit: 'Bebas karat setelah pembersihan', method: 'Pembersihan (blasting/brushing) + coating ulang.', cond: [] },
+    { id: 'mark', name: 'Penandaan tidak lengkap', cls: 'Minor', disp: 'rework', limit: 'Sesuai standar produk', method: 'Penandaan ulang.', cond: [] }
+  ],
+  tempa: [
+    { id: 'crack', name: 'Retak (terdeteksi MT/PT)', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap.' },
+    { id: 'leak', name: 'Bocor pada uji tekanan', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap; investigasi.' },
+    { id: 'lap', name: 'Lap / seam tempa', cls: 'Mayor', disp: 'rework', limit: 'Dapat digerinda habis tanpa melanggar tebal minimum', method: 'Grind-out, haluskan, cek PT/MT ulang & ukur tebal dinding.', cond: ['wallOK', 'dimAfter'] },
+    { id: 'dimover', name: 'Dimensi oversize', cls: 'Mayor', disp: 'rework', limit: 'Setelah permesinan masuk toleransi', method: 'Permesinan ulang.', cond: ['oversize', 'dimAfter', 'wallOK'] },
+    { id: 'dimunder', name: 'Dimensi undersize / dinding tipis', cls: 'Mayor', disp: 'reject', limit: '≥ minimum', method: 'Tolak.' },
+    { id: 'thread', name: 'Ulir cacat', cls: 'Mayor', disp: 'rework', limit: 'Lolos gauge', method: 'Chasing ulir + cek gauge.', cond: ['dimAfter'] },
+    { id: 'bevel', name: 'Bevel ujung las tidak sesuai', cls: 'Mayor', disp: 'rework', limit: 'Sudut & root face sesuai standar produk', method: 'Re-beveling permesinan.', cond: ['dimAfter'] },
+    { id: 'scale', name: 'Scale / kerak tempa, burr', cls: 'Minor', disp: 'rework', limit: 'Bersih', method: 'Shot blasting / deburring.', cond: [] },
+    { id: 'pit', name: 'Pitting / goresan dangkal', cls: 'Minor', disp: 'rework', limit: 'Kedalaman tidak melanggar tebal minimum', method: 'Polishing/grinding ringan, ukur tebal.', cond: ['wallOK'] },
+    { id: 'mark', name: 'Penandaan tidak lengkap / heat number hilang', cls: 'Mayor', disp: 'rework', limit: 'Ketertelusuran ke MTC wajib', method: 'Penandaan ulang hanya bila ketertelusuran terbukti; jika tidak → tolak.', cond: ['approval'] }
+  ],
+  stainless: [
+    { id: 'crack', name: 'Retak (PT)', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap.' },
+    { id: 'leak', name: 'Bocor pada uji tekanan', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap; investigasi.' },
+    { id: 'pmi', name: 'Grade material salah (gagal PMI)', cls: 'Kritis', disp: 'reject', limit: 'Sesuai grade', method: 'Tolak & karantina; telusuri heat.' },
+    { id: 'dimover', name: 'Dimensi oversize', cls: 'Mayor', disp: 'rework', limit: 'Setelah permesinan masuk toleransi', method: 'Permesinan ulang.', cond: ['oversize', 'dimAfter', 'wallOK'] },
+    { id: 'dimunder', name: 'Dimensi undersize', cls: 'Mayor', disp: 'reject', limit: '≥ minimum', method: 'Tolak.' },
+    { id: 'thread', name: 'Ulir cacat', cls: 'Mayor', disp: 'rework', limit: 'Lolos gauge', method: 'Chasing ulir + cek gauge.', cond: ['dimAfter'] },
+    { id: 'tea', name: 'Tea staining / kontaminasi besi / heat tint', cls: 'Minor', disp: 'rework', limit: 'Bebas noda setelah perlakuan', method: 'Pickling & pasivasi (ASTM A967), bilas, verifikasi.', cond: [] },
+    { id: 'pit', name: 'Goresan / pitting dangkal', cls: 'Minor', disp: 'rework', limit: 'Tidak melanggar tebal minimum', method: 'Polishing + pasivasi ulang.', cond: ['wallOK'] },
+    { id: 'mark', name: 'Penandaan tidak lengkap', cls: 'Minor', disp: 'rework', limit: 'Sesuai standar', method: 'Penandaan ulang (etching/laser).', cond: [] }
+  ],
+  nonferro: [
+    { id: 'crack', name: 'Retak / season cracking', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap (lebur ulang).' },
+    { id: 'leak', name: 'Bocor / porositas tembus', cls: 'Kritis', disp: 'reject', limit: 'Tidak diizinkan', method: 'Scrap.' },
+    { id: 'dimover', name: 'Dimensi oversize', cls: 'Mayor', disp: 'rework', limit: 'Setelah permesinan masuk toleransi', method: 'Permesinan ulang.', cond: ['oversize', 'dimAfter', 'wallOK'] },
+    { id: 'dimunder', name: 'Dimensi undersize', cls: 'Mayor', disp: 'reject', limit: '≥ minimum', method: 'Tolak.' },
+    { id: 'thread', name: 'Ulir cacat', cls: 'Mayor', disp: 'rework', limit: 'Lolos gauge', method: 'Chasing ulir + cek gauge.', cond: ['dimAfter'] },
+    { id: 'burr', name: 'Burr / flash stamping', cls: 'Minor', disp: 'rework', limit: 'Rata', method: 'Deburring / tumbling.', cond: [] },
+    { id: 'tarnish', name: 'Oksidasi / perubahan warna permukaan', cls: 'Minor', disp: 'rework', limit: 'Sesuai limit sample', method: 'Pickling / pembersihan / plating ulang (bila berlapis).', cond: [] },
+    { id: 'mark', name: 'Penandaan tidak lengkap', cls: 'Minor', disp: 'rework', limit: 'Sesuai standar', method: 'Penandaan ulang.', cond: [] }
+  ]
+};
+DEFECTS.lain = DEFECTS.tempa;
+const COND_TEXT = {
+  nonSealing: 'Lokasi cacat BUKAN di area fungsional/sealing (socket, ulir, muka flange, spigot)',
+  dimAfter: 'Setelah finishing, dimensi/berat terukur masuk dalam batas toleransi (LSL–USL)',
+  wallOK: 'Tebal dinding sisa setelah finishing ≥ tebal minimum yang disyaratkan',
+  oversize: 'Penyimpangan berupa kelebihan material (oversize) sehingga bisa dibuang',
+  approval: 'Prosedur perbaikan tervalidasi tersedia dan disetujui (internal QA / pelanggan)',
+  visualOK: 'Dalam batas sampel visual (limit sample) yang disepakati'
+};
+
+/* ---------- Test plan per family ---------- */
+function testPlan(fam, input) {
+  const T = [];
+  const add = (name, std, freq, cls) => T.push({ name, std, freq, cls });
+  if (fam === 'plastik') {
+    add('Densitas & MFR bahan baku (incoming)', 'ISO 1183-1, ISO 1133-1', 'Setiap lot bahan baku (cek COA pemasok)', 'Incoming');
+    add('Berat bersih per unit', 'Spesifikasi SQMC', 'Tiap jam/shift → Peta kendali I-MR atau X̄-R', 'Proses (SPC)');
+    add('Dimensi kritis (diameter socket, tebal dinding, panjang)', 'Standar produk', 'Tiap shift / setup mesin → X̄-R', 'Proses (SPC)');
+    add('Visual (crack, short shot, flash, sink)', 'Katalog cacat SQMC + limit sample', 'Per lot, sampling ISO 2859-1', 'Final');
+    add('Uji tekanan hidrostatik internal', 'ISO 1167-1 (parameter dari standar produk)', 'Per lot produksi & uji tipe', 'Final / Tipe');
+    if (['pvcu', 'pvcc', 'ppr'].includes(input.material)) add('Oven test (efek pemanasan)', 'ISO 580', 'Per lot / per cetakan', 'Final');
+    if ((input.envs || []).includes('outdoor')) add('Ketahanan UV / pelapukan', 'ISO 4892-2', 'Uji tipe (validasi formulasi)', 'Tipe');
+    if ((input.fluids || []).includes('potable')) add('Efek terhadap kualitas air minum', 'Regulasi air minum nasional; rujukan NSF/ANSI/CAN 61', 'Uji tipe di laboratorium terakreditasi', 'Tipe');
+  } else {
+    add('Sertifikat material bahan baku (MTC)', 'EN 10204 (3.1)', 'Setiap heat/lot bahan baku', 'Incoming');
+    add('Komposisi kimia (spektrometer)', 'Spesifikasi material', 'Setiap heat', 'Incoming / Proses');
+    add('Berat bersih per unit', 'Spesifikasi SQMC', 'Tiap shift → Peta kendali', 'Proses (SPC)');
+    add('Dimensi kritis', fam === 'cor' ? 'Standar produk; ISO 8062-3 (coran)' : 'Standar produk; ISO 2768-1 (permesinan umum)', 'Tiap shift → X̄-R', 'Proses (SPC)');
+    if (['taper', 'npt', 'parallel'].includes(input.joint)) add('Pemeriksaan ulir (go/no-go gauge)', input.joint === 'npt' ? 'ASME B1.20.1' : 'ISO 7-2', '100% atau sampling ketat', 'Final');
+    add('Kekerasan', 'ISO 6506-1', 'Per batch perlakuan panas', 'Proses');
+    add('Uji tarik', 'ISO 6892-1', 'Per heat / batch', 'Proses');
+    add('Uji kebocoran / tekanan', 'Sesuai standar produk', fam === 'cor' ? '100% (lazim untuk coran bertekanan)' : 'Sesuai standar produk', 'Final');
+    if (fam === 'tempa' || fam === 'stainless') add('NDT retak permukaan (MT/PT)', fam === 'stainless' ? 'ISO 3452-1' : 'ISO 9934-1 / ISO 3452-1', 'Sampling atau sesuai permintaan pelanggan', 'Final');
+    if (fam === 'stainless') add('Identifikasi grade (PMI)', 'Spesifikasi material', 'Sampling per lot', 'Final');
+    if (input.galv) add('Tebal lapisan galvanis', 'ISO 1461; ISO 2178', 'Per lot galvanis', 'Final');
+    if ((input.envs || []).some(e => ['sea', 'chem', 'outdoor'].includes(e))) add('Ketahanan korosi lapisan (salt spray)', 'ISO 9227', 'Uji tipe / validasi sistem coating', 'Tipe');
+    add('Visual & penandaan', 'Katalog cacat SQMC', 'Per lot, sampling ISO 2859-1', 'Final');
+  }
+  return T;
+}
+
+/* =====================================================================
+   SPEC ENGINE
+   ===================================================================== */
+function buildSpec(inp) {
+  const mat = MATERIALS[inp.material] || MATERIALS.other;
+  const fam = mat.fam;
+  const stds = []; const seen = new Set();
+  const addS = (k, reason) => { if (!STD[k] || seen.has(k)) return; seen.add(k); stds.push({ key: k, ...STD[k], reason }); };
+  const W = []; // warnings {lvl, text}
+  const fluids = inp.fluids || [], envs = inp.envs || [];
+  const T = numOrNull(inp.tmax), PN = numOrNull(inp.pn);
+
+  // --- product standards
+  switch (inp.material) {
+    case 'pvcu':
+      if (fluids.includes('waste') && !fluids.some(f => ['potable', 'water'].includes(f)) && !(PN > 0)) addS('sni0178', 'Fitting PVC untuk air buangan/drainase.');
+      else { addS('iso1452', 'Standar produk internasional fitting PVC-U bertekanan.'); if (fluids.includes('potable') || fluids.includes('water')) addS('sni0135', 'Produk untuk saluran air minum di Indonesia (skema SNI).'); if (fluids.includes('waste')) addS('sni0178', 'Juga dipakai untuk air buangan.'); }
+      break;
+    case 'pvcc': addS('iso15877', 'Standar produk fitting PVC-C air panas & dingin.'); addS('iso10508', 'Penentuan kelas aplikasi suhu.'); break;
+    case 'pe100':
+      if (fluids.includes('gas')) addS('iso4437', 'Fitting PE untuk gas memakai seri standar khusus gas.');
+      if (fluids.some(f => f !== 'gas') || !fluids.length) { addS('iso4427', 'Standar produk fitting PE untuk air.'); addS('sni4829', 'Skema SNI fitting PE air minum (padanan ISO 4427-3:2019).'); }
+      break;
+    case 'ppr': addS('iso15874', 'Standar produk fitting PP-R/PP-RCT.'); addS('sni15874', 'Adopsi SNI untuk sertifikasi di Indonesia.'); addS('iso10508', 'Kelas aplikasi air panas.'); break;
+    case 'pex': addS('iso15875', 'Standar produk fitting sistem PE-X.'); addS('iso10508', 'Kelas aplikasi air panas.'); break;
+    case 'malleable': addS('iso49', 'Standar produk fitting besi cor maleabel berulir.'); addS('rsni139', 'Rancangan SNI nasional untuk fitting maleabel hitam — pantau penetapannya.'); break;
+    case 'ductile': addS('iso2531', 'Standar produk fitting ductile iron untuk air.'); break;
+    case 'csForged': addS('b1611', 'Standar produk fitting tempa socket-weld/berulir.'); addS('a105', 'Spesifikasi material tempa baja karbon.'); break;
+    case 'csBW': addS('b169', 'Standar produk fitting butt-weld.'); addS('a234', 'Spesifikasi material fitting BW baja karbon.'); break;
+    case 'ss304': case 'ss316':
+      if (['taper', 'npt', 'parallel'].includes(inp.joint)) addS('iso4144', 'Fitting stainless berulir.');
+      else if (inp.joint === 'sw') addS('b1611', 'Fitting tempa socket-weld.');
+      else { addS('b169', 'Fitting stainless butt-weld.'); addS('a403', 'Spesifikasi material fitting stainless austenitik.'); }
+      break;
+    case 'copper': addS('en1254_1', 'Fitting tembaga ujung kapiler.'); break;
+    case 'brass': addS(inp.joint === 'press' ? 'en1254_2' : 'en1254_1', 'Fitting paduan tembaga (kuningan) plumbing — pilih bagian EN 1254 yang sesuai jenis ujung.'); break;
+    default: W.push({ lvl: 'warn', text: 'Material "Lainnya": SQMC tidak dapat memetakan standar produk otomatis. Tentukan standar produk secara manual dengan engineer QA.' });
+  }
+  // --- joints
+  if (inp.joint === 'taper') { addS('iso7_1', 'Ujung berulir tirus.'); addS('iso7_2', 'Verifikasi ulir dengan gauge batas.'); }
+  if (inp.joint === 'parallel') addS('iso228', 'Ujung berulir paralel (butuh seal/gasket).');
+  if (inp.joint === 'npt') addS('b1201', 'Ujung berulir NPT.');
+  if (inp.joint === 'flange' && fam !== 'plastik') addS('iso7005', 'Ujung flange logam.');
+  // --- tolerances
+  if (inp.process === 'casting' || fam === 'cor') addS('iso8062', 'Toleransi dimensi benda cor.');
+  if (fam !== 'plastik') addS('iso2768', 'Toleransi umum dimensi permesinan tanpa toleransi individual.');
+  // --- tests
+  testPlan(fam, inp).forEach(t => {
+    const map = { 'ISO 1167-1': 'iso1167', 'ISO 580': 'iso580', 'ISO 1183-1': 'iso1183', 'ISO 1133-1': 'iso1133', 'ISO 4892-2': 'iso4892', 'ISO 6506-1': 'iso6506', 'ISO 6892-1': 'iso6892', 'ISO 1461': 'iso1461', 'ISO 2178': 'iso2178', 'ISO 9227': 'iso9227', 'ISO 3452-1': 'iso3452', 'ISO 9934-1': 'iso9934', 'EN 10204': 'en10204', 'ISO 7-2': 'iso7_2', 'NSF/ANSI/CAN 61': 'nsf61' };
+    Object.keys(map).forEach(c => { if (t.std.includes(c)) addS(map[c], 'Metode uji: ' + t.name + '.'); });
+  });
+  if (fam === 'stainless') addS('a967', 'Finishing pasivasi untuk rework noda/kontaminasi.');
+  // --- environment
+  const metal = fam !== 'plastik';
+  if (envs.includes('soil')) { if (metal) { addS('iso12944', 'Kategori Im3 (tanah) untuk proteksi korosi.'); addS('iso15589', 'Pertimbangkan proteksi katodik untuk logam tertanam.'); if (fluids.some(f => ['gas', 'oil'].includes(f))) addS('iso21809', 'Lapisan eksternal jalur pipa migas tertanam.'); } }
+  if (envs.includes('fresh') && metal) addS('iso12944', 'Kategori Im1 (air tawar).');
+  if (envs.includes('sea') && metal) { addS('iso12944', 'Kategori Im2/Im4 (air laut/payau).'); addS('iso9227', 'Validasi lapisan dengan uji kabut garam.'); }
+  if (envs.includes('outdoor')) { if (metal) { addS('iso9223', 'Estimasi korosivitas atmosfer.'); addS('iso12944', 'Kategori atmosfer C1–CX.'); } else addS('iso4892', 'Ketahanan UV material plastik.'); }
+  if (envs.includes('chem') || fluids.includes('chem')) { if (!metal) addS('tr10358', 'Kecocokan kimia termoplastik.'); else W.push({ lvl: 'warn', text: 'Lingkungan/fluida kimia: evaluasi kompatibilitas logam terhadap bahan kimia spesifik (data ketahanan korosi pemasok material).' }); }
+  if (fluids.includes('potable')) addS('nsf61', 'Pembuktian keamanan material kontak air minum.');
+  // --- system standards (always)
+  addS('iso9001', 'Sistem manajemen mutu pabrik (edisi terbaru 2026).');
+  addS('iso2859', 'Rencana sampling inspeksi atribut (AQL).');
+  addS('iso7870', 'Peta kendali Shewhart untuk pengendalian proses.');
+  addS('iso22514', 'Perhitungan kapabilitas proses Cp/Cpk.');
+  addS('iso10012', 'Validitas sistem pengukuran (kalibrasi alat ukur).');
+
+  // --- compatibility warnings
+  if (mat.tmax !== null && T !== null && T > mat.tmax) W.push({ lvl: mat.tSoft ? 'warn' : 'bad', text: `Suhu operasi ${fmt(T)} °C melebihi batas acuan ${mat.tmax} °C untuk ${mat.name}. ${inp.material === 'pvcu' ? 'ISO 1452-3 hanya mencakup komponen hingga 45 °C — pertimbangkan PP-R/PP-RCT atau PVC-C.' : mat.tSoft ? 'Periksa kelas aplikasi ISO 10508 & derating tekanan.' : 'Pertimbangkan material lain atau derating tekanan sesuai standar.'}` });
+  if (inp.material === 'pvcu' && fluids.includes('hot')) W.push({ lvl: 'bad', text: 'PVC-U tidak untuk air panas. Gunakan PP-R/PP-RCT, PE-X, atau PVC-C.' });
+  if (fluids.includes('gas') && ['pvcu', 'pvcc', 'ppr'].includes(inp.material)) W.push({ lvl: 'bad', text: 'Material ini tidak lazim/tidak sesuai untuk jaringan gas. Untuk gas plastik gunakan PE sesuai seri ISO 4437.' });
+  if (fam !== 'plastik' && envs.includes('soil') && !inp.galv && !['ss316', 'ss304', 'ductile'].includes(inp.material)) W.push({ lvl: 'warn', text: 'Logam tertanam tanpa lapisan pelindung berisiko korosi tinggi (Im3). Tentukan sistem coating/wrapping dan pertimbangkan proteksi katodik.' });
+  if (inp.material === 'ss304' && (envs.includes('sea') || fluids.includes('chem'))) W.push({ lvl: 'warn', text: 'SS304 rentan pitting/crevice corrosion di lingkungan klorida (air laut). Pertimbangkan SS316/316L atau duplex.' });
+  if (inp.material === 'brass' && (envs.includes('sea') || fluids.includes('potable'))) W.push({ lvl: 'warn', text: 'Kuningan biasa rentan dezincification di air agresif/laut. Gunakan kuningan DZR (mis. CW602N) dan cek batas kandungan Pb untuk air minum.' });
+  if (['csForged', 'csBW', 'malleable'].includes(inp.material) && envs.includes('sea') && !inp.galv) W.push({ lvl: 'bad', text: 'Baja karbon/besi cor tanpa lapisan di air laut akan terkorosi cepat. Wajib sistem proteksi (coating + CP) atau ganti material.' });
+  if (fam === 'plastik' && envs.includes('outdoor')) W.push({ lvl: 'warn', text: inp.material === 'pe100' ? 'PE terpapar UV: gunakan compound hitam ber-carbon black atau proteksi UV.' : 'Plastik terpapar UV: pastikan stabilizer UV/opasitas sesuai standar produk, atau beri pelindung.' });
+  if (fam === 'plastik' && numOrNull(inp.recycle) > 0) W.push({ lvl: inp.recycleSrc === 'external' ? 'bad' : 'warn', text: inp.recycleSrc === 'external' ? `Material daur ulang eksternal ${fmt(numOrNull(inp.recycle))}%: standar produk perpipaan bertekanan umumnya TIDAK mengizinkan material daur ulang dari luar. Verifikasi klausul material standar terkait.` : `Material rework internal ${fmt(numOrNull(inp.recycle))}%: umumnya hanya diizinkan material rework milik sendiri yang bersih & berasal dari produksi produk sejenis. Verifikasi klausul material standar terkait dan validasi dengan uji tekanan.` });
+  if (fluids.includes('potable')) W.push({ lvl: 'info', text: 'Kontak air minum: wajib bukti uji efek terhadap kualitas air dari laboratorium terakreditasi dan kepatuhan regulasi kualitas air minum yang berlaku.' });
+  if (PN !== null && fam === 'plastik' && T !== null && T > 20) W.push({ lvl: 'info', text: `Tekanan nominal PN ${fmt(PN)} umumnya berlaku pada suhu referensi 20 °C. Pada ${fmt(T)} °C gunakan faktor derating tekanan dari standar produk.` });
+
+  // --- weight tolerance
+  const proc = PROCESS[inp.process] || PROCESS[mat.proc] || PROCESS.machining;
+  const wt = numOrNull(inp.weight);
+  let weight = null;
+  if (wt !== null && wt > 0) {
+    let tolAbs, tolPct, basis;
+    if (inp.wtolMode === 'pct' && numOrNull(inp.wtolVal) > 0) { tolPct = numOrNull(inp.wtolVal); tolAbs = wt * tolPct / 100; basis = 'Ditentukan pengguna (± %)'; }
+    else if (inp.wtolMode === 'abs' && numOrNull(inp.wtolVal) > 0) { tolAbs = numOrNull(inp.wtolVal); tolPct = tolAbs / wt * 100; basis = 'Ditentukan pengguna (± gram)'; }
+    else { tolPct = proc.wtol; tolAbs = wt * tolPct / 100; basis = `Default internal SQMC untuk proses ${proc.name} (±${fmt(tolPct)}%) — BUKAN nilai dari dokumen ISO. Validasi dengan kapabilitas proses (target Cpk ≥ 1,33) di menu Peta Kendali.`; }
+    weight = { target: wt, tolAbs, tolPct, lsl: wt - tolAbs, usl: wt + tolAbs, basis };
+  }
+  // --- dimensions
+  const dims = (inp.dims || []).filter(d => d && String(d.name || '').trim() && numOrNull(d.nominal) !== null).map(d => {
+    const nom = numOrNull(d.nominal);
+    let plus = null, minus = null, basis = '';
+    if (d.mode === 'iso2768') { const t = iso2768Tol(nom, d.cls || 'm'); if (t !== null) { plus = t; minus = t; basis = `ISO 2768-1 kelas ${d.cls || 'm'}`; } else basis = 'Di luar rentang ISO 2768-1 untuk kelas ini — isi toleransi individual'; }
+    else { plus = numOrNull(d.plus); minus = numOrNull(d.minus); basis = d.src || 'Toleransi individual (gambar teknik / tabel standar produk)'; }
+    return { name: d.name, nominal: nom, unit: d.unit || 'mm', plus, minus, lsl: minus !== null ? nom - Math.abs(minus) : null, usl: plus !== null ? nom + Math.abs(plus) : null, basis };
+  });
+  // --- sampling
+  const lot = numOrNull(inp.lot), lvl = inp.level || 'II';
+  const sampling = [];
+  if (lot !== null && lot >= 2) {
+    const pc = aqlPlan(lot, lvl, 0.065);
+    sampling.push({ cls: 'Kritis', aql: '0 (zero acceptance)', ...(pc ? { letter: pc.planLetter, n: pc.n, ac: 0, re: 1, full: pc.full } : {}), note: 'Rekomendasi SQMC: Ac = 0. Untuk karakteristik keselamatan (kebocoran) lazim inspeksi 100%.' });
+    [['Mayor', numOrNull(inp.aqlMajor) ?? 1.0], ['Minor', numOrNull(inp.aqlMinor) ?? 2.5]].forEach(([c, a]) => {
+      const p = aqlPlan(lot, lvl, a);
+      sampling.push({ cls: c, aql: fmt(a), ...(p ? { letter: p.letter, planLetter: p.planLetter, n: p.n, ac: p.ac, re: p.re, full: p.full, arrow: p.arrow } : {}), note: p ? (p.full ? 'Ukuran sampel ≥ ukuran lot → inspeksi 100%.' : (p.arrow ? `Mengikuti panah tabel (${p.arrow}) ke rencana kode ${p.planLetter}.` : '')) : 'AQL tidak tersedia di tabel.' });
+    });
+  }
+  const defects = (DEFECTS[fam] || DEFECTS.lain);
+  const tests = testPlan(fam, inp);
+  return { id: inp.id || uid(), createdAt: inp.createdAt || Date.now(), updatedAt: Date.now(), input: JSON.parse(JSON.stringify(inp)), materialName: mat.name, family: fam, standards: stds, warnings: W, weight, dims, sampling, defects, tests, processName: proc.name };
+}
+
+/* =====================================================================
+   STORAGE (claude db → localStorage → memori)
+   ===================================================================== */
+const LS_KEY = 'sqmc.v1';
+function lsGet() { try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function lsSet(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); return true; } catch (e) { return false; } }
+const Store = {
+  mode: 'memory', db: null, uid: null,
+  data: { spec: [], dataset: [], draft: null },
+  async init() {
+    const l = lsGet();
+    if (l) { this.data = Object.assign({ spec: [], dataset: [], draft: null }, l); this.mode = 'local'; }
+    else if (lsSet(this.data)) this.mode = 'local';
+    this.badge();
+    if (!(window.claude && typeof window.claude.use === 'function')) return;
+    try {
+      const [db, user] = await Promise.all([withTimeout(window.claude.use('db'), 10000).catch(() => null), withTimeout(window.claude.use('user'), 10000).catch(() => null)]);
+      const id = user ? await user.id().catch(() => null) : null;
+      if (!db || !id) return;
+      const snap = await withTimeout(db.collection('data/users/' + id).get(), 10000);
+      const remote = { spec: [], dataset: [] };
+      snap.docs.forEach(d => { const v = d.data(); if (v && remote[v.kind] && v.payload) remote[v.kind].push(v.payload); });
+      this.db = db; this.uid = id; this.mode = 'cloud';
+      for (const kind of ['spec', 'dataset']) {
+        const map = new Map(remote[kind].map(o => [o.id, o]));
+        for (const o of this.data[kind]) { const r = map.get(o.id); if (!r || (o.updatedAt || 0) > (r.updatedAt || 0)) { map.set(o.id, o); await this._remote(kind, o).catch(() => { }); } }
+        this.data[kind] = Array.from(map.values());
+      }
+      lsSet(this.data); this.badge(); App.refresh();
+    } catch (e) { /* tetap lokal */ }
+  },
+  badge() {
+    const t = { cloud: '☁ Tersimpan di akun Anda', local: '● Tersimpan di browser ini', memory: '○ Sementara (tidak tersimpan)' }[this.mode];
+    const el = $('#storageBadge'); if (el) el.textContent = t;
+  },
+  docRef(kind, id) { return this.db.collection('data/users/' + this.uid).doc(kind + '_' + id); },
+  async _remote(kind, obj) {
+    const body = { kind, id: obj.id, updatedAt: obj.updatedAt || Date.now(), payload: obj };
+    if (JSON.stringify(body).length > 250000) throw new Error('too_large');
+    await this.docRef(kind, obj.id).set(body);
+  },
+  list(kind) { return (this.data[kind] || []).slice().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); },
+  get(kind, id) { return (this.data[kind] || []).find(o => o.id === id) || null; },
+  async put(kind, obj) {
+    obj.updatedAt = Date.now();
+    const arr = this.data[kind]; const i = arr.findIndex(o => o.id === obj.id);
+    if (i >= 0) arr[i] = obj; else arr.push(obj);
+    if (this.mode !== 'memory') lsSet(this.data);
+    if (this.mode === 'cloud') {
+      try { await this._remote(kind, obj); }
+      catch (e) { toast(e && e.message === 'too_large' ? 'Data terlalu besar untuk disimpan di cloud (maks ±250 KB per item). Tersimpan lokal saja.' : 'Gagal sinkron ke cloud: ' + (e.code || e.message || e), 'err'); }
+    }
+  },
+  async del(kind, id) {
+    this.data[kind] = this.data[kind].filter(o => o.id !== id);
+    if (this.mode !== 'memory') lsSet(this.data);
+    if (this.mode === 'cloud') { try { await this.docRef(kind, id).delete(); } catch (e) { toast('Gagal menghapus di cloud', 'err'); } }
+  },
+  saveDraft(d) { this.data.draft = d; if (this.mode !== 'memory') lsSet(this.data); }
+};
+
+/* ---------- downloads (claude capability → fallback blob link) ---------- */
+let DL = null, DLready = false;
+async function initDownloads() {
+  if (window.claude && typeof window.claude.use === 'function') { try { DL = await withTimeout(window.claude.use('downloads'), 10000); } catch (e) { DL = null; } }
+  DLready = true;
+}
+async function saveFile(filename, data, mime) {
+  if (DL) {
+    try { await DL.save({ filename, data }); toast('File siap: ' + filename, 'ok'); return; }
+    catch (e) {
+      const c = e && e.code;
+      if (c === 'declined') { toast('Unduhan dibatalkan'); return; }
+      if (c === 'rate_limited') { toast('Tunggu sebentar lalu coba lagi', 'err'); return; }
+      if (!['unavailable', 'not_granted', 'capability_disabled', 'capability_removed'].includes(c)) { toast('Gagal mengunduh: ' + ((e && e.message) || c), 'err'); return; }
+    }
+  }
+  try {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime || 'application/octet-stream' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  } catch (e) { toast('Browser ini menolak unduhan.', 'err'); }
+}
+
+/* =====================================================================
+   SPC ENGINE
+   ===================================================================== */
+const D2 = [NaN, NaN, 1.128379, 1.692569, 2.058751, 2.325929, 2.534413, 2.704357, 2.847201, 2.970026, 3.077505, 3.172873, 3.258455, 3.33598, 3.406763, 3.471827, 3.531983, 3.587884, 3.640064, 3.688963, 3.73495, 3.778336, 3.819385, 3.858323, 3.895348, 3.930629];
+const D3 = [NaN, NaN, 0.852502, 0.888368, 0.879808, 0.864082, 0.84804, 0.833205, 0.819831, 0.807834, 0.797051, 0.787315, 0.778478, 0.770416, 0.763023, 0.756211, 0.749908, 0.744052, 0.738591, 0.733481, 0.728686, 0.724173, 0.719915, 0.715887, 0.712068, 0.708441];
+const c4 = (n) => n < 2 ? NaN : Math.exp(lgamma(n / 2) - lgamma((n - 1) / 2)) * Math.sqrt(2 / (n - 1));
+const consts = (n) => {
+  const d2 = D2[n], d3 = D3[n], C4 = c4(n), r = Math.sqrt(n);
+  return { n, d2, d3, c4: C4, A2: 3 / (d2 * r), D3: Math.max(0, 1 - 3 * d3 / d2), D4: 1 + 3 * d3 / d2, A3: 3 / (C4 * r), B3: Math.max(0, 1 - 3 * Math.sqrt(1 - C4 * C4) / C4), B4: 1 + 3 * Math.sqrt(1 - C4 * C4) / C4 };
+};
+const TESTS = {
+  1: '1 titik > 3σ dari garis tengah',
+  2: '9 titik berturut-turut pada sisi yang sama',
+  3: '6 titik berturut-turut naik atau turun semua',
+  4: '14 titik berturut-turut naik-turun bergantian',
+  5: '2 dari 3 titik > 2σ (sisi sama)',
+  6: '4 dari 5 titik > 1σ (sisi sama)',
+  7: '15 titik berturut-turut dalam 1σ (kedua sisi)',
+  8: '8 titik berturut-turut > 1σ (kedua sisi)'
+};
+function runTests(x, cl, sig, enabled) {
+  const n = x.length, z = x.map((v, i) => (isNum(v) && isNum(sig[i]) && sig[i] > 0) ? (v - cl[i]) / sig[i] : NaN);
+  const flags = x.map(() => []);
+  const on = new Set(enabled);
+  const okIdx = (i) => isNum(z[i]);
+  for (let i = 0; i < n; i++) {
+    if (!okIdx(i)) continue;
+    if (on.has(1) && Math.abs(z[i]) > 3) flags[i].push(1);
+    const win = (k) => { if (i - k + 1 < 0) return null; const w = []; for (let j = i - k + 1; j <= i; j++) { if (!okIdx(j)) return null; w.push(j); } return w; };
+    if (on.has(2)) { const w = win(9); if (w && (w.every(j => z[j] > 0) || w.every(j => z[j] < 0))) flags[i].push(2); }
+    if (on.has(3)) { const w = win(6); if (w) { let up = true, dn = true; for (let t = 1; t < 6; t++) { if (!(x[w[t]] > x[w[t - 1]])) up = false; if (!(x[w[t]] < x[w[t - 1]])) dn = false; } if (up || dn) flags[i].push(3); } }
+    if (on.has(4)) { const w = win(14); if (w) { let ok = true; for (let t = 2; t < 14; t++) { const a = x[w[t - 1]] - x[w[t - 2]], b = x[w[t]] - x[w[t - 1]]; if (!(a * b < 0)) { ok = false; break; } } if (ok && (x[w[1]] - x[w[0]]) !== 0) flags[i].push(4); } }
+    if (on.has(5)) { const w = win(3); if (w) { const up = w.filter(j => z[j] > 2).length, dn = w.filter(j => z[j] < -2).length; if ((z[i] > 2 && up >= 2) || (z[i] < -2 && dn >= 2)) flags[i].push(5); } }
+    if (on.has(6)) { const w = win(5); if (w) { const up = w.filter(j => z[j] > 1).length, dn = w.filter(j => z[j] < -1).length; if ((z[i] > 1 && up >= 4) || (z[i] < -1 && dn >= 4)) flags[i].push(6); } }
+    if (on.has(7)) { const w = win(15); if (w && w.every(j => Math.abs(z[j]) < 1)) flags[i].push(7); }
+    if (on.has(8)) { const w = win(8); if (w && w.every(j => Math.abs(z[j]) > 1)) flags[i].push(8); }
+  }
+  return flags;
+}
+
+/** groups: array of arrays (variabel). opts: {type, exclude:Set(1-based), histMean, histSigma, tests} */
+function computeVariable(groupsIn, opts) {
+  const notes = [];
+  let groups = groupsIn.map(g => g.filter(isNum));
+  const nonEmpty = groups.filter(g => g.length > 0);
+  if (nonEmpty.length < 2) throw new Error('Data terlalu sedikit (minimal 2 subgrup/observasi berisi angka).');
+  const sizes = groups.map(g => g.length);
+  const maxN = Math.max(...sizes);
+  let type = opts.type || 'auto';
+  if (type === 'auto') type = maxN <= 1 ? 'imr' : (maxN <= 8 ? 'xbarr' : 'xbars');
+  if (type === 'imr' && maxN > 1) { groups = [].concat(...groups).map(v => [v]); notes.push('Data subgrup diratakan menjadi observasi individual untuk peta I-MR.'); }
+  if (type === 'xbarr' && maxN > 25) { type = 'xbars'; notes.push('Ukuran subgrup > 25: otomatis memakai X̄-S.'); }
+  const ex = opts.exclude || new Set();
+  const k = groups.length;
+  const inc = (i) => !ex.has(i + 1);
+  if (type === 'imr') {
+    const v = groups.map(g => g.length ? g[0] : NaN);
+    const incV = v.filter((x, i) => isNum(x) && inc(i));
+    if (incV.length < 2) throw new Error('Observasi tersisa setelah pengecualian terlalu sedikit.');
+    const mr = v.map((x, i) => i === 0 ? NaN : (isNum(x) && isNum(v[i - 1]) ? Math.abs(x - v[i - 1]) : NaN));
+    const mrInc = mr.filter((m, i) => isNum(m) && inc(i) && inc(i - 1));
+    const mean = isNum(opts.histMean) ? opts.histMean : avg(incV);
+    const MRbar = avg(mrInc);
+    const sigma = isNum(opts.histSigma) ? opts.histSigma : MRbar / D2[2];
+    if (!(sigma > 0)) throw new Error('Variasi nol — semua nilai sama; batas kendali tidak dapat dihitung.');
+    const all = (val) => v.map(() => val);
+    const main = { label: 'Nilai Individual', sym: 'X̄', points: v, cl: all(mean), ucl: all(mean + 3 * sigma), lcl: all(mean - 3 * sigma), sig: all(sigma) };
+    const cMR = consts(2);
+    const disp = { label: 'Rentang Bergerak', sym: 'MR̄', points: mr, cl: all(cMR.d2 * sigma), ucl: all((cMR.d2 + 3 * cMR.d3) * sigma), lcl: all(Math.max(0, (cMR.d2 - 3 * cMR.d3) * sigma)), sig: all(cMR.d3 * sigma) };
+    return finishVar({ type, title: 'Peta Kendali I-MR', mainName: 'I', dispName: 'MR', main, disp, sigmaWithin: sigma, mean, values: incV, k, sizes: v.map(() => 1), notes, opts, xLabel: 'Observasi' });
+  }
+  const useR = type === 'xbarr';
+  const valid = groups.map((g, i) => g.length >= 2);
+  const dropped = valid.filter(x => !x).length;
+  if (dropped) notes.push(`${dropped} subgrup berukuran < 2 diabaikan dalam estimasi σ.`);
+  const xbar = groups.map(g => g.length ? avg(g) : NaN);
+  const disp = groups.map(g => g.length >= 2 ? (useR ? Math.max(...g) - Math.min(...g) : sd(g)) : NaN);
+  const incIdx = groups.map((g, i) => i).filter(i => inc(i) && valid[i]);
+  if (incIdx.length < 2) throw new Error('Subgrup valid (n ≥ 2) setelah pengecualian terlalu sedikit.');
+  let sigma;
+  if (isNum(opts.histSigma)) sigma = opts.histSigma;
+  else if (useR) sigma = avg(incIdx.map(i => disp[i] / D2[groups[i].length]));
+  else sigma = avg(incIdx.map(i => disp[i] / c4(groups[i].length)));
+  if (!(sigma > 0)) throw new Error('Variasi dalam subgrup nol; batas kendali tidak dapat dihitung.');
+  const totN = sum(incIdx.map(i => groups[i].length));
+  const mean = isNum(opts.histMean) ? opts.histMean : sum(incIdx.map(i => xbar[i] * groups[i].length)) / totN;
+  const nArr = groups.map(g => Math.max(1, g.length));
+  const main = { label: 'Rata-rata Sampel', sym: 'X̄', points: xbar, cl: xbar.map(() => mean), sig: nArr.map(n => sigma / Math.sqrt(n)) };
+  main.ucl = main.sig.map(s => mean + 3 * s); main.lcl = main.sig.map(s => mean - 3 * s);
+  const dObj = { label: useR ? 'Rentang Sampel' : 'Simpangan Baku Sampel', sym: useR ? 'R̄' : 'S̄', points: disp, cl: [], ucl: [], lcl: [], sig: [] };
+  groups.forEach((g, i) => {
+    const n = g.length;
+    if (n < 2) { dObj.cl.push(NaN); dObj.ucl.push(NaN); dObj.lcl.push(NaN); dObj.sig.push(NaN); return; }
+    if (useR) { dObj.cl.push(D2[n] * sigma); dObj.ucl.push((D2[n] + 3 * D3[n]) * sigma); dObj.lcl.push(Math.max(0, (D2[n] - 3 * D3[n]) * sigma)); dObj.sig.push(D3[n] * sigma); }
+    else { const C = c4(n), s3 = Math.sqrt(1 - C * C); dObj.cl.push(C * sigma); dObj.ucl.push((C + 3 * s3) * sigma); dObj.lcl.push(Math.max(0, (C - 3 * s3) * sigma)); dObj.sig.push(s3 * sigma); }
+  });
+  const uniq = new Set(groups.filter(g => g.length).map(g => g.length));
+  if (uniq.size > 1) notes.push('Ukuran subgrup tidak seragam: batas kendali dihitung per subgrup.');
+  const values = [].concat(...incIdx.map(i => groups[i]));
+  return finishVar({ type, title: useR ? 'Peta Kendali X̄-R' : 'Peta Kendali X̄-S', mainName: 'X̄', dispName: useR ? 'R' : 'S', main, disp: dObj, sigmaWithin: sigma, mean, values, k, sizes: groups.map(g => g.length), notes, opts, xLabel: 'Subgrup', constN: uniq.size === 1 ? [...uniq][0] : null });
+}
+function finishVar(r) {
+  r.kind = 'variable';
+  r.main.flags = runTests(r.main.points, r.main.cl, r.main.sig, r.opts.tests || [1]);
+  r.disp.flags = runTests(r.disp.points, r.disp.cl, r.disp.sig, [1]);
+  return r;
+}
+/** attribute: rows [{d, n}] */
+function computeAttribute(rows, opts) {
+  const type = opts.type; const ex = opts.exclude || new Set(); const notes = [];
+  const k = rows.length; if (k < 2) throw new Error('Minimal 2 subgrup data atribut.');
+  const inc = rows.map((r, i) => !ex.has(i + 1) && isNum(r.d) && (type === 'c' || (isNum(r.n) && r.n > 0)));
+  const I = rows.map((r, i) => i).filter(i => inc[i]);
+  if (I.length < 2) throw new Error('Data valid terlalu sedikit (periksa kolom jumlah cacat & ukuran sampel).');
+  let main, title, sym, label;
+  if (type === 'p' || type === 'np') {
+    const pbar = sum(I.map(i => rows[i].d)) / sum(I.map(i => rows[i].n));
+    if (!(pbar > 0 && pbar < 1)) throw new Error('Proporsi rata-rata harus di antara 0 dan 1 (cek data: jumlah cacat ≤ ukuran sampel).');
+    if (rows.some(r => isNum(r.d) && isNum(r.n) && r.d > r.n)) throw new Error('Ada baris dengan jumlah unit cacat > ukuran sampel.');
+    if (type === 'p') {
+      const sig = rows.map(r => Math.sqrt(pbar * (1 - pbar) / r.n));
+      main = { label: 'Proporsi', sym: 'P̄', points: rows.map(r => r.d / r.n), cl: rows.map(() => pbar), sig, ucl: sig.map(s => pbar + 3 * s), lcl: sig.map(s => Math.max(0, pbar - 3 * s)) };
+      title = 'Peta Kendali P';
+    } else {
+      const sig = rows.map(r => Math.sqrt(r.n * pbar * (1 - pbar)));
+      main = { label: 'Jumlah Unit Cacat', sym: 'NP̄', points: rows.map(r => r.d), cl: rows.map(r => r.n * pbar), sig };
+      main.ucl = main.cl.map((c, i) => c + 3 * sig[i]); main.lcl = main.cl.map((c, i) => Math.max(0, c - 3 * sig[i]));
+      title = 'Peta Kendali NP';
+      if (new Set(rows.map(r => r.n)).size > 1) notes.push('Ukuran sampel bervariasi: untuk NP chart disarankan ukuran sampel konstan; pertimbangkan P chart.');
+    }
+    main.center = pbar;
+  } else if (type === 'c') {
+    const cbar = avg(I.map(i => rows[i].d)); if (!(cbar > 0)) throw new Error('Rata-rata jumlah cacat nol.');
+    const s = Math.sqrt(cbar);
+    main = { label: 'Jumlah Cacat', sym: 'C̄', points: rows.map(r => r.d), cl: rows.map(() => cbar), sig: rows.map(() => s), ucl: rows.map(() => cbar + 3 * s), lcl: rows.map(() => Math.max(0, cbar - 3 * s)), center: cbar };
+    title = 'Peta Kendali C';
+  } else {
+    const ubar = sum(I.map(i => rows[i].d)) / sum(I.map(i => rows[i].n)); if (!(ubar > 0)) throw new Error('Rata-rata cacat per unit nol.');
+    const sig = rows.map(r => Math.sqrt(ubar / r.n));
+    main = { label: 'Cacat per Unit', sym: 'Ū', points: rows.map(r => r.d / r.n), cl: rows.map(() => ubar), sig, ucl: sig.map(s => ubar + 3 * s), lcl: sig.map(s => Math.max(0, ubar - 3 * s)), center: ubar };
+    title = 'Peta Kendali U';
+  }
+  main.flags = runTests(main.points, main.cl, main.sig, opts.tests || [1, 2, 3, 4]);
+  return { kind: 'attribute', type, title, mainName: type.toUpperCase(), main, k, notes, opts, xLabel: 'Sampel', rows };
+}
+
+function capability(values, sigmaW, lsl, usl, target) {
+  const N = values.length; const mean = avg(values); const sO = sd(values);
+  const r = { N, mean, sigmaW, sigmaO: sO, lsl, usl, target };
+  const hasL = isNum(lsl), hasU = isNum(usl);
+  if (!hasL && !hasU) return r;
+  if (hasL && hasU) { r.Cp = (usl - lsl) / (6 * sigmaW); r.Pp = (usl - lsl) / (6 * sO); }
+  r.CPU = hasU ? (usl - mean) / (3 * sigmaW) : NaN; r.CPL = hasL ? (mean - lsl) / (3 * sigmaW) : NaN;
+  r.PPU = hasU ? (usl - mean) / (3 * sO) : NaN; r.PPL = hasL ? (mean - lsl) / (3 * sO) : NaN;
+  r.Cpk = Math.min(...[r.CPU, r.CPL].filter(isNum)); r.Ppk = Math.min(...[r.PPU, r.PPL].filter(isNum));
+  const obsL = hasL ? values.filter(v => v < lsl).length : 0, obsU = hasU ? values.filter(v => v > usl).length : 0;
+  r.ppmObs = { lsl: obsL / N * 1e6, usl: obsU / N * 1e6, tot: (obsL + obsU) / N * 1e6 };
+  const eW = { lsl: hasL ? Phi((lsl - mean) / sigmaW) * 1e6 : 0, usl: hasU ? (1 - Phi((usl - mean) / sigmaW)) * 1e6 : 0 }; eW.tot = eW.lsl + eW.usl; r.ppmW = eW;
+  const eO = { lsl: hasL ? Phi((lsl - mean) / sO) * 1e6 : 0, usl: hasU ? (1 - Phi((usl - mean) / sO)) * 1e6 : 0 }; eO.tot = eO.lsl + eO.usl; r.ppmO = eO;
+  return r;
+}
+function andersonDarling(values) {
+  const n = values.length; if (n < 8) return null;
+  const m = avg(values), s = sd(values); if (!(s > 0)) return null;
+  const y = values.slice().sort((a, b) => a - b).map(v => (v - m) / s);
+  let S = 0;
+  for (let i = 0; i < n; i++) {
+    const F1 = clamp(Phi(y[i]), 1e-15, 1 - 1e-15), F2 = clamp(Phi(y[n - 1 - i]), 1e-15, 1 - 1e-15);
+    S += (2 * (i + 1) - 1) * (Math.log(F1) + Math.log(1 - F2));
+  }
+  const A2 = -n - S / n; const A = A2 * (1 + 0.75 / n + 2.25 / (n * n));
+  let p;
+  if (A >= 0.6) p = Math.exp(1.2937 - 5.709 * A + 0.0186 * A * A);
+  else if (A >= 0.34) p = Math.exp(0.9177 - 4.279 * A - 1.38 * A * A);
+  else if (A >= 0.2) p = 1 - Math.exp(-8.318 + 42.796 * A - 59.938 * A * A);
+  else p = 1 - Math.exp(-13.436 + 101.14 * A - 223.73 * A * A);
+  return { A2, Astar: A, p: clamp(p, 0, 1) };
+}
+
+/* =====================================================================
+   SAMPLE DATA
+   ===================================================================== */
+function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function gauss(r) { let u = 0, v = 0; while (u === 0) u = r(); while (v === 0) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function sampleVariable() {
+  const r = rng(20261122), rows = [];
+  const start = new Date('2026-11-01');
+  for (let i = 0; i < 25; i++) {
+    const shift = i >= 18 ? 0.42 : 0; const vals = [];
+    for (let j = 0; j < 5; j++) vals.push(+(38.5 + shift + 0.26 * gauss(r)).toFixed(2));
+    if (i === 9) vals[2] = +(vals[2] + 1.35).toFixed(2);
+    const d = new Date(start.getTime() + i * 86400000);
+    rows.push({ date: d.toISOString().slice(0, 10), shift: i % 2 ? '2' : '1', operator: ['Andi', 'Budi', 'Citra'][i % 3], machine: 'INJ-03', vals, note: '' });
+  }
+  return { id: uid(), name: 'Contoh — Berat Elbow 90° PVC-U ½"', kind: 'variable', product: 'Elbow 90° PVC-U ½" (20 mm)', characteristic: 'Berat bersih', unit: 'g', lsl: 37.73, usl: 39.27, target: 38.5, n: 5, rows, createdAt: Date.now(), updatedAt: Date.now(), sample: true };
+}
+function sampleAttribute() {
+  const r = rng(77), rows = []; const start = new Date('2026-11-01');
+  for (let i = 0; i < 25; i++) {
+    const n = 200; let p = 0.03; if (i === 14) p = 0.085;
+    let d = 0; for (let j = 0; j < n; j++) if (r() < p) d++;
+    const dt = new Date(start.getTime() + i * 86400000);
+    rows.push({ date: dt.toISOString().slice(0, 10), inspected: n, defects: d, note: '' });
+  }
+  return { id: uid(), name: 'Contoh — Unit cacat visual Tee PVC', kind: 'attribute', defType: 'defective', product: 'Tee PVC-U 1"', characteristic: 'Unit cacat visual', rows, createdAt: Date.now(), updatedAt: Date.now(), sample: true };
+}
+
+/* =====================================================================
+   APP / ROUTER
+   ===================================================================== */
+const ICON = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  spec: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l2 2 4-4"/><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+  chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M6 15l4-5 3 3 5-7"/><path d="M3 6h18" stroke-dasharray="2 2"/></svg>',
+  data: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>',
+  lib: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7M8 11h7"/></svg>',
+  guide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>',
+  dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v3h16v-3"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'
+};
+const ROUTES = [
+  ['beranda', 'Beranda', 'home'], ['spesifikasi', 'Spesifikasi Standar', 'spec'], ['peta-kendali', 'Peta Kendali', 'chart'],
+  ['input-data', 'Input Data', 'data'], ['pustaka', 'Pustaka Standar', 'lib'], ['panduan', 'Panduan', 'guide']
+];
+const App = {
+  route: 'beranda',
+  state: { specResult: null, spc: { source: null, table: null, ds: null, result: null, cfg: {} }, dsEdit: null },
+  go(r) { if (location.hash !== '#' + r) location.hash = r; else this.render(); },
+  refresh() { this.render(true); },
+  render(soft) {
+    const h = (location.hash || '').replace('#', '');
+    this.route = ROUTES.some(r => r[0] === h) ? h : 'beranda';
+    $('#nav').innerHTML = ROUTES.map(([k, l, ic]) => `<a href="#${k}" class="${k === this.route ? 'active' : ''}">${ICON[ic]}<span>${l}</span></a>`).join('');
+    const v = { 'beranda': viewHome, 'spesifikasi': viewSpec, 'peta-kendali': viewSPC, 'input-data': viewData, 'pustaka': viewLib, 'panduan': viewGuide }[this.route];
+    try { v($('#app')); } catch (e) { console.error(e); $('#app').innerHTML = `<div class="alert bad">Terjadi kesalahan saat menampilkan halaman: ${esc(e.message)}</div>`; }
+    if (!soft) window.scrollTo(0, 0);
+  }
+};
+window.addEventListener('hashchange', () => App.render());
+
+/* =====================================================================
+   VIEW: BERANDA
+   ===================================================================== */
+function viewHome(root) {
+  const specs = Store.list('spec'), ds = Store.list('dataset');
+  root.innerHTML = `
+  <section class="hero">
+    <div class="sub">SQMC · Standart Quality Mutu Controller</div>
+    <h1>Kendalikan mutu dari spesifikasi sampai peta kendali</h1>
+    <p>Masukkan deskripsi produk — material, berat, bahan baku, dan kondisi pemakaian — lalu SQMC menyusun standar acuan, toleransi, batas cacat, aturan rework, dan rencana sampling. Data pengukuran diolah menjadi peta kendali Shewhart dan analisis kapabilitas.</p>
+    <div class="row">
+      <a class="btn acc" href="#spesifikasi">${ICON.spec} Buat Spesifikasi</a>
+      <a class="btn sec" href="#peta-kendali">${ICON.chart} Analisis Peta Kendali</a>
+    </div>
+  </section>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi"><div class="k">Spesifikasi tersimpan</div><div class="v">${specs.length}</div><div class="s">Lembar spesifikasi mutu</div></div>
+    <div class="kpi"><div class="k">Dataset pengukuran</div><div class="v">${ds.length}</div><div class="s">${ds.filter(d => d.kind === 'variable').length} variabel · ${ds.filter(d => d.kind === 'attribute').length} atribut</div></div>
+    <div class="kpi"><div class="k">Standar di pustaka</div><div class="v">${Object.keys(STD).length}</div><div class="s">ISO · SNI · ASME · EN · ASTM</div></div>
+    <div class="kpi"><div class="k">Jenis peta kendali</div><div class="v">7</div><div class="s">I-MR, X̄-R, X̄-S, P, NP, C, U</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Alur kerja (siklus PDCA)</h3><span class="pill-step">Plan → Do → Check → Act</span></div>
+    <div class="flow">
+      <div class="st"><b>1 · Plan</b><span>Tetapkan spesifikasi: standar acuan, toleransi, batas cacat, AQL.</span></div>
+      <div class="st"><b>2 · Do</b><span>Catat pengukuran produksi di menu Input Data atau unggah CSV/XLSX.</span></div>
+      <div class="st"><b>3 · Check</b><span>Peta kendali + 8 tes pola + kapabilitas Cp/Cpk.</span></div>
+      <div class="st"><b>4 · Act</b><span>Disposisi: terima, rework (finishing), atau tolak; perbaiki proses.</span></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="card-head"><h3>Spesifikasi terbaru</h3><a class="btn sm sec" href="#spesifikasi">Lihat semua</a></div>
+      ${specs.length ? specs.slice(0, 4).map(s => `<div class="list-item"><div><b>${esc(s.input.name || 'Tanpa nama')}</b><div class="meta">${esc(s.materialName)} · ${dateID(s.updatedAt)}</div></div><button class="btn sm sec" data-open-spec="${s.id}">Buka</button></div>`).join('') : `<div class="empty">Belum ada spesifikasi. <a href="#spesifikasi">Buat yang pertama</a>.</div>`}
+    </div>
+    <div class="card"><div class="card-head"><h3>Dataset terbaru</h3><a class="btn sm sec" href="#input-data">Kelola</a></div>
+      ${ds.length ? ds.slice(0, 4).map(d => `<div class="list-item"><div><b>${esc(d.name)}</b><div class="meta">${d.kind === 'variable' ? 'Variabel' : 'Atribut'} · ${d.rows.length} baris · ${dateID(d.updatedAt)}</div></div><button class="btn sm sec" data-spc-ds="${d.id}">Analisis</button></div>`).join('') : `<div class="empty">Belum ada dataset. <button class="btn sm" id="loadSamples">Muat contoh data</button></div>`}
+    </div>
+  </div>
+  <div class="alert info"><b>Tentang dokumen standar resmi:</b> dokumen ISO/SNI/ASME dilindungi hak cipta dan dijual oleh penerbitnya, sehingga SQMC tidak dapat menyediakan berkas aslinya. Setiap standar di SQMC dilengkapi tautan ke halaman resmi (untuk membeli/melihat pratinjau) dan ringkasan PDF buatan SQMC yang bisa diunduh.</div>`;
+  root.querySelectorAll('[data-open-spec]').forEach(b => b.onclick = () => { App.state.specResult = Store.get('spec', b.dataset.openSpec); App.state.specFormFromResult = true; App.go('spesifikasi'); });
+  root.querySelectorAll('[data-spc-ds]').forEach(b => b.onclick = () => openDatasetInSPC(b.dataset.spcDs));
+  const ls = $('#loadSamples', root); if (ls) ls.onclick = loadSamples;
+}
+async function loadSamples() {
+  await Store.put('dataset', sampleVariable());
+  await Store.put('dataset', sampleAttribute());
+  toast('Contoh data dimuat', 'ok'); App.refresh();
+}
+
+/* =====================================================================
+   VIEW: SPESIFIKASI
+   ===================================================================== */
+const DEFAULT_FORM = () => ({ name: '', code: '', category: 'fitting', categoryOther: '', ftype: 'Elbow 90°', ftypeOther: '', joint: 'solvent', material: 'pvcu', materialOther: '', raw: '', rawDetail: '', recycle: '', recycleSrc: 'internal', galv: false, weight: '', process: 'injection', wtolMode: 'default', wtolVal: '', size: '', pn: '', tmax: '', envs: [], envOther: '', fluids: ['potable'], fluidOther: '', dims: [{ name: 'Diameter dalam socket (rata-rata)', nominal: '', unit: 'mm', mode: 'custom', cls: 'm', plus: '', minus: '', src: '' }], lot: '1000', level: 'II', aqlMajor: '1.0', aqlMinor: '2.5' });
+let F = null;
+function viewSpec(root) {
+  if (App.state.specFormFromResult && App.state.specResult) { F = Object.assign(DEFAULT_FORM(), JSON.parse(JSON.stringify(App.state.specResult.input))); App.state.specFormFromResult = false; }
+  if (!F) F = Object.assign(DEFAULT_FORM(), Store.data.draft || {});
+  const specs = Store.list('spec');
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Spesifikasi Standar Mutu</h2><p>Isi deskripsi produk. Sistem menentukan standar acuan, toleransi, batas cacat, batas rework/finishing, rencana sampling AQL, dan rencana uji.</p></div>
+  <div class="row"><button class="btn sec sm" id="newForm">${ICON.plus} Form baru</button></div></div>
+  <div class="split">
+    <div>
+      <form class="card" id="specForm" autocomplete="off"></form>
+      <div class="card"><div class="card-head"><h3>Spesifikasi tersimpan</h3><span class="muted">${specs.length} item</span></div>
+        ${specs.length ? specs.map(s => `<div class="list-item"><div><b>${esc(s.input.name || 'Tanpa nama')}</b><div class="meta">${esc(s.input.code || '')} ${esc(s.materialName)} · ${dateID(s.updatedAt)}</div></div><div class="row"><button class="btn sm sec" data-load="${s.id}">Buka</button><button class="btn sm danger" data-del="${s.id}">Hapus</button></div></div>`).join('') : '<div class="empty">Belum ada.</div>'}
+      </div>
+    </div>
+    <div id="specOut">${App.state.specResult ? '' : `<div class="card"><div class="empty">Lengkapi form lalu tekan <b>Tentukan Standar Mutu</b>. Hasil akan muncul di sini.</div></div>`}</div>
+  </div>`;
+  renderSpecForm();
+  if (App.state.specResult) renderSpecOut(App.state.specResult);
+  $('#newForm').onclick = () => { F = DEFAULT_FORM(); App.state.specResult = null; Store.saveDraft(F); viewSpec(root); };
+  root.querySelectorAll('[data-load]').forEach(b => b.onclick = () => { const s = Store.get('spec', b.dataset.load); F = Object.assign(DEFAULT_FORM(), JSON.parse(JSON.stringify(s.input))); App.state.specResult = s; viewSpec(root); });
+  root.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => { if (await confirmDlg('Hapus spesifikasi?', 'Spesifikasi ini akan dihapus permanen.', 'Hapus')) { await Store.del('spec', b.dataset.del); if (App.state.specResult && App.state.specResult.id === b.dataset.del) App.state.specResult = null; viewSpec(root); toast('Dihapus'); } });
+}
+function opt(v, label, cur) { const same = String(v) === String(cur) || (cur !== '' && cur !== null && cur !== undefined && v !== '' && isNum(+v) && isNum(+cur) && +v === +cur); return `<option value="${esc(v)}" ${same ? 'selected' : ''}>${esc(label)}</option>`; }
+function renderSpecForm() {
+  const f = $('#specForm'); const mat = MATERIALS[F.material] || MATERIALS.other;
+  if (!mat.raw.includes(F.raw)) F.raw = mat.raw[0];
+  f.innerHTML = `
+  <div class="sec-title"><span class="n">1</span><h3>Identitas produk</h3></div>
+  <div class="grid g2">
+    <div class="field"><label class="f">Nama produk *</label><input type="text" data-k="name" value="${esc(F.name)}" placeholder="mis. Elbow 90° PVC-U ½&quot;"></div>
+    <div class="field"><label class="f">Kode produk</label><input type="text" data-k="code" value="${esc(F.code)}" placeholder="mis. EL90-PVC-20"></div>
+  </div>
+  <div class="grid g2">
+    <div class="field"><label class="f">Kategori produk</label><select data-k="category">${opt('fitting', 'Sambungan pipa (fitting)', F.category)}${opt('other', 'Lainnya (isi)', F.category)}</select>
+      ${F.category === 'other' ? `<input type="text" style="margin-top:6px" data-k="categoryOther" value="${esc(F.categoryOther)}" placeholder="Tulis kategori">` : ''}</div>
+    <div class="field"><label class="f">Jenis fitting</label><select data-k="ftype">${FITTING_TYPES.map(t => opt(t, t, F.ftype)).join('')}</select>
+      ${F.ftype === 'Lainnya' ? `<input type="text" style="margin-top:6px" data-k="ftypeOther" value="${esc(F.ftypeOther)}" placeholder="Tulis jenis fitting">` : ''}</div>
+  </div>
+  <div class="grid g3">
+    <div class="field"><label class="f">Ukuran nominal</label><input type="text" data-k="size" value="${esc(F.size)}" placeholder='mis. ½" / dn20 / DN50'></div>
+    <div class="field"><label class="f">Tekanan kerja PN (bar)</label><input type="text" inputmode="decimal" data-k="pn" value="${esc(F.pn)}" placeholder="mis. 10"></div>
+    <div class="field"><label class="f">Suhu operasi maks (°C)</label><input type="text" inputmode="decimal" data-k="tmax" value="${esc(F.tmax)}" placeholder="mis. 30"></div>
+  </div>
+
+  <div class="sec-title"><span class="n">2</span><h3>Material & bahan baku</h3></div>
+  <div class="field"><label class="f">Jenis material yang dipakai *</label><select data-k="material">${Object.entries(MATERIALS).map(([k, m]) => opt(k, m.name, F.material)).join('')}</select>
+    ${F.material === 'other' ? `<input type="text" style="margin-top:6px" data-k="materialOther" value="${esc(F.materialOther)}" placeholder="Tulis material">` : ''}</div>
+  <div class="field"><label class="f">Bahan baku</label><select data-k="raw">${mat.raw.map(r => opt(r, r, F.raw)).join('')}</select>
+    <input type="text" style="margin-top:6px" data-k="rawDetail" value="${esc(F.rawDetail)}" placeholder="Detail: grade, pemasok, nomor COA/MTC (opsional)"></div>
+  ${mat.fam === 'plastik' ? `<div class="grid g2"><div class="field"><label class="f">Material rework/daur ulang (%)</label><input type="text" inputmode="decimal" min="0" max="100" data-k="recycle" value="${esc(F.recycle)}" placeholder="0"></div>
+    <div class="field"><label class="f">Asal material daur ulang</label><select data-k="recycleSrc">${opt('internal', 'Internal (rework sendiri, bersih)', F.recycleSrc)}${opt('external', 'Eksternal (dari luar pabrik)', F.recycleSrc)}</select></div></div>`
+      : `<label class="chk"><input type="checkbox" data-k="galv" ${F.galv ? 'checked' : ''}> Diberi lapisan pelindung (galvanis / coating)</label>`}
+  <div class="field"><label class="f">Jenis sambungan / ujung</label><select data-k="joint">${Object.entries(JOINTS).map(([k, v]) => opt(k, v, F.joint)).join('')}</select></div>
+
+  <div class="sec-title"><span class="n">3</span><h3>Berat & proses</h3></div>
+  <div class="grid g2">
+    <div class="field"><label class="f">Berat bersih per unit (gram) *</label><input type="text" inputmode="decimal" data-k="weight" value="${esc(F.weight)}" placeholder="mis. 38,5"></div>
+    <div class="field"><label class="f">Proses manufaktur</label><select data-k="process">${Object.entries(PROCESS).map(([k, p]) => opt(k, p.name, F.process)).join('')}</select></div>
+  </div>
+  <div class="grid g2">
+    <div class="field"><label class="f">Dasar toleransi berat</label><select data-k="wtolMode">${opt('default', 'Default proses (SQMC)', F.wtolMode)}${opt('pct', 'Kustom ± %', F.wtolMode)}${opt('abs', 'Kustom ± gram', F.wtolMode)}</select></div>
+    ${F.wtolMode !== 'default' ? `<div class="field"><label class="f">Nilai toleransi (${F.wtolMode === 'pct' ? '%' : 'gram'})</label><input type="text" inputmode="decimal" data-k="wtolVal" value="${esc(F.wtolVal)}"></div>` : `<div class="hint" style="align-self:center">Default: ±${fmt((PROCESS[F.process] || PROCESS.injection).wtol)}% (rekomendasi internal, validasi dengan Cpk).</div>`}
+  </div>
+
+  <div class="sec-title"><span class="n">4</span><h3>Kondisi lingkungan saat dipakai</h3></div>
+  <div class="chips" data-multi="envs">${Object.entries(ENVS).map(([k, v]) => `<label class="chip ${F.envs.includes(k) ? 'on' : ''}"><input type="checkbox" value="${k}" ${F.envs.includes(k) ? 'checked' : ''}>${v}</label>`).join('')}</div>
+  <input type="text" style="margin-top:8px" data-k="envOther" value="${esc(F.envOther)}" placeholder="Kondisi lain (opsional), mis. area pesisir, getaran tinggi">
+  <div class="field" style="margin-top:12px"><label class="f">Fluida yang dialirkan</label>
+  <div class="chips" data-multi="fluids">${Object.entries(FLUIDS).map(([k, v]) => `<label class="chip ${F.fluids.includes(k) ? 'on' : ''}"><input type="checkbox" value="${k}" ${F.fluids.includes(k) ? 'checked' : ''}>${v}</label>`).join('')}</div>
+  <input type="text" style="margin-top:8px" data-k="fluidOther" value="${esc(F.fluidOther)}" placeholder="Fluida lain (opsional)"></div>
+
+  <div class="sec-title"><span class="n">5</span><h3>Dimensi kritis</h3></div>
+  <div class="hint" style="margin-bottom:6px">Untuk fitting plastik, toleransi diambil dari tabel standar produk/gambar teknik (isi manual). ISO 2768-1 hanya untuk dimensi permesinan.</div>
+  <div id="dimRows"></div>
+  <button type="button" class="btn sm sec" id="addDim">${ICON.plus} Tambah dimensi</button>
+
+  <div class="sec-title"><span class="n">6</span><h3>Inspeksi lot (ISO 2859-1)</h3></div>
+  <div class="grid g2">
+    <div class="field"><label class="f">Ukuran lot (unit)</label><input type="number" min="2" data-k="lot" value="${esc(F.lot)}"></div>
+    <div class="field"><label class="f">Level inspeksi</label><select data-k="level">${AQL.levels.map(l => opt(l, l === 'II' ? 'II (umum)' : l, F.level)).join('')}</select></div>
+  </div>
+  <div class="grid g2">
+    <div class="field"><label class="f">AQL cacat mayor</label><select data-k="aqlMajor">${[0.065, 0.1, 0.15, 0.25, 0.4, 0.65, 1.0, 1.5, 2.5, 4.0].map(a => opt(a, fmt(a), F.aqlMajor)).join('')}</select></div>
+    <div class="field"><label class="f">AQL cacat minor</label><select data-k="aqlMinor">${[0.65, 1.0, 1.5, 2.5, 4.0, 6.5].map(a => opt(a, fmt(a), F.aqlMinor)).join('')}</select></div>
+  </div>
+  <button type="submit" class="btn acc" style="width:100%;margin-top:6px">${ICON.spec} Tentukan Standar Mutu</button>`;
+  renderDims();
+  f.oninput = f.onchange = (e) => {
+    const t = e.target;
+    if (t.dataset.k) {
+      const k = t.dataset.k;
+      F[k] = t.type === 'checkbox' ? t.checked : t.value;
+      if (k === 'material') { const m = MATERIALS[F.material]; F.process = m.proc === 'forming' ? 'forming' : m.proc; F.raw = m.raw[0]; if (m.fam === 'plastik' && !['solvent', 'rubber', 'butt', 'electro', 'socketf', 'taper', 'press', 'flange'].includes(F.joint)) F.joint = 'solvent'; if (m.fam !== 'plastik' && ['solvent', 'rubber', 'butt', 'electro', 'socketf'].includes(F.joint)) F.joint = 'taper'; }
+      if (e.type === 'change' && ['category', 'ftype', 'material', 'wtolMode', 'process'].includes(k)) { Store.saveDraft(F); renderSpecForm(); return; }
+    }
+    const multi = t.closest('[data-multi]');
+    if (multi && t.type === 'checkbox') { const key = multi.dataset.multi; F[key] = $$('input:checked', multi).map(i => i.value); t.closest('.chip').classList.toggle('on', t.checked); }
+    if (t.dataset.dim !== undefined) { const i = +t.dataset.dim, k = t.dataset.dk; F.dims[i][k] = t.value; if (k === 'mode' && e.type === 'change') renderDims(); else updateDimPreview(i); }
+    Store.saveDraft(F);
+  };
+  $('#addDim').onclick = () => { F.dims.push({ name: '', nominal: '', unit: 'mm', mode: (MATERIALS[F.material].fam === 'plastik' ? 'custom' : 'iso2768'), cls: 'm', plus: '', minus: '', src: '' }); renderDims(); };
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const miss = [];
+    if (!String(F.name).trim()) miss.push('Nama produk');
+    if (!(numOrNull(F.weight) > 0)) miss.push('Berat bersih per unit');
+    if (miss.length) { toast('Lengkapi: ' + miss.join(', '), 'err'); return; }
+    const prevId = App.state.specResult && App.state.specResult.input && App.state.specResult.input.name === F.name ? App.state.specResult.id : null;
+    const res = buildSpec(Object.assign({}, F, { id: prevId || undefined, createdAt: App.state.specResult && prevId ? App.state.specResult.createdAt : undefined }));
+    App.state.specResult = res; renderSpecOut(res);
+    if (window.innerWidth < 1000) $('#specOut').scrollIntoView({ behavior: 'smooth' });
+  };
+}
+function renderDims() {
+  const box = $('#dimRows');
+  box.innerHTML = F.dims.map((d, i) => `
+    <div class="card" style="padding:10px;margin-bottom:8px;box-shadow:none;background:#fafbfd">
+      <div class="row"><input class="grow" type="text" data-dim="${i}" data-dk="name" value="${esc(d.name)}" placeholder="Nama dimensi"><button type="button" class="btn sm danger" data-rmdim="${i}" aria-label="Hapus">✕</button></div>
+      <div class="grid g3" style="margin-top:6px;gap:6px">
+        <input type="text" inputmode="decimal" data-dim="${i}" data-dk="nominal" value="${esc(d.nominal)}" placeholder="Nominal">
+        <select data-dim="${i}" data-dk="unit">${['mm', 'inch', 'g', '°'].map(u => opt(u, u, d.unit)).join('')}</select>
+        <select data-dim="${i}" data-dk="mode">${opt('custom', 'Toleransi individual', d.mode)}${opt('iso2768', 'ISO 2768-1', d.mode)}</select>
+      </div>
+      ${d.mode === 'iso2768' ? `<div class="grid g2" style="margin-top:6px;gap:6px"><select data-dim="${i}" data-dk="cls">${[['f', 'f — halus'], ['m', 'm — sedang'], ['c', 'c — kasar'], ['v', 'v — sangat kasar']].map(([k, l]) => opt(k, l, d.cls)).join('')}</select><div class="hint mono" id="dimPrev${i}"></div></div>`
+      : `<div class="grid g3" style="margin-top:6px;gap:6px"><input type="text" inputmode="decimal" data-dim="${i}" data-dk="plus" value="${esc(d.plus)}" placeholder="+ toleransi"><input type="text" inputmode="decimal" data-dim="${i}" data-dk="minus" value="${esc(d.minus)}" placeholder="− toleransi"><input type="text" data-dim="${i}" data-dk="src" value="${esc(d.src)}" placeholder="Sumber (mis. Tabel 3)"></div><div class="hint mono" id="dimPrev${i}"></div>`}
+    </div>`).join('') || '<div class="hint">Belum ada dimensi.</div>';
+  box.querySelectorAll('[data-rmdim]').forEach(b => b.onclick = () => { F.dims.splice(+b.dataset.rmdim, 1); renderDims(); Store.saveDraft(F); });
+  F.dims.forEach((_, i) => updateDimPreview(i));
+}
+function updateDimPreview(i) {
+  const d = F.dims[i]; const el = $('#dimPrev' + i); if (!el) return;
+  const nom = numOrNull(d.nominal); if (nom === null) { el.textContent = ''; return; }
+  if (d.mode === 'iso2768') { const t = iso2768Tol(nom, d.cls || 'm'); el.textContent = t === null ? 'Di luar rentang tabel untuk kelas ini' : `±${fmt(t)} → ${fmt(nom - t)} … ${fmt(nom + t)} ${d.unit}`; }
+  else { const p = numOrNull(d.plus), m = numOrNull(d.minus); el.textContent = (p !== null || m !== null) ? `Batas: ${m !== null ? fmt(nom - Math.abs(m)) : '—'} … ${p !== null ? fmt(nom + Math.abs(p)) : '—'} ${d.unit}` : ''; }
+}
+function bodyBadge(b) { return `<span class="badge b-${b.toLowerCase()}">${b}</span>`; }
+function stdCode(s) { return s.year ? `${s.code}${s.code.includes(':') || s.body === 'SNI' ? '' : ':' + s.year}` : s.code; }
+function renderSpecOut(r) {
+  const out = $('#specOut'); const inp = r.input;
+  const fluids = (inp.fluids || []).map(k => FLUIDS[k]).concat(inp.fluidOther ? [inp.fluidOther] : []);
+  const envs = (inp.envs || []).map(k => ENVS[k]).concat(inp.envOther ? [inp.envOther] : []);
+  const cats = {}; r.standards.forEach(s => { (cats[s.cat] = cats[s.cat] || []).push(s); });
+  const catOrder = ['Standar Produk', 'Material', 'Ulir & Sambungan', 'Dimensi & Toleransi', 'Metode Uji', 'Lapisan & Korosi', 'Lingkungan & Aplikasi', 'Statistik & Sampling', 'Sistem Manajemen Mutu'];
+  out.innerHTML = `
+  <div class="card">
+    <div class="card-head"><div><h3>${esc(inp.name)}</h3><div class="muted">${esc(inp.code || '')} · ${esc(inp.ftype === 'Lainnya' ? inp.ftypeOther : inp.ftype)} · ${esc(r.materialName)}${inp.material === 'other' && inp.materialOther ? ' (' + esc(inp.materialOther) + ')' : ''}</div></div>
+    <div class="row"><button class="btn sm" id="saveSpec">Simpan</button><button class="btn sm acc" id="pdfSpec">${ICON.dl} Unduh PDF</button><button class="btn sm sec" id="toDs">Buat dataset SPC</button></div></div>
+    <div class="grid g4">
+      <div class="kpi"><div class="k">Berat target</div><div class="v">${fmt(r.weight && r.weight.target, 3)}<small style="font-size:.8rem"> g</small></div><div class="s">${r.weight ? '±' + fmt(r.weight.tolAbs, 3) + ' g (±' + fmt(r.weight.tolPct, 2) + '%)' : ''}</div></div>
+      <div class="kpi"><div class="k">Standar acuan</div><div class="v">${r.standards.length}</div><div class="s">${(cats['Standar Produk'] || []).map(s => s.code).join(', ') || '—'}</div></div>
+      <div class="kpi"><div class="k">Peringatan</div><div class="v" style="color:${r.warnings.some(w => w.lvl === 'bad') ? 'var(--bad)' : r.warnings.length ? 'var(--warn)' : 'var(--ok)'}">${r.warnings.filter(w => w.lvl !== 'info').length}</div><div class="s">kecocokan material–aplikasi</div></div>
+      <div class="kpi"><div class="k">Sampling (Mayor)</div><div class="v">${r.sampling[1] && r.sampling[1].n ? 'n=' + r.sampling[1].n : '—'}</div><div class="s">${r.sampling[1] && r.sampling[1].n ? 'Ac ' + r.sampling[1].ac + ' / Re ' + r.sampling[1].re : 'Isi ukuran lot'}</div></div>
+    </div>
+    <p class="muted" style="margin-top:10px;font-size:.82rem">Lingkungan: ${esc(envs.join(', ') || '—')} · Fluida: ${esc(fluids.join(', ') || '—')} · Sambungan: ${esc(JOINTS[inp.joint] || '')} · Proses: ${esc(r.processName)}</p>
+    ${r.warnings.map(w => `<div class="alert ${w.lvl === 'bad' ? 'bad' : w.lvl === 'warn' ? 'warn' : 'info'}">${w.lvl === 'bad' ? '⛔ ' : w.lvl === 'warn' ? '⚠ ' : 'ℹ '}${esc(w.text)}</div>`).join('')}
+  </div>
+
+  <div class="card"><div class="card-head"><h3>A · Standar mutu yang harus dipenuhi</h3><span class="muted" style="font-size:.78rem">Badge "cek edisi" = edisi belum diverifikasi SQMC</span></div>
+    ${catOrder.filter(c => cats[c]).map(c => `<h4 style="margin:12px 0 6px">${c}</h4><div class="tw"><table class="t"><thead><tr><th>Kode</th><th>Judul (ringkas)</th><th>Alasan dipilih</th><th>Dokumen</th></tr></thead><tbody>
+      ${cats[c].map(s => `<tr><td style="white-space:nowrap">${bodyBadge(s.body)} <b class="mono">${esc(stdCode(s))}</b>${s.year ? '' : ' <span class="badge b-gray">cek edisi</span>'}</td><td>${esc(s.title)}</td><td>${esc(s.reason)}</td><td style="white-space:nowrap"><a class="btn sm sec" href="${esc(s.url)}" target="_blank" rel="noopener">${ICON.ext} Resmi</a> <button class="btn sm sec" data-stdpdf="${s.key}">${ICON.dl} Ringkasan</button></td></tr>`).join('')}
+      </tbody></table></div>`).join('')}
+  </div>
+
+  <div class="card"><h3>B · Nilai toleransi produk</h3>
+    ${r.weight ? `<div class="tw" style="margin-top:10px"><table class="t"><thead><tr><th>Karakteristik</th><th class="num">Nominal</th><th class="num">Toleransi</th><th class="num">LSL</th><th class="num">USL</th><th>Dasar</th></tr></thead><tbody>
+      <tr><td><b>Berat bersih per unit</b></td><td class="num">${fmt(r.weight.target, 3)} g</td><td class="num">±${fmt(r.weight.tolAbs, 3)} g</td><td class="num">${fmt(r.weight.lsl, 3)}</td><td class="num">${fmt(r.weight.usl, 3)}</td><td style="font-size:.8rem">${esc(r.weight.basis)}</td></tr>
+      ${r.dims.map(d => `<tr><td>${esc(d.name)}</td><td class="num">${fmt(d.nominal)} ${esc(d.unit)}</td><td class="num">${d.plus !== null || d.minus !== null ? `+${fmt(Math.abs(d.plus ?? 0))} / −${fmt(Math.abs(d.minus ?? 0))}` : '—'}</td><td class="num">${fmt(d.lsl)}</td><td class="num">${fmt(d.usl)}</td><td style="font-size:.8rem">${esc(d.basis)}</td></tr>`).join('')}
+    </tbody></table></div>` : ''}
+    <p class="hint">Toleransi produk harus ≥ ±4σ proses agar Cpk ≥ 1,33. Validasi di menu <a href="#peta-kendali">Peta Kendali</a> → analisis kapabilitas.</p>
+  </div>
+
+  <div class="card"><h3>C · Batas cacat & rencana sampling (ISO 2859-1, inspeksi normal, sampling tunggal)</h3>
+    ${r.sampling.length ? `<div class="tw" style="margin-top:10px"><table class="t"><thead><tr><th>Kelas cacat</th><th class="num">AQL</th><th class="num">Kode</th><th class="num">Ukuran sampel n</th><th class="num">Terima (Ac)</th><th class="num">Tolak (Re)</th><th>Catatan</th></tr></thead><tbody>
+      ${r.sampling.map(s => `<tr><td><span class="badge ${s.cls === 'Kritis' ? 'b-bad' : s.cls === 'Mayor' ? 'b-warn' : 'b-info'}">${s.cls}</span></td><td class="num">${esc(s.aql)}</td><td class="num">${esc(s.letter || '—')}</td><td class="num">${s.n ?? '—'}${s.full ? ' (100%)' : ''}</td><td class="num">${s.ac ?? '—'}</td><td class="num">${s.re ?? '—'}</td><td style="font-size:.8rem">${esc(s.note || '')}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="hint">Lot ${fmt(numOrNull(inp.lot))} unit, level ${esc(inp.level)}. Lot DITERIMA bila jumlah unit cacat dalam sampel ≤ Ac, DITOLAK bila ≥ Re. Tabel diturunkan dari tabel master ISO 2859-1 (identik ANSI/ASQ Z1.4) — cocokkan dengan dokumen resmi edisi 2026 sebelum dipakai kontraktual.</p>`
+      : '<div class="empty">Isi ukuran lot untuk menghitung rencana sampling.</div>'}
+  </div>
+
+  <div class="card"><div class="card-head"><h3>D · Katalog cacat, batas & disposisi (boleh finishing / tolak)</h3><button class="btn sm acc" id="openDisp">Kalkulator disposisi</button></div>
+    <div class="tw"><table class="t"><thead><tr><th>Cacat</th><th>Kelas</th><th>Batas</th><th>Disposisi</th><th>Metode / tindakan</th></tr></thead><tbody>
+      ${r.defects.map(d => `<tr><td>${esc(d.name)}</td><td><span class="badge ${d.cls === 'Kritis' ? 'b-bad' : d.cls === 'Mayor' ? 'b-warn' : 'b-info'}">${d.cls}</span></td><td style="font-size:.82rem">${esc(d.limit)}</td><td class="disp-${d.disp}">${{ reject: 'TOLAK', rework: 'REWORK*', accept: 'TERIMA*' }[d.disp]}</td><td style="font-size:.82rem">${esc(d.method)}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="hint">* REWORK/TERIMA hanya berlaku bila seluruh syarat terpenuhi (lokasi non-fungsional, dimensi/berat pasca-finishing masuk toleransi, tebal dinding ≥ minimum). Gunakan kalkulator disposisi untuk keputusan per unit.</p>
+  </div>
+
+  <div class="card"><h3>E · Rencana uji & frekuensi</h3>
+    <div class="tw" style="margin-top:10px"><table class="t"><thead><tr><th>Uji / pemeriksaan</th><th>Acuan</th><th>Frekuensi</th><th>Tahap</th></tr></thead><tbody>
+      ${r.tests.map(t => `<tr><td>${esc(t.name)}</td><td style="font-size:.82rem">${esc(t.std)}</td><td style="font-size:.82rem">${esc(t.freq)}</td><td><span class="badge b-gray">${esc(t.cls)}</span></td></tr>`).join('')}
+    </tbody></table></div>
+  </div>`;
+  $('#saveSpec').onclick = async () => { await Store.put('spec', r); toast('Spesifikasi disimpan', 'ok'); viewSpec($('#app')); };
+  $('#pdfSpec').onclick = () => pdfSpec(r);
+  $('#toDs').onclick = () => createDatasetFromSpec(r);
+  $('#openDisp').onclick = () => dispositionDialog(r);
+  out.querySelectorAll('[data-stdpdf]').forEach(b => b.onclick = () => pdfStd(b.dataset.stdpdf));
+}
+async function dispositionDialog(r) {
+  const defs = r.defects;
+  const body = `
+    <div class="field"><label class="f">Jenis cacat yang ditemukan</label><select id="dd_def">${defs.map(d => opt(d.id, `[${d.cls}] ${d.name}`, defs[0].id)).join('')}</select></div>
+    <div id="dd_conds"></div>
+    <div id="dd_res" style="margin-top:10px"></div>`;
+  const p = dialog('Kalkulator Disposisi Produk', body, [{ label: 'Tutup', value: null, cls: 'sec' }]);
+  const upd = () => {
+    const d = defs.find(x => x.id === $('#dd_def').value);
+    const conds = d.cond || [];
+    $('#dd_conds').innerHTML = d.disp === 'reject' ? '' : `<label class="f">Periksa syarat:</label>${conds.map(c => `<label class="chk"><input type="checkbox" data-c="${c}"> ${esc(COND_TEXT[c])}</label>`).join('') || '<div class="hint">Tidak ada syarat tambahan.</div>'}`;
+    const calc = () => {
+      const all = conds.every(c => { const el = $(`#dd_conds [data-c="${c}"]`); return el && el.checked; });
+      let cls, txt;
+      if (d.disp === 'reject') { cls = 'bad'; txt = `<b>TOLAK (Reject/Scrap)</b><br>${esc(d.method)}`; }
+      else if (d.disp === 'rework') { if (all) { cls = 'warn'; txt = `<b>REWORK / FINISHING DIIZINKAN</b><br>${esc(d.method)}<br><small>Setelah rework: lakukan inspeksi ulang karakteristik terkait & catat di laporan NCR.</small>`; } else { cls = 'bad'; txt = '<b>TOLAK</b> — syarat rework belum terpenuhi semua. Bila diragukan, ajukan ke MRB (Material Review Board).'; } }
+      else { if (all) { cls = 'ok'; txt = `<b>TERIMA (use-as-is)</b><br>${esc(d.method)}`; } else { cls = 'bad'; txt = '<b>TOLAK / eskalasi</b> — cacat berada di luar batas penerimaan visual atau pada area fungsional.'; } }
+      $('#dd_res').innerHTML = `<div class="alert ${cls}">${txt}</div><div class="hint">Kelas: ${d.cls} · Batas: ${esc(d.limit)}</div>`;
+    };
+    $$('#dd_conds input').forEach(i => i.onchange = calc); calc();
+  };
+  setTimeout(() => { const s = $('#dd_def'); if (s) { s.onchange = upd; upd(); } }, 0);
+  await p;
+}
+async function createDatasetFromSpec(r) {
+  const ds = { id: uid(), name: `${r.input.name} — Berat bersih`, kind: 'variable', product: r.input.name, characteristic: 'Berat bersih per unit', unit: 'g', lsl: r.weight ? +r.weight.lsl.toFixed(4) : null, usl: r.weight ? +r.weight.usl.toFixed(4) : null, target: r.weight ? r.weight.target : null, n: 5, specId: r.id, rows: [], createdAt: Date.now() };
+  await Store.put('dataset', ds);
+  if (!Store.get('spec', r.id)) await Store.put('spec', r);
+  App.state.dsEdit = ds.id; toast('Dataset dibuat — silakan input pengukuran', 'ok'); App.go('input-data');
+}
+
+/* =====================================================================
+   VIEW: INPUT DATA
+   ===================================================================== */
+function viewData(root) {
+  const list = Store.list('dataset');
+  const editing = App.state.dsEdit ? Store.get('dataset', App.state.dsEdit) : null;
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Input Data Pengukuran</h2><p>Basis data pencatatan hasil pengukuran di sistem. Data variabel (berat, dimensi) untuk peta X̄-R / X̄-S / I-MR; data atribut (jumlah cacat) untuk peta P / NP / C / U.</p></div>
+  <div class="row"><button class="btn" id="newVar">${ICON.plus} Dataset variabel</button><button class="btn sec" id="newAttr">${ICON.plus} Dataset atribut</button><button class="btn sec" id="samples">Muat contoh</button></div></div>
+  <div class="split">
+    <div class="card"><div class="card-head"><h3>Dataset</h3><span class="muted">${list.length}</span></div>
+      ${list.length ? list.map(d => `<div class="list-item" style="${editing && editing.id === d.id ? 'border-color:var(--pri2);background:var(--pri-soft)' : ''}"><div><b>${esc(d.name)}</b><div class="meta">${d.kind === 'variable' ? `Variabel · n=${d.n}` : 'Atribut'} · ${d.rows.length} baris · ${dateID(d.updatedAt)}</div></div><div class="row"><button class="btn sm sec" data-edit="${d.id}">Edit</button><button class="btn sm" data-an="${d.id}">Analisis</button></div></div>`).join('') : '<div class="empty">Belum ada dataset.</div>'}
+      <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
+      <h4>Cadangan data</h4>
+      <div class="row" style="margin-top:8px"><button class="btn sm sec" id="bkExport">${ICON.dl} Ekspor cadangan (JSON)</button><label class="btn sm sec" style="cursor:pointer">Impor cadangan<input type="file" accept=".json,application/json" id="bkImport" hidden></label></div>
+    </div>
+    <div id="dsEditor">${editing ? '' : '<div class="card"><div class="empty">Pilih dataset untuk diedit, atau buat dataset baru.</div></div>'}</div>
+  </div>`;
+  $('#newVar').onclick = () => newDataset('variable');
+  $('#newAttr').onclick = () => newDataset('attribute');
+  $('#samples').onclick = loadSamples;
+  root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => { App.state.dsEdit = b.dataset.edit; viewData(root); });
+  root.querySelectorAll('[data-an]').forEach(b => b.onclick = () => openDatasetInSPC(b.dataset.an));
+  $('#bkExport').onclick = () => saveFile(`sqmc-cadangan-${todayISO()}.json`, JSON.stringify({ app: 'SQMC', version: 1, exportedAt: new Date().toISOString(), spec: Store.data.spec, dataset: Store.data.dataset }, null, 2), 'application/json');
+  $('#bkImport').onchange = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    try { const j = JSON.parse(await file.text()); if (j.app !== 'SQMC') throw new Error('Bukan file cadangan SQMC'); let c = 0; for (const s of (j.spec || [])) { await Store.put('spec', s); c++; } for (const d of (j.dataset || [])) { await Store.put('dataset', d); c++; } toast(`${c} item diimpor`, 'ok'); viewData(root); }
+    catch (err) { toast('Gagal impor: ' + err.message, 'err'); }
+  };
+  if (editing) renderDsEditor(editing);
+}
+async function newDataset(kind) {
+  const specs = Store.list('spec');
+  const body = `<div class="field"><label class="f">Nama dataset</label><input type="text" id="nd_name" placeholder="mis. Berat Elbow PVC — Mesin INJ-03"></div>
+    ${specs.length ? `<div class="field"><label class="f">Tautkan ke spesifikasi (opsional, isi LSL/USL otomatis)</label><select id="nd_spec"><option value="">— tidak —</option>${specs.map(s => opt(s.id, s.input.name, '')).join('')}</select></div>` : ''}
+    ${kind === 'variable' ? `<div class="grid g2"><div class="field"><label class="f">Karakteristik</label><input type="text" id="nd_char" value="Berat bersih"></div><div class="field"><label class="f">Satuan</label><input type="text" id="nd_unit" value="g"></div></div>
+    <div class="field"><label class="f">Ukuran subgrup (n pengukuran per pengambilan)</label><input type="number" id="nd_n" min="1" max="50" value="5"><div class="hint">n=1 → peta I-MR; n=2–8 → X̄-R; n≥9 → X̄-S.</div></div>`
+      : `<div class="field"><label class="f">Jenis data atribut</label><select id="nd_def">${opt('defective', 'Unit cacat (defective) → P / NP chart', 'defective')}${opt('defects', 'Jumlah cacat (defects) → C / U chart', '')}</select></div>`}`;
+  const ok = await dialog(kind === 'variable' ? 'Dataset variabel baru' : 'Dataset atribut baru', body, [{ label: 'Batal', value: false, cls: 'sec' }, { label: 'Buat', value: (bg) => ({ name: $('#nd_name', bg).value, spec: $('#nd_spec', bg) ? $('#nd_spec', bg).value : '', char: $('#nd_char', bg) ? $('#nd_char', bg).value : '', unit: $('#nd_unit', bg) ? $('#nd_unit', bg).value : '', n: $('#nd_n', bg) ? $('#nd_n', bg).value : '', def: $('#nd_def', bg) ? $('#nd_def', bg).value : '' }) }]);
+  if (!ok) return;
+  const sp = ok.spec ? Store.get('spec', ok.spec) : null;
+  const ds = { id: uid(), name: ok.name.trim() || (kind === 'variable' ? 'Dataset variabel' : 'Dataset atribut'), kind, product: sp ? sp.input.name : '', rows: [], createdAt: Date.now(), specId: sp ? sp.id : null };
+  if (kind === 'variable') Object.assign(ds, { characteristic: ok.char, unit: ok.unit, n: clamp(parseInt(ok.n) || 5, 1, 50), lsl: sp && sp.weight ? +sp.weight.lsl.toFixed(4) : null, usl: sp && sp.weight ? +sp.weight.usl.toFixed(4) : null, target: sp && sp.weight ? sp.weight.target : null });
+  else Object.assign(ds, { defType: ok.def, characteristic: ok.def === 'defects' ? 'Jumlah cacat' : 'Unit cacat' });
+  await Store.put('dataset', ds); App.state.dsEdit = ds.id; viewData($('#app'));
+}
+function renderDsEditor(ds) {
+  const box = $('#dsEditor'); const V = ds.kind === 'variable';
+  const n = ds.n || 1;
+  box.innerHTML = `<div class="card">
+    <div class="card-head"><div><h3>${esc(ds.name)}</h3><div class="muted">${V ? 'Data variabel' : 'Data atribut'} ${ds.product ? '· ' + esc(ds.product) : ''}</div></div>
+      <div class="row"><button class="btn sm" id="dsSave">Simpan</button><button class="btn sm acc" id="dsAn">${ICON.chart} Analisis</button><button class="btn sm sec" id="dsCsv">${ICON.dl} CSV</button><button class="btn sm danger" id="dsDel">Hapus</button></div></div>
+    <div class="grid ${V ? 'g4' : 'g2'}">
+      <div class="field"><label class="f">Nama</label><input type="text" id="ds_name" value="${esc(ds.name)}"></div>
+      <div class="field"><label class="f">Karakteristik</label><input type="text" id="ds_char" value="${esc(ds.characteristic || '')}"></div>
+      ${V ? `<div class="field"><label class="f">LSL</label><input type="text" inputmode="decimal" id="ds_lsl" value="${ds.lsl ?? ''}"></div><div class="field"><label class="f">USL</label><input type="text" inputmode="decimal" id="ds_usl" value="${ds.usl ?? ''}"></div>
+      <div class="field"><label class="f">Target</label><input type="text" inputmode="decimal" id="ds_tgt" value="${ds.target ?? ''}"></div><div class="field"><label class="f">Satuan</label><input type="text" id="ds_unit" value="${esc(ds.unit || '')}"></div>
+      <div class="field"><label class="f">Ukuran subgrup n</label><input type="number" min="1" max="50" id="ds_n" value="${n}"></div>` : ''}
+    </div>
+    <div class="tw"><table class="t grid-edit"><thead><tr><th>#</th><th>Tanggal</th>${V ? '<th>Shift</th><th>Operator</th><th>Mesin</th>' + Array.from({ length: n }, (_, i) => `<th class="num">x${i + 1}</th>`).join('') : '<th class="num">Diperiksa</th><th class="num">' + (ds.defType === 'defects' ? 'Jml cacat' : 'Unit cacat') + '</th>'}<th>Catatan</th><th></th></tr></thead>
+    <tbody id="dsBody"></tbody></table></div>
+    <div class="row" style="margin-top:10px"><button class="btn sm sec" id="addRow">${ICON.plus} Tambah baris</button><button class="btn sm sec" id="pasteRows">Tempel dari Excel</button><span class="muted" id="dsCount"></span></div>
+  </div>`;
+  const body = $('#dsBody');
+  const rowHTML = (r, i) => `<tr data-i="${i}"><td class="muted">${i + 1}</td><td><input type="date" data-f="date" value="${esc(r.date || '')}"></td>
+    ${V ? `<td><input type="text" data-f="shift" value="${esc(r.shift || '')}" style="min-width:50px;width:60px"></td><td><input type="text" data-f="operator" value="${esc(r.operator || '')}"></td><td><input type="text" data-f="machine" value="${esc(r.machine || '')}"></td>${Array.from({ length: n }, (_, j) => `<td><input class="v" type="text" inputmode="decimal" data-v="${j}" value="${isNum((r.vals || [])[j]) ? String(r.vals[j]).replace('.', ',') : ''}"></td>`).join('')}`
+      : `<td><input class="v" type="text" inputmode="numeric" data-f="inspected" value="${r.inspected ?? ''}"></td><td><input class="v" type="text" inputmode="numeric" data-f="defects" value="${r.defects ?? ''}"></td>`}
+    <td><input type="text" data-f="note" value="${esc(r.note || '')}"></td><td><button class="btn sm danger" data-rm="${i}" aria-label="Hapus baris">✕</button></td></tr>`;
+  const draw = () => { body.innerHTML = ds.rows.map(rowHTML).join('') || `<tr><td colspan="20"><div class="empty">Belum ada baris. Tambah baris atau tempel dari Excel.</div></td></tr>`; $('#dsCount').textContent = `${ds.rows.length} baris`; bindRm(); };
+  const bindRm = () => body.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { ds.rows.splice(+b.dataset.rm, 1); draw(); dirty = true; });
+  let dirty = false;
+  body.oninput = (e) => {
+    const tr = e.target.closest('tr[data-i]'); if (!tr) return; const r = ds.rows[+tr.dataset.i]; dirty = true;
+    if (e.target.dataset.v !== undefined) { r.vals = r.vals || []; r.vals[+e.target.dataset.v] = numOrNull(e.target.value) ?? null; }
+    else { const f = e.target.dataset.f; r[f] = ['inspected', 'defects'].includes(f) ? numOrNull(e.target.value) : e.target.value; }
+  };
+  draw();
+  const readMeta = () => {
+    ds.name = $('#ds_name').value.trim() || ds.name; ds.characteristic = $('#ds_char').value;
+    if (V) { ds.lsl = numOrNull($('#ds_lsl').value); ds.usl = numOrNull($('#ds_usl').value); ds.target = numOrNull($('#ds_tgt').value); ds.unit = $('#ds_unit').value; }
+  };
+  if (V) $('#ds_n').onchange = (e) => { readMeta(); ds.n = clamp(parseInt(e.target.value) || 1, 1, 50); renderDsEditor(ds); };
+  $('#addRow').onclick = () => { const last = ds.rows[ds.rows.length - 1]; ds.rows.push(V ? { date: todayISO(), shift: last ? last.shift : '1', operator: last ? last.operator : '', machine: last ? last.machine : '', vals: [], note: '' } : { date: todayISO(), inspected: last ? last.inspected : null, defects: null, note: '' }); draw(); dirty = true; const inp = body.querySelector(`tr[data-i="${ds.rows.length - 1}"] input.v`); if (inp) inp.focus(); };
+  $('#pasteRows').onclick = async () => {
+    const txt = await dialog('Tempel data dari Excel', `<p class="hint">${V ? `Salin blok angka dari Excel (tiap baris = 1 subgrup, ${n} kolom nilai). Opsional kolom pertama berisi tanggal (YYYY-MM-DD).` : 'Dua kolom: jumlah diperiksa, jumlah cacat. Opsional kolom pertama tanggal.'}</p><textarea id="pasteTxt" placeholder="38,52\t38,47\t38,61\t38,39\t38,55"></textarea>`, [{ label: 'Batal', value: null, cls: 'sec' }, { label: 'Tambahkan', value: (bg) => $('#pasteTxt', bg).value }]);
+    if (!txt) return;
+    const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean); let added = 0;
+    lines.forEach(l => {
+      let cells = l.split(/\t|;/); if (cells.length === 1) cells = l.split(/\s+/);
+      let date = ''; if (/^\d{4}-\d{2}-\d{2}$/.test(cells[0])) date = cells.shift();
+      const nums = cells.map(parseNum);
+      if (V) { const vals = nums.filter(isNum).slice(0, n); if (vals.length) { ds.rows.push({ date: date || todayISO(), shift: '', operator: '', machine: '', vals, note: '' }); added++; } }
+      else { if (isNum(nums[0])) { ds.rows.push({ date: date || todayISO(), inspected: nums[0], defects: isNum(nums[1]) ? nums[1] : null, note: '' }); added++; } }
+    });
+    draw(); dirty = true; toast(`${added} baris ditambahkan`, added ? 'ok' : 'err');
+  };
+  $('#dsSave').onclick = async () => { readMeta(); await Store.put('dataset', ds); dirty = false; toast('Dataset disimpan', 'ok'); viewData($('#app')); };
+  $('#dsAn').onclick = async () => { readMeta(); await Store.put('dataset', ds); openDatasetInSPC(ds.id); };
+  $('#dsCsv').onclick = () => { readMeta(); saveFile(`${slug(ds.name)}.csv`, datasetToCSV(ds), 'text/csv'); };
+  $('#dsDel').onclick = async () => { if (await confirmDlg('Hapus dataset?', `"${ds.name}" beserta ${ds.rows.length} baris data akan dihapus permanen.`, 'Hapus')) { await Store.del('dataset', ds.id); App.state.dsEdit = null; viewData($('#app')); toast('Dihapus'); } };
+}
+function datasetToCSV(ds) {
+  const q = (v) => { const s = String(v ?? ''); return /[",;\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  if (ds.kind === 'variable') {
+    const n = ds.n || 1;
+    const head = ['subgrup', 'tanggal', 'shift', 'operator', 'mesin', ...Array.from({ length: n }, (_, i) => 'x' + (i + 1)), 'catatan'];
+    return [head.join(','), ...ds.rows.map((r, i) => [i + 1, r.date, r.shift, r.operator, r.machine, ...Array.from({ length: n }, (_, j) => isNum((r.vals || [])[j]) ? r.vals[j] : ''), r.note].map(q).join(','))].join('\n');
+  }
+  return ['sampel,tanggal,diperiksa,cacat,catatan', ...ds.rows.map((r, i) => [i + 1, r.date, r.inspected ?? '', r.defects ?? '', r.note].map(q).join(','))].join('\n');
+}
+function openDatasetInSPC(id) {
+  const ds = Store.get('dataset', id); if (!ds) return;
+  const S = App.state.spc;
+  S.source = 'dataset'; S.ds = id; S.table = null; S.result = null;
+  S.cfg = Object.assign({}, S.cfg, { dataKind: ds.kind, lsl: ds.lsl ?? '', usl: ds.usl ?? '', target: ds.target ?? '', varName: ds.characteristic || ds.name, unit: ds.unit || '', chart: ds.kind === 'variable' ? 'auto' : (ds.defType === 'defects' ? 'u' : 'p') });
+  App.go('peta-kendali');
+  setTimeout(() => runSPC(true), 50);
+}
+
+/* =====================================================================
+   VIEW: PETA KENDALI
+   ===================================================================== */
+const SPC_DEFAULT = { dataKind: 'variable', layout: 'single', valCol: 0, valCols: [], subSize: 5, subCol: -1, labelCol: -1, cntCol: 0, nCol: -1, nConst: '', chart: 'auto', lsl: '', usl: '', target: '', varName: '', unit: '', tests: [1, 2, 3, 4, 5, 6, 7, 8], exclude: '', histMean: '', histSigma: '', sheet: 0 };
+function viewSPC(root) {
+  const S = App.state.spc; S.cfg = Object.assign({}, SPC_DEFAULT, S.cfg);
+  const dsList = Store.list('dataset');
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Peta Kendali Shewhart</h2><p>Olah data pengukuran menjadi peta kendali ala Minitab: batas kendali 3σ, 8 tes pola tidak acak (Western Electric/Nelson), dan analisis kapabilitas proses.</p></div>
+  <div class="row"><button class="btn sm sec" id="tplVar">${ICON.dl} Template CSV variabel</button><button class="btn sm sec" id="tplAttr">${ICON.dl} Template CSV atribut</button></div></div>
+  <div class="split">
+    <div>
+      <div class="card"><h3>1 · Sumber data</h3>
+        <div class="tabs" id="srcTabs" style="margin-top:8px">
+          <button data-src="file" class="${S.source === 'file' || !S.source ? 'on' : ''}">Unggah CSV/XLSX</button>
+          <button data-src="dataset" class="${S.source === 'dataset' ? 'on' : ''}">Basis data sistem</button>
+          <button data-src="paste" class="${S.source === 'paste' ? 'on' : ''}">Tempel</button>
+        </div>
+        <div id="srcBody"></div>
+      </div>
+      <div class="card" id="cfgCard"></div>
+    </div>
+    <div id="spcOut">${S.result ? '' : '<div class="card"><div class="empty">Pilih sumber data dan konfigurasi, lalu tekan <b>Buat Peta Kendali</b>.</div></div>'}</div>
+  </div>`;
+  const curSrc = S.source || 'file';
+  const drawSrc = (src) => {
+    const b = $('#srcBody');
+    if (src === 'file') {
+      b.innerHTML = `<div class="drop" id="drop"><b>Seret file ke sini</b> atau ketuk untuk memilih<br><small>CSV (koma/titik-koma) atau Excel .xlsx/.xls</small><input type="file" id="fileIn" accept=".csv,.txt,.xlsx,.xls" hidden></div>
+        ${S.table && S.source === 'file' ? `<div class="hint" style="margin-top:8px">File: <b>${esc(S.table.fileName)}</b> · ${S.table.rows.length} baris · ${S.table.headers.length} kolom</div>${S.table.sheets && S.table.sheets.length > 1 ? `<div class="field" style="margin-top:6px"><label class="f">Sheet</label><select id="sheetSel">${S.table.sheets.map((s, i) => opt(i, s, S.cfg.sheet)).join('')}</select></div>` : ''}${previewTable(S.table)}` : ''}`;
+      const drop = $('#drop'), fi = $('#fileIn');
+      drop.onclick = () => fi.click();
+      drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('over'); };
+      drop.ondragleave = () => drop.classList.remove('over');
+      drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+      fi.onchange = () => { if (fi.files[0]) handleFile(fi.files[0]); };
+      const ss = $('#sheetSel'); if (ss) ss.onchange = () => { S.cfg.sheet = +ss.value; loadSheet(S.table.wb, S.cfg.sheet, S.table.fileName); };
+    } else if (src === 'dataset') {
+      b.innerHTML = dsList.length ? `<div class="field"><label class="f">Pilih dataset</label><select id="dsSel">${dsList.map(d => opt(d.id, `${d.name} (${d.kind === 'variable' ? 'variabel' : 'atribut'}, ${d.rows.length} baris)`, S.ds)).join('')}</select></div><button class="btn sm sec" id="dsUse">Gunakan dataset ini</button>${S.source === 'dataset' && S.ds ? `<div class="hint" style="margin-top:6px">Aktif: <b>${esc((Store.get('dataset', S.ds) || {}).name || '')}</b></div>` : ''}`
+        : `<div class="empty">Belum ada dataset. <a href="#input-data">Input data</a> atau <button class="btn sm" id="ldS">Muat contoh</button></div>`;
+      const u = $('#dsUse'); if (u) u.onclick = () => openDatasetInSPC($('#dsSel').value);
+      const l = $('#ldS'); if (l) l.onclick = async () => { await loadSamples(); viewSPC(root); };
+    } else {
+      b.innerHTML = `<textarea id="pasteArea" placeholder="Tempel tabel dari Excel/CSV, baris pertama boleh berisi judul kolom">${S.source === 'paste' && S.pasteText ? esc(S.pasteText) : ''}</textarea><button class="btn sm sec" id="pasteGo" style="margin-top:6px">Baca data</button>${S.table && S.source === 'paste' ? previewTable(S.table) : ''}`;
+      $('#pasteGo').onclick = () => { S.pasteText = $('#pasteArea').value; const res = Papa.parse(S.pasteText.trim(), { skipEmptyLines: true }); setTable(res.data, 'Tempel', null, 'paste'); };
+    }
+  };
+  $$('#srcTabs button').forEach(bt => bt.onclick = () => { $$('#srcTabs button').forEach(x => x.classList.remove('on')); bt.classList.add('on'); drawSrc(bt.dataset.src); });
+  drawSrc(curSrc);
+  renderCfg();
+  $('#tplVar').onclick = () => saveFile('sqmc-template-variabel.csv', 'subgrup,tanggal,x1,x2,x3,x4,x5\n1,2026-11-01,38.52,38.47,38.61,38.39,38.55\n2,2026-11-02,38.44,38.58,38.50,38.62,38.41\n', 'text/csv');
+  $('#tplAttr').onclick = () => saveFile('sqmc-template-atribut.csv', 'sampel,tanggal,diperiksa,cacat\n1,2026-11-01,200,6\n2,2026-11-02,200,4\n', 'text/csv');
+  if (S.result) drawSPCResult(S.result);
+}
+function previewTable(T) {
+  const rows = T.rows.slice(0, 6);
+  return `<div class="tw" style="margin-top:8px;max-height:220px;overflow:auto"><table class="t"><thead><tr>${T.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${T.headers.map((_, i) => `<td class="${isNum(parseNum(r[i])) ? 'num' : ''}">${esc(r[i] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${T.rows.length > 6 ? `<div class="hint">…dan ${T.rows.length - 6} baris lagi</div>` : ''}`;
+}
+async function handleFile(file) {
+  const S = App.state.spc; const name = file.name || 'data';
+  try {
+    if (/\.(xlsx|xls)$/i.test(name)) {
+      if (typeof XLSX === 'undefined') throw new Error('Pustaka Excel gagal dimuat. Simpan file sebagai CSV.');
+      const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+      S.cfg.sheet = 0; loadSheet(wb, 0, name);
+    } else {
+      if (typeof Papa === 'undefined') throw new Error('Pustaka CSV gagal dimuat.');
+      const text = await file.text();
+      const res = Papa.parse(text.trim(), { skipEmptyLines: true });
+      setTable(res.data, name, null, 'file');
+    }
+  } catch (e) { toast('Gagal membaca file: ' + e.message, 'err'); }
+}
+function loadSheet(wb, idx, name) {
+  const ws = wb.Sheets[wb.SheetNames[idx]];
+  const arr = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' }).filter(r => r.some(c => String(c).trim() !== ''));
+  setTable(arr, name, wb, 'file');
+}
+function setTable(arr, fileName, wb, src) {
+  const S = App.state.spc;
+  if (!arr || !arr.length) { toast('Data kosong', 'err'); return; }
+  const first = arr[0]; const hasHeader = first.some(c => String(c).trim() !== '' && !isNum(parseNum(c)));
+  const width = Math.max(...arr.map(r => r.length));
+  const headers = hasHeader ? Array.from({ length: width }, (_, i) => String(first[i] ?? '').trim() || ('Kolom ' + (i + 1))) : Array.from({ length: width }, (_, i) => 'Kolom ' + (i + 1));
+  const rows = (hasHeader ? arr.slice(1) : arr).map(r => Array.from({ length: width }, (_, i) => r[i] ?? ''));
+  S.table = { headers, rows, fileName, wb, sheets: wb ? wb.SheetNames : null };
+  S.source = src; S.ds = null; S.result = null;
+  // tebak konfigurasi
+  const numCols = headers.map((_, i) => rows.filter(r => isNum(parseNum(r[i]))).length >= Math.max(1, rows.length * 0.8));
+  const lower = headers.map(h => h.toLowerCase());
+  const xCols = lower.map((h, i) => /^x\d+$|^ukur|^nilai\d|^sample\d|^obs\d/.test(h) && numCols[i] ? i : -1).filter(i => i >= 0);
+  const labelCol = lower.findIndex(h => /tanggal|date|waktu|time/.test(h));
+  const cnt = lower.findIndex(h => /cacat|defect|reject|ng/.test(h));
+  const insp = lower.findIndex(h => /diperiksa|inspect|sampel size|sample size|^n$|jumlah sampel|ukuran sampel/.test(h));
+  if (cnt >= 0 && numCols[cnt]) { Object.assign(S.cfg, { dataKind: 'attribute', cntCol: cnt, nCol: insp >= 0 ? insp : -1, chart: 'p' }); }
+  else if (xCols.length >= 2) { Object.assign(S.cfg, { dataKind: 'variable', layout: 'wide', valCols: xCols, chart: 'auto' }); }
+  else { const vc = numCols.lastIndexOf(true); Object.assign(S.cfg, { dataKind: 'variable', layout: 'single', valCol: vc >= 0 ? vc : 0, chart: 'auto' }); }
+  S.cfg.labelCol = labelCol;
+  if (!S.cfg.varName) S.cfg.varName = '';
+  viewSPC($('#app'));
+}
+function renderCfg() {
+  const S = App.state.spc, c = S.cfg, card = $('#cfgCard');
+  const T = S.table, ds = S.source === 'dataset' && S.ds ? Store.get('dataset', S.ds) : null;
+  const H = T ? T.headers : [];
+  const colOpts = (cur, allowNone) => (allowNone ? opt(-1, '— tidak ada —', cur) : '') + H.map((h, i) => opt(i, h, cur)).join('');
+  const kind = ds ? ds.kind : c.dataKind;
+  const variable = kind === 'variable';
+  card.innerHTML = `<h3>2 · Konfigurasi</h3>
+  ${!T && !ds ? '<div class="hint" style="margin:8px 0">Muat data terlebih dahulu.</div>' : ''}
+  ${T ? `<div class="field" style="margin-top:10px"><label class="f">Tipe data</label><select id="c_kind">${opt('variable', 'Variabel (hasil pengukuran)', c.dataKind)}${opt('attribute', 'Atribut (jumlah cacat)', c.dataKind)}</select></div>` : ''}
+  ${T && variable ? `
+    <div class="field"><label class="f">Struktur data</label><select id="c_layout">${opt('single', 'Satu kolom nilai + ukuran subgrup tetap', c.layout)}${opt('subcol', 'Satu kolom nilai + kolom ID subgrup', c.layout)}${opt('wide', 'Satu baris = satu subgrup (beberapa kolom)', c.layout)}</select></div>
+    ${c.layout === 'wide' ? `<div class="field"><label class="f">Kolom pengukuran</label><div class="chips" id="c_cols">${H.map((h, i) => `<label class="chip ${c.valCols.includes(i) ? 'on' : ''}"><input type="checkbox" value="${i}" ${c.valCols.includes(i) ? 'checked' : ''}>${esc(h)}</label>`).join('')}</div></div>`
+        : `<div class="field"><label class="f">Kolom nilai</label><select id="c_val">${colOpts(c.valCol)}</select></div>
+         ${c.layout === 'single' ? `<div class="field"><label class="f">Ukuran subgrup</label><input type="number" min="1" max="50" id="c_sub" value="${c.subSize}"><div class="hint">1 = data individual (I-MR)</div></div>` : `<div class="field"><label class="f">Kolom ID subgrup</label><select id="c_subcol">${colOpts(c.subCol)}</select></div>`}`}
+  ` : ''}
+  ${T && !variable ? `
+    <div class="field"><label class="f">Kolom jumlah cacat / unit cacat</label><select id="c_cnt">${colOpts(c.cntCol)}</select></div>
+    <div class="grid g2"><div class="field"><label class="f">Kolom ukuran sampel</label><select id="c_ncol">${colOpts(c.nCol, true)}</select></div>
+    <div class="field"><label class="f">…atau ukuran sampel tetap</label><input type="number" min="1" id="c_nconst" value="${esc(c.nConst)}"></div></div>
+  ` : ''}
+  ${T ? `<div class="field"><label class="f">Kolom label (opsional, mis. tanggal)</label><select id="c_label">${colOpts(c.labelCol, true)}</select></div>` : ''}
+  ${(T || ds) ? `
+  <div class="field"><label class="f">Jenis peta kendali</label><select id="c_chart">${variable ? opt('auto', 'Otomatis (berdasarkan ukuran subgrup)', c.chart) + opt('imr', 'I-MR (individual & moving range)', c.chart) + opt('xbarr', 'X̄-R (rata-rata & rentang)', c.chart) + opt('xbars', 'X̄-S (rata-rata & simpangan baku)', c.chart)
+        : opt('p', 'P — proporsi unit cacat', c.chart) + opt('np', 'NP — jumlah unit cacat (n tetap)', c.chart) + opt('c', 'C — jumlah cacat per unit inspeksi tetap', c.chart) + opt('u', 'U — cacat per unit (n bervariasi)', c.chart)}</select></div>
+  <div class="grid g2"><div class="field"><label class="f">Nama variabel</label><input type="text" id="c_var" value="${esc(c.varName)}" placeholder="mis. Berat (g)"></div><div class="field"><label class="f">Satuan</label><input type="text" id="c_unit" value="${esc(c.unit)}" placeholder="g / mm"></div></div>
+  ${variable ? `<div class="grid g3"><div class="field"><label class="f">LSL</label><input type="text" inputmode="decimal" id="c_lsl" value="${esc(c.lsl)}"></div><div class="field"><label class="f">USL</label><input type="text" inputmode="decimal" id="c_usl" value="${esc(c.usl)}"></div><div class="field"><label class="f">Target</label><input type="text" inputmode="decimal" id="c_tgt" value="${esc(c.target)}"></div></div>
+    ${Store.list('spec').length ? `<div class="field"><label class="f">Ambil LSL/USL dari spesifikasi</label><select id="c_fromSpec"><option value="">— pilih —</option>${Store.list('spec').filter(s => s.weight).map(s => opt(s.id, s.input.name + ' (berat)', '')).join('')}</select></div>` : ''}` : ''}
+  <details class="acc"><summary>Tes pola tidak acak <span class="muted">${c.tests.length} aktif</span></summary>
+    ${Object.entries(TESTS).map(([k, t]) => `<label class="chk"><input type="checkbox" class="c_test" value="${k}" ${c.tests.includes(+k) ? 'checked' : ''}> <b>Tes ${k}</b> — ${t}</label>`).join('')}
+    <div class="row" style="margin:6px 0 10px"><button type="button" class="btn sm sec" id="t_all">Semua</button><button type="button" class="btn sm sec" id="t_one">Hanya tes 1</button></div>
+  </details>
+  <details class="acc"><summary>Opsi estimasi (Fase I / data historis)</summary>
+    <div class="field"><label class="f">Kecualikan subgrup dari perhitungan batas</label><input type="text" id="c_ex" value="${esc(c.exclude)}" placeholder="mis. 3, 7, 12-14"><div class="hint">Untuk subgrup yang penyebab khususnya sudah diketahui & diperbaiki.</div></div>
+    ${variable ? `<div class="grid g2"><div class="field"><label class="f">μ historis</label><input type="text" inputmode="decimal" id="c_hm" value="${esc(c.histMean)}"></div><div class="field"><label class="f">σ historis</label><input type="text" inputmode="decimal" id="c_hs" value="${esc(c.histSigma)}"></div></div>` : ''}
+  </details>
+  <button class="btn acc" id="runSPC" style="width:100%;margin-top:8px">${ICON.chart} Buat Peta Kendali</button>` : ''}`;
+  const bind = (id, k, cast = (v) => v, rer) => { const el = $('#' + id); if (el) el.onchange = () => { c[k] = cast(el.value); if (rer) renderCfg(); }; };
+  bind('c_kind', 'dataKind', v => v, true); const kd = $('#c_kind'); if (kd) kd.addEventListener('change', () => { c.chart = c.dataKind === 'variable' ? 'auto' : 'p'; renderCfg(); });
+  bind('c_layout', 'layout', v => v, true); bind('c_val', 'valCol', Number); bind('c_sub', 'subSize', v => clamp(parseInt(v) || 1, 1, 50)); bind('c_subcol', 'subCol', Number);
+  bind('c_cnt', 'cntCol', Number); bind('c_ncol', 'nCol', Number); bind('c_nconst', 'nConst'); bind('c_label', 'labelCol', Number); bind('c_chart', 'chart');
+  bind('c_var', 'varName'); bind('c_unit', 'unit'); bind('c_lsl', 'lsl'); bind('c_usl', 'usl'); bind('c_tgt', 'target'); bind('c_ex', 'exclude'); bind('c_hm', 'histMean'); bind('c_hs', 'histSigma');
+  const cols = $('#c_cols'); if (cols) cols.onchange = (e) => { c.valCols = $$('input:checked', cols).map(i => +i.value); e.target.closest('.chip').classList.toggle('on', e.target.checked); };
+  $$('.c_test').forEach(i => i.onchange = () => { c.tests = $$('.c_test:checked').map(x => +x.value); });
+  const ta = $('#t_all'); if (ta) ta.onclick = () => { c.tests = [1, 2, 3, 4, 5, 6, 7, 8]; renderCfg(); };
+  const t1 = $('#t_one'); if (t1) t1.onclick = () => { c.tests = [1]; renderCfg(); };
+  const fs = $('#c_fromSpec'); if (fs) fs.onchange = () => { const s = Store.get('spec', fs.value); if (s && s.weight) { c.lsl = +s.weight.lsl.toFixed(4); c.usl = +s.weight.usl.toFixed(4); c.target = s.weight.target; if (!c.varName) c.varName = 'Berat bersih'; c.unit = 'g'; renderCfg(); } };
+  const rb = $('#runSPC'); if (rb) rb.onclick = () => runSPC();
+}
+function parseExclude(s) {
+  const set = new Set(); String(s || '').split(/[,;\s]+/).filter(Boolean).forEach(p => { const m = p.match(/^(\d+)-(\d+)$/); if (m) { for (let i = +m[1]; i <= +m[2]; i++) set.add(i); } else if (/^\d+$/.test(p)) set.add(+p); });
+  return set;
+}
+function buildGroups() {
+  const S = App.state.spc, c = S.cfg;
+  const ds = S.source === 'dataset' && S.ds ? Store.get('dataset', S.ds) : null;
+  if (ds) {
+    if (ds.kind === 'variable') return { kind: 'variable', groups: ds.rows.map(r => (r.vals || []).filter(isNum)), labels: ds.rows.map((r, i) => r.date || String(i + 1)) };
+    return { kind: 'attribute', rows: ds.rows.map(r => ({ d: isNum(r.defects) ? r.defects : NaN, n: isNum(r.inspected) ? r.inspected : NaN })), labels: ds.rows.map((r, i) => r.date || String(i + 1)) };
+  }
+  const T = S.table; if (!T) throw new Error('Belum ada data.');
+  const lab = (r, i) => c.labelCol >= 0 ? String(r[c.labelCol] ?? '') : String(i + 1);
+  if (c.dataKind === 'variable') {
+    if (c.layout === 'wide') {
+      if (!c.valCols.length) throw new Error('Pilih minimal satu kolom pengukuran.');
+      const rows = T.rows.filter(r => c.valCols.some(i => isNum(parseNum(r[i]))));
+      return { kind: 'variable', groups: rows.map(r => c.valCols.map(i => parseNum(r[i])).filter(isNum)), labels: rows.map(lab) };
+    }
+    const rows = T.rows.filter(r => isNum(parseNum(r[c.valCol])));
+    if (c.layout === 'subcol') {
+      if (c.subCol < 0) throw new Error('Pilih kolom ID subgrup.');
+      const order = [], map = new Map(), labels = [];
+      rows.forEach((r, i) => { const key = String(r[c.subCol]); if (!map.has(key)) { map.set(key, []); order.push(key); labels.push(c.labelCol >= 0 ? String(r[c.labelCol] ?? key) : key); } map.get(key).push(parseNum(r[c.valCol])); });
+      return { kind: 'variable', groups: order.map(k => map.get(k)), labels };
+    }
+    const k = Math.max(1, c.subSize), vals = rows.map(r => parseNum(r[c.valCol])), groups = [], labels = [];
+    for (let i = 0; i < vals.length; i += k) { groups.push(vals.slice(i, i + k)); labels.push(c.labelCol >= 0 ? String(rows[i][c.labelCol] ?? '') : String(groups.length)); }
+    if (k > 1 && vals.length % k) toast(`Subgrup terakhir hanya berisi ${vals.length % k} nilai`, '');
+    return { kind: 'variable', groups, labels };
+  }
+  const nConst = numOrNull(c.nConst);
+  const rows = T.rows.filter(r => isNum(parseNum(r[c.cntCol])));
+  return { kind: 'attribute', rows: rows.map(r => ({ d: parseNum(r[c.cntCol]), n: c.nCol >= 0 ? parseNum(r[c.nCol]) : (nConst ?? NaN) })), labels: rows.map(lab) };
+}
+function runSPC(silent) {
+  const S = App.state.spc, c = S.cfg;
+  try {
+    const G = buildGroups();
+    const opts = { type: c.chart, exclude: parseExclude(c.exclude), tests: c.tests.length ? c.tests : [1], histMean: numOrNull(c.histMean), histSigma: numOrNull(c.histSigma) };
+    let res;
+    if (G.kind === 'variable') {
+      if (!['auto', 'imr', 'xbarr', 'xbars'].includes(opts.type)) opts.type = 'auto';
+      res = computeVariable(G.groups, opts);
+      const lsl = numOrNull(c.lsl), usl = numOrNull(c.usl);
+      if (lsl !== null && usl !== null && lsl >= usl) throw new Error('LSL harus lebih kecil dari USL.');
+      res.cap = (lsl !== null || usl !== null) ? capability(res.values, res.sigmaWithin, lsl, usl, numOrNull(c.target)) : null;
+      res.ad = andersonDarling(res.values);
+    } else {
+      if (!['p', 'np', 'c', 'u'].includes(opts.type)) opts.type = 'p';
+      if (opts.type !== 'c' && G.rows.some(r => !isNum(r.n))) throw new Error('Ukuran sampel belum ditentukan (pilih kolom atau isi ukuran tetap).');
+      res = computeAttribute(G.rows, opts);
+    }
+    res.labels = G.labels; res.varName = c.varName || (res.kind === 'variable' ? 'Data' : 'Cacat'); res.unit = c.unit; res.createdAt = Date.now();
+    res.sourceName = S.source === 'dataset' ? ((Store.get('dataset', S.ds) || {}).name || '') : (S.table ? S.table.fileName : '');
+    S.result = res;
+    if (!$('#spcOut')) return;
+    drawSPCResult(res);
+    if (window.innerWidth < 1000 && !silent) $('#spcOut').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) { if (!silent) toast(e.message, 'err'); else { S.result = null; const o = $('#spcOut'); if (o) o.innerHTML = `<div class="card"><div class="alert bad">${esc(e.message)}</div></div>`; } }
+}
+function violationList(part, labels) {
+  const out = []; part.flags.forEach((f, i) => { if (f.length) out.push({ i: i + 1, label: labels ? labels[i] : String(i + 1), tests: f, val: part.points[i] }); }); return out;
+}
+function interpret(res) {
+  const v = violationList(res.main, res.labels), vd = res.disp ? violationList(res.disp, res.labels) : [];
+  const L = [];
+  if (!v.length && !vd.length) L.push({ c: 'ok', t: 'Proses <b>terkendali secara statistik</b>: tidak ada titik yang melanggar tes yang diaktifkan. Variasi hanya berasal dari penyebab umum (common cause).' });
+  else {
+    const byTest = {}; v.forEach(x => x.tests.forEach(t => (byTest[t] = byTest[t] || []).push(x.i)));
+    L.push({ c: 'bad', t: `Proses <b>TIDAK terkendali</b>: ${v.length} titik pada peta ${esc(res.mainName)}${vd.length ? ` dan ${vd.length} titik pada peta ${esc(res.dispName)}` : ''} menunjukkan penyebab khusus (special cause).` });
+    Object.entries(byTest).forEach(([t, idx]) => L.push({ c: 'warn', t: `Tes ${t} (${TESTS[t]}): ${res.xLabel.toLowerCase()} ${idx.slice(0, 12).join(', ')}${idx.length > 12 ? '…' : ''}. ${{ 1: 'Investigasi kejadian khusus (setting mesin, bahan baku, operator, alat ukur).', 2: 'Indikasi pergeseran rata-rata proses (shift).', 3: 'Indikasi tren (keausan tool/cetakan, perubahan suhu).', 4: 'Indikasi overadjustment atau dua sumber bergantian (2 mesin/cavity).', 5: 'Indikasi pergeseran rata-rata kecil-sedang.', 6: 'Indikasi pergeseran rata-rata kecil.', 7: 'Variasi terlalu kecil — cek stratifikasi atau batas kendali usang.', 8: 'Indikasi campuran populasi (mixture).' }[t]}` }));
+    if (vd.length) L.push({ c: 'warn', t: `Peta ${esc(res.dispName)} melanggar batas pada ${res.xLabel.toLowerCase()} ${vd.map(x => x.i).join(', ')}: variabilitas dalam subgrup tidak stabil, batas peta ${esc(res.mainName)} kurang dapat diandalkan.` });
+  }
+  if (res.cap) {
+    const cp = res.cap;
+    const k = isNum(cp.Cpk) ? cp.Cpk : NaN;
+    if (isNum(k)) L.push({ c: k >= 1.33 ? 'ok' : k >= 1 ? 'warn' : 'bad', t: `Kapabilitas: Cpk = <b>${fmtFix(k, 2)}</b> ${k >= 1.67 ? '(sangat baik, ≥ 1,67)' : k >= 1.33 ? '(capable, ≥ 1,33)' : k >= 1 ? '(marginal 1,00–1,33 — perlu perbaikan)' : '(TIDAK capable < 1,00 — produk di luar spesifikasi diperkirakan ' + fmt(cp.ppmW.tot, 0) + ' PPM)'}.${isNum(cp.Cp) && isNum(k) && cp.Cp - k > 0.25 ? ' Cp jauh di atas Cpk → proses tidak terpusat; geser rata-rata ke target.' : ''}` });
+    if (v.length) L.push({ c: 'warn', t: 'Catatan: indeks kapabilitas hanya bermakna bila proses stabil. Hilangkan penyebab khusus terlebih dahulu (ISO 22514-2).' });
+    if (res.ad && res.ad.p < 0.05) L.push({ c: 'warn', t: `Uji normalitas Anderson-Darling: p = ${fmtFix(res.ad.p, 3)} (< 0,05) → data tidak berdistribusi normal; Cp/Cpk berbasis normal bisa bias.` });
+    L.push({ c: 'info', t: `Rekomendasi toleransi minimum agar Cpk ≥ 1,33 (bila proses terpusat): ±${fmt(4 * res.sigmaWithin, 4)} ${esc(res.unit || '')} (= ±4σ dalam-subgrup).` });
+  }
+  return L;
+}
+function drawSPCResult(res) {
+  const out = $('#spcOut');
+  const v = violationList(res.main, res.labels), vd = res.disp ? violationList(res.disp, res.labels) : [];
+  const L = interpret(res);
+  out.innerHTML = `
+  <div class="card">
+    <div class="card-head"><div><h3>${esc(res.title)} — ${esc(res.varName)}</h3><div class="muted">${esc(res.sourceName || '')} · ${res.k} ${res.xLabel.toLowerCase()}${res.constN ? ' · n = ' + res.constN : ''}</div></div>
+      <div class="row"><button class="btn sm sec" id="pngChart">${ICON.dl} PNG</button><button class="btn sm acc" id="pdfSPC">${ICON.dl} Laporan PDF</button><button class="btn sm sec" id="csvSPC">${ICON.dl} CSV hasil</button></div></div>
+    <div id="chartMain" class="chart-box" style="min-height:${res.disp ? 560 : 380}px"></div>
+    ${res.notes.length ? res.notes.map(n => `<div class="alert info">${esc(n)}</div>`).join('') : ''}
+  </div>
+  <div class="card"><h3>Ringkasan batas kendali</h3>
+    <div class="grid ${res.disp ? 'g2' : 'g3'}" style="margin-top:10px">${summaryKPIs(res)}</div>
+  </div>
+  <div class="card"><h3>Interpretasi</h3>${L.map(x => `<div class="alert ${x.c}">${x.t}</div>`).join('')}</div>
+  ${v.length || vd.length ? `<div class="card"><h3>Hasil tes untuk penyebab khusus</h3><div class="tw" style="margin-top:10px;max-height:320px;overflow:auto"><table class="t"><thead><tr><th>Peta</th><th class="num">${res.xLabel}</th><th>Label</th><th class="num">Nilai</th><th>Tes gagal</th></tr></thead><tbody>
+    ${v.map(x => `<tr><td>${esc(res.mainName)}</td><td class="num">${x.i}</td><td>${esc(x.label)}</td><td class="num">${fmt(x.val)}</td><td>${x.tests.map(t => `<span class="badge b-bad" title="${esc(TESTS[t])}">Tes ${t}</span>`).join(' ')}</td></tr>`).join('')}
+    ${vd.map(x => `<tr><td>${esc(res.dispName)}</td><td class="num">${x.i}</td><td>${esc(x.label)}</td><td class="num">${fmt(x.val)}</td><td>${x.tests.map(t => `<span class="badge b-bad">Tes ${t}</span>`).join(' ')}</td></tr>`).join('')}
+    </tbody></table></div></div>` : ''}
+  ${res.cap ? `<div class="card"><div class="card-head"><h3>Analisis Kapabilitas Proses — ${esc(res.varName)}</h3></div><div id="chartCap" class="chart-box" style="min-height:360px"></div>${capTable(res)}</div>` : (res.kind === 'variable' ? '<div class="card"><div class="alert info">Isi LSL dan/atau USL pada konfigurasi untuk menampilkan analisis kapabilitas (Cp, Cpk, Pp, Ppk, PPM).</div></div>' : '')}`;
+  if (typeof Plotly === 'undefined') { $('#chartMain').innerHTML = '<div class="alert bad">Pustaka grafik (Plotly) gagal dimuat. Periksa koneksi internet.</div>'; }
+  else { plotControl($('#chartMain'), res); if (res.cap) plotCap($('#chartCap'), res); }
+  $('#pngChart').onclick = async () => { try { const url = await Plotly.toImage($('#chartMain'), { format: 'png', width: 1400, height: res.disp ? 820 : 520, scale: 1 }); const blob = await (await fetch(url)).blob(); saveFile(`${slug(res.title + '-' + res.varName)}.png`, blob, 'image/png'); } catch (e) { toast('Gagal membuat PNG', 'err'); } };
+  $('#pdfSPC').onclick = () => pdfSPC(res);
+  $('#csvSPC').onclick = () => saveFile(`${slug(res.title + '-' + res.varName)}-hasil.csv`, spcToCSV(res), 'text/csv');
+}
+function summaryKPIs(res) {
+  const m = res.main, d = res.disp; const last = m.points.length - 1;
+  const varLim = (arr) => arr.some(x => isNum(x) && Math.abs(x - arr.find(isNum)) > 1e-12);
+  const lim = (arr) => varLim(arr) ? 'bervariasi' : fmt(arr.find(isNum), 4);
+  const block = (p, name) => `<div class="kpi"><div class="k">Peta ${esc(name)}</div><div class="mono" style="font-size:.86rem;margin-top:6px;line-height:1.8">UCL = <b>${lim(p.ucl)}</b><br>${esc(p.sym)} = <b>${lim(p.cl)}</b><br>LCL = <b>${lim(p.lcl)}</b></div><div class="s">${p.flags.filter(f => f.length).length} titik gagal tes</div></div>`;
+  let h = block(m, res.mainName) + (d ? block(d, res.dispName) : '');
+  if (res.kind === 'variable') h += `<div class="kpi"><div class="k">Estimasi σ (dalam subgrup)</div><div class="v" style="font-size:1.15rem">${fmt(res.sigmaWithin, 5)}</div><div class="s">${{ imr: 'MR̄ / d₂ (d₂ = 1,128)', xbarr: 'R̄ / d₂', xbars: 'S̄ / c₄' }[res.type]}${isNum(res.opts.histSigma) ? ' — historis' : ''}</div></div><div class="kpi"><div class="k">Rata-rata proses</div><div class="v" style="font-size:1.15rem">${fmt(res.mean, 5)}</div><div class="s">${res.values.length} observasi</div></div>`;
+  else h += `<div class="kpi"><div class="k">Rata-rata</div><div class="v" style="font-size:1.15rem">${fmt(res.main.center, 5)}</div><div class="s">${{ p: 'p̄ — proporsi cacat', np: 'p̄ — proporsi cacat', c: 'c̄ — cacat per unit inspeksi', u: 'ū — cacat per unit' }[res.type]}</div></div><div class="kpi"><div class="k">Persen cacat</div><div class="v" style="font-size:1.15rem">${['p', 'np'].includes(res.type) ? fmtFix(res.main.center * 100, 2) + '%' : '—'}</div><div class="s">${['p', 'np'].includes(res.type) ? '≈ ' + fmt(res.main.center * 1e6, 0) + ' PPM' : ''}</div></div>`;
+  return h;
+}
+function capTable(res) {
+  const c = res.cap; const f2 = (x) => fmtFix(x, 2);
+  return `<div class="grid g3 capgrid" style="margin-top:10px">
+    <div class="tw"><table class="t"><thead><tr><th colspan="2">Data proses</th></tr></thead><tbody>
+      <tr><td>LSL</td><td class="num">${fmt(c.lsl)}</td></tr><tr><td>Target</td><td class="num">${fmt(c.target)}</td></tr><tr><td>USL</td><td class="num">${fmt(c.usl)}</td></tr>
+      <tr><td>Rata-rata</td><td class="num">${fmt(c.mean, 5)}</td></tr><tr><td>N</td><td class="num">${c.N}</td></tr>
+      <tr><td>σ dalam (within)</td><td class="num">${fmt(c.sigmaW, 5)}</td></tr><tr><td>σ keseluruhan (overall)</td><td class="num">${fmt(c.sigmaO, 5)}</td></tr>
+      ${res.ad ? `<tr><td>AD normalitas (p)</td><td class="num">${fmtFix(res.ad.p, 3)}</td></tr>` : ''}
+    </tbody></table></div>
+    <div class="tw"><table class="t"><thead><tr><th colspan="2">Kapabilitas potensial (within)</th></tr></thead><tbody>
+      <tr><td>Cp</td><td class="num">${f2(c.Cp)}</td></tr><tr><td>CPL</td><td class="num">${f2(c.CPL)}</td></tr><tr><td>CPU</td><td class="num">${f2(c.CPU)}</td></tr><tr><td><b>Cpk</b></td><td class="num"><b>${f2(c.Cpk)}</b></td></tr>
+      <tr><td colspan="2" class="muted" style="font-size:.76rem">Kinerja keseluruhan (overall)</td></tr>
+      <tr><td>Pp</td><td class="num">${f2(c.Pp)}</td></tr><tr><td>PPL</td><td class="num">${f2(c.PPL)}</td></tr><tr><td>PPU</td><td class="num">${f2(c.PPU)}</td></tr><tr><td><b>Ppk</b></td><td class="num"><b>${f2(c.Ppk)}</b></td></tr>
+    </tbody></table></div>
+    <div class="tw"><table class="t"><thead><tr><th>PPM</th><th class="num">Observasi</th><th class="num">Ekspektasi within</th><th class="num">Ekspektasi overall</th></tr></thead><tbody>
+      <tr><td>&lt; LSL</td><td class="num">${fmt(c.ppmObs.lsl, 2)}</td><td class="num">${fmt(c.ppmW.lsl, 2)}</td><td class="num">${fmt(c.ppmO.lsl, 2)}</td></tr>
+      <tr><td>&gt; USL</td><td class="num">${fmt(c.ppmObs.usl, 2)}</td><td class="num">${fmt(c.ppmW.usl, 2)}</td><td class="num">${fmt(c.ppmO.usl, 2)}</td></tr>
+      <tr><td><b>Total</b></td><td class="num"><b>${fmt(c.ppmObs.tot, 2)}</b></td><td class="num"><b>${fmt(c.ppmW.tot, 2)}</b></td><td class="num"><b>${fmt(c.ppmO.tot, 2)}</b></td></tr>
+    </tbody></table></div>
+  </div>`;
+}
+const PLOT_FONT = { family: 'IBM Plex Sans, Segoe UI, sans-serif', size: 12, color: '#132231' };
+function plotControl(el, res) {
+  const k = res.main.points.length; const x = Array.from({ length: k }, (_, i) => i + 1);
+  const traces = [], ann = [];
+  const narrow = el.clientWidth < 560;
+  const part = (p, yaxis, yref, name) => {
+    const hover = x.map((xi, i) => `${res.xLabel} ${xi}${res.labels && res.labels[i] && res.labels[i] !== String(xi) ? ' · ' + res.labels[i] : ''}<br>${name}: ${fmt(p.points[i], 5)}${p.flags[i].length ? '<br><b>Gagal tes: ' + p.flags[i].join(', ') + '</b>' : ''}`);
+    traces.push({ x, y: p.points.map(v => isNum(v) ? v : null), yaxis, type: 'scatter', mode: 'lines+markers', line: { color: '#1f4e9c', width: 1.3 }, marker: { color: '#1f4e9c', size: 6 }, hovertext: hover, hoverinfo: 'text', name, showlegend: false, connectgaps: false });
+    const fx = [], fy = [], ft = [];
+    p.flags.forEach((f, i) => { if (f.length && isNum(p.points[i])) { fx.push(i + 1); fy.push(p.points[i]); ft.push(f.join(',')); } });
+    if (fx.length) traces.push({ x: fx, y: fy, yaxis, type: 'scatter', mode: 'markers+text', marker: { color: '#d32f2f', size: 9, symbol: 'square' }, text: ft, textposition: 'top center', textfont: { color: '#d32f2f', size: 11 }, hoverinfo: 'skip', showlegend: false });
+    const step = (arr) => { const xs = [], ys = []; arr.forEach((v, i) => { xs.push(i + 0.5, i + 1.5); ys.push(v, v); }); return { xs, ys }; };
+    [['ucl', '#d32f2f', 'UCL'], ['lcl', '#d32f2f', 'LCL'], ['cl', '#2e7d32', p.sym]].forEach(([key, col, lab]) => {
+      const s = step(p[key]);
+      traces.push({ x: s.xs, y: s.ys.map(v => isNum(v) ? v : null), yaxis, type: 'scatter', mode: 'lines', line: { color: col, width: key === 'cl' ? 1.4 : 1.2, shape: 'linear' }, hoverinfo: 'skip', showlegend: false, connectgaps: false });
+      const lastV = [...p[key]].reverse().find(isNum);
+      if (isNum(lastV)) ann.push({ x: 1.005, y: lastV, xref: 'paper', yref, text: `${lab}=${fmt(lastV, 4)}`, showarrow: false, xanchor: 'left', font: { size: narrow ? 9 : 11, color: col } });
+    });
+  };
+  part(res.main, 'y', 'y', res.mainName);
+  if (res.disp) part(res.disp, 'y2', 'y2', res.dispName);
+  const unit = res.unit ? ` (${res.unit})` : '';
+  const layout = {
+    title: { text: `${res.title} untuk ${esc(res.varName)}`, font: { size: narrow ? 13 : 15 }, x: 0.02 },
+    font: PLOT_FONT, separators: ',.', paper_bgcolor: '#fff', plot_bgcolor: '#fff',
+    margin: { l: 62, r: narrow ? 84 : 110, t: 46, b: 46 }, height: res.disp ? 560 : 380, hovermode: 'closest',
+    xaxis: { anchor: res.disp ? 'y2' : 'y', range: [0.5, k + 0.5], showgrid: false, zeroline: false, title: { text: res.xLabel }, tickmode: 'auto', nticks: Math.min(k, narrow ? 8 : 16), linecolor: '#9aa7b4', mirror: true, ticks: 'outside' },
+    yaxis: { domain: res.disp ? [0.55, 1] : [0, 1], title: { text: res.main.label + (res.kind === 'variable' ? unit : '') }, showgrid: false, zeroline: false, linecolor: '#9aa7b4', mirror: true, ticks: 'outside' },
+    annotations: ann
+  };
+  if (res.disp) layout.yaxis2 = { domain: [0, 0.42], title: { text: res.disp.label }, showgrid: false, zeroline: false, linecolor: '#9aa7b4', mirror: true, ticks: 'outside', rangemode: 'tozero' };
+  if (res.disp) traces.forEach(t => { t.xaxis = 'x'; });
+  Plotly.newPlot(el, traces, layout, { responsive: true, displaylogo: false, modeBarButtonsToRemove: ['lasso2d', 'select2d'], toImageButtonOptions: { filename: slug(res.title + '-' + res.varName), scale: 2 } });
+}
+function plotCap(el, res) {
+  const c = res.cap, vals = res.values;
+  const lo = Math.min(...vals, isNum(c.lsl) ? c.lsl : Infinity), hi = Math.max(...vals, isNum(c.usl) ? c.usl : -Infinity);
+  const pad = (hi - lo) * 0.12 || 1; const xs = []; for (let i = 0; i <= 200; i++) xs.push(lo - pad + (hi - lo + 2 * pad) * i / 200);
+  const nb = clamp(Math.round(Math.sqrt(vals.length) * 1.3), 6, 40);
+  const traces = [
+    { x: vals, type: 'histogram', histnorm: 'probability density', nbinsx: nb, marker: { color: 'rgba(118,160,210,.75)', line: { color: '#3c6aa5', width: 1 } }, name: 'Data', hovertemplate: '%{x}<extra></extra>' },
+    { x: xs, y: xs.map(v => normPdf(v, c.mean, c.sigmaW)), type: 'scatter', mode: 'lines', line: { color: '#c62828', width: 2 }, name: 'Within' },
+    { x: xs, y: xs.map(v => normPdf(v, c.mean, c.sigmaO)), type: 'scatter', mode: 'lines', line: { color: '#222', width: 1.6, dash: 'dash' }, name: 'Overall' }
+  ];
+  const shapes = [], ann = [];
+  [[c.lsl, 'LSL', '#c62828'], [c.target, 'Target', '#2e7d32'], [c.usl, 'USL', '#c62828']].forEach(([v, l, col]) => { if (isNum(v)) { shapes.push({ type: 'line', x0: v, x1: v, yref: 'paper', y0: 0, y1: 1, line: { color: col, width: 1.6, dash: l === 'Target' ? 'dot' : 'dash' } }); ann.push({ x: v, yref: 'paper', y: 1.04, text: l, showarrow: false, font: { color: col, size: 11 } }); } });
+  Plotly.newPlot(el, traces, {
+    title: { text: `Kapabilitas Proses ${esc(res.varName)} — Cpk ${fmtFix(c.Cpk, 2)} · Ppk ${fmtFix(c.Ppk, 2)}`, font: { size: 14 }, x: 0.02 },
+    font: PLOT_FONT, separators: ',.', margin: { l: 50, r: 20, t: 56, b: 40 }, height: 360, bargap: 0.02, shapes, annotations: ann,
+    legend: { orientation: 'h', y: -0.15 }, xaxis: { zeroline: false, title: { text: res.varName + (res.unit ? ` (${res.unit})` : '') } }, yaxis: { showticklabels: false, zeroline: false, showgrid: false }
+  }, { responsive: true, displaylogo: false });
+}
+function spcToCSV(res) {
+  const H = [res.xLabel, 'label', res.mainName, 'CL_' + res.mainName, 'UCL_' + res.mainName, 'LCL_' + res.mainName, 'tes_' + res.mainName];
+  if (res.disp) H.push(res.dispName, 'CL_' + res.dispName, 'UCL_' + res.dispName, 'LCL_' + res.dispName, 'tes_' + res.dispName);
+  const r6 = (v) => isNum(v) ? +v.toFixed(6) : '';
+  const rows = res.main.points.map((_, i) => {
+    const a = [i + 1, '"' + String(res.labels[i] || '').replace(/"/g, '""') + '"', r6(res.main.points[i]), r6(res.main.cl[i]), r6(res.main.ucl[i]), r6(res.main.lcl[i]), res.main.flags[i].join(' ')];
+    if (res.disp) a.push(r6(res.disp.points[i]), r6(res.disp.cl[i]), r6(res.disp.ucl[i]), r6(res.disp.lcl[i]), res.disp.flags[i].join(' '));
+    return a.join(',');
+  });
+  return [H.join(','), ...rows].join('\n');
+}
+
+/* =====================================================================
+   VIEW: PUSTAKA STANDAR
+   ===================================================================== */
+function viewLib(root) {
+  const cats = [...new Set(Object.values(STD).map(s => s.cat))];
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Pustaka Standar</h2><p>Basis pengetahuan standar yang dipakai mesin rekomendasi SQMC. Tautan "Resmi" menuju katalog penerbit (pembelian/pratinjau). "Ringkasan PDF" adalah dokumen ringkas buatan SQMC — bukan salinan dokumen standar.</p></div></div>
+  <div class="alert warn"><b>Hak cipta:</b> dokumen ISO, SNI, ASME, ASTM, dan EN adalah karya berhak cipta yang dijual resmi oleh ISO/BSN/ASME/ASTM/CEN. Unduhan PDF penuh dari sumber tidak resmi berisiko pelanggaran hak cipta dan bisa berisi versi kedaluwarsa.</div>
+  <div class="card"><div class="row"><input type="text" class="grow" id="libQ" placeholder="Cari kode atau kata kunci (mis. PVC, ulir, sampling)"><select id="libCat" style="max-width:240px"><option value="">Semua kategori</option>${cats.map(c => opt(c, c, '')).join('')}</select><select id="libBody" style="max-width:140px"><option value="">Semua badan</option>${['ISO', 'SNI', 'ASME', 'ASTM', 'EN'].map(b => opt(b, b, '')).join('')}</select></div></div>
+  <div id="libList"></div>`;
+  const draw = () => {
+    const q = $('#libQ').value.toLowerCase(), cat = $('#libCat').value, body = $('#libBody').value;
+    const items = Object.entries(STD).filter(([k, s]) => (!cat || s.cat === cat) && (!body || s.body === body) && (!q || (s.code + ' ' + s.title + ' ' + s.scope + ' ' + s.use).toLowerCase().includes(q)));
+    $('#libList').innerHTML = items.length ? items.map(([k, s]) => `<details class="acc"><summary><span>${bodyBadge(s.body)} <b class="mono">${esc(stdCode(s))}</b> ${s.year ? `<span class="badge b-ok">diverifikasi</span>` : '<span class="badge b-gray">cek edisi</span>'} <span style="font-weight:500">— ${esc(s.title)}</span></span><span class="muted" style="font-weight:400;font-size:.78rem;white-space:nowrap">${esc(s.cat)}</span></summary>
+      <p><b>Ruang lingkup:</b> ${esc(s.scope)}</p><p><b>Dipakai di SQMC untuk:</b> ${esc(s.use)}</p>
+      <div class="row" style="margin:8px 0 12px"><a class="btn sm sec" href="${esc(s.url)}" target="_blank" rel="noopener">${ICON.ext} Halaman resmi</a><button class="btn sm acc" data-stdpdf="${k}">${ICON.dl} Ringkasan PDF</button></div></details>`).join('') : '<div class="empty">Tidak ada standar yang cocok.</div>';
+    $$('#libList [data-stdpdf]').forEach(b => b.onclick = () => pdfStd(b.dataset.stdpdf));
+  };
+  $('#libQ').oninput = draw; $('#libCat').onchange = draw; $('#libBody').onchange = draw; draw();
+}
+
+/* =====================================================================
+   VIEW: PANDUAN
+   ===================================================================== */
+function viewGuide(root) {
+  const cc = [2, 3, 4, 5, 6, 7, 8, 9, 10].map(consts);
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Panduan & Metodologi</h2><p>Cara kerja SQMC, rumus yang dipakai, dan batasan sistem.</p></div></div>
+  <details class="acc" open><summary>1 · Cara menggunakan SQMC</summary>
+    <ol><li><b>Spesifikasi Standar</b> — isi identitas, material, bahan baku, berat, lingkungan & fluida, dimensi kritis, ukuran lot. Tekan <i>Tentukan Standar Mutu</i>. Simpan & unduh PDF lembar spesifikasi.</li>
+    <li><b>Buat dataset SPC</b> dari spesifikasi (LSL/USL berat terisi otomatis), lalu catat pengukuran per subgrup di <b>Input Data</b> — atau unggah CSV/XLSX hasil pencatatan langsung di <b>Peta Kendali</b>.</li>
+    <li><b>Peta Kendali</b> — pilih jenis peta (atau otomatis), aktifkan tes, isi LSL/USL. Baca interpretasi, kapabilitas, lalu unduh laporan PDF.</li>
+    <li><b>Disposisi</b> — pakai kalkulator disposisi untuk memutuskan terima / rework (finishing) / tolak per unit cacat.</li></ol></details>
+  <details class="acc"><summary>2 · Rumus peta kendali (ISO 7870-2)</summary>
+    <div class="formula">I-MR   : CL = x̄ ;  UCL/LCL = x̄ ± 3·σ̂ ;  σ̂ = MR̄ / 1,128
+         MR: CL = MR̄ ; UCL = 3,267·MR̄ ; LCL = 0
+X̄-R    : CL = X̿ ;  UCL/LCL = X̿ ± A₂·R̄   (σ̂ = R̄/d₂)
+         R : UCL = D₄·R̄ ; LCL = D₃·R̄
+X̄-S    : CL = X̿ ;  UCL/LCL = X̿ ± A₃·S̄   (σ̂ = S̄/c₄)
+         S : UCL = B₄·S̄ ; LCL = B₃·S̄
+P      : p̄ ± 3·√(p̄(1−p̄)/nᵢ)        NP : n·p̄ ± 3·√(n·p̄(1−p̄))
+C      : c̄ ± 3·√c̄                   U  : ū ± 3·√(ū/nᵢ)
+LCL negatif dipotong ke 0. Ukuran subgrup tidak seragam → batas per subgrup.</div>
+    <h4 style="margin:12px 0 6px">Konstanta (dihitung dari d₂, d₃, c₄)</h4>
+    <div class="tw"><table class="t"><thead><tr><th class="num">n</th><th class="num">A₂</th><th class="num">D₃</th><th class="num">D₄</th><th class="num">d₂</th><th class="num">A₃</th><th class="num">B₃</th><th class="num">B₄</th><th class="num">c₄</th></tr></thead><tbody>
+      ${cc.map(c => `<tr><td class="num">${c.n}</td><td class="num">${fmtFix(c.A2, 3)}</td><td class="num">${fmtFix(c.D3, 3)}</td><td class="num">${fmtFix(c.D4, 3)}</td><td class="num">${fmtFix(c.d2, 3)}</td><td class="num">${fmtFix(c.A3, 3)}</td><td class="num">${fmtFix(c.B3, 3)}</td><td class="num">${fmtFix(c.B4, 3)}</td><td class="num">${fmtFix(c.c4, 4)}</td></tr>`).join('')}
+    </tbody></table></div></details>
+  <details class="acc"><summary>3 · Delapan tes pola tidak acak</summary>
+    <div class="tw"><table class="t"><tbody>${Object.entries(TESTS).map(([k, t]) => `<tr><td><b>Tes ${k}</b></td><td>${t}</td></tr>`).join('')}</tbody></table></div>
+    <p class="hint">Tes 1–8 diterapkan pada peta utama (X̄, I, P, NP, C, U). Peta dispersi (R, S, MR) memakai tes 1. Zona σ untuk batas bervariasi dihitung per titik.</p></details>
+  <details class="acc"><summary>4 · Kapabilitas proses (ISO 22514-2)</summary>
+    <div class="formula">Cp  = (USL − LSL) / 6σ_within        Pp  = (USL − LSL) / 6σ_overall
+Cpk = min(USL − μ, μ − LSL) / 3σ_within
+Ppk = min(USL − μ, μ − LSL) / 3σ_overall
+PPM ekspektasi = [Φ((LSL−μ)/σ) + 1 − Φ((USL−μ)/σ)] × 10⁶
+Normalitas: Anderson-Darling (p-value D'Agostino & Stephens)</div>
+    <p class="hint">σ_within berasal dari peta kendali (R̄/d₂, S̄/c₄, MR̄/1,128). Minitab secara default memakai pooled standard deviation untuk X̄-R; hasil Cpk SQMC bisa sedikit berbeda.</p></details>
+  <details class="acc"><summary>5 · Rencana sampling AQL (ISO 2859-1)</summary>
+    <p>Kode huruf ditentukan dari ukuran lot dan level inspeksi; ukuran sampel & Ac/Re dari tabel master sampling tunggal inspeksi normal (termasuk aturan panah). Bila ukuran sampel ≥ ukuran lot → inspeksi 100%. Aturan perpindahan normal → ketat → longgar dan skip-lot (edisi 2026) belum diotomasi.</p></details>
+  <details class="acc"><summary>6 · Batasan & tanggung jawab</summary>
+    <ul><li>SQMC adalah alat pendukung keputusan. Penetapan standar, toleransi, dan disposisi final tetap tanggung jawab QA/QC yang kompeten dan pemilik produk.</li>
+    <li>Nilai toleransi berat default (±% per proses) adalah <b>rekomendasi internal</b>, bukan kutipan standar ISO. Toleransi dimensi plastik wajib diambil dari tabel standar produk.</li>
+    <li>Standar bertanda "cek edisi" belum diverifikasi tahun edisinya oleh SQMC.</li>
+    <li>Dokumen standar resmi harus dibeli dari ISO, BSN, ASME, ASTM, atau CEN/badan nasional.</li></ul></details>`;
+}
+
+/* =====================================================================
+   PDF EXPORTS (jsPDF + autoTable)
+   ===================================================================== */
+function pdfReady() { if (!(window.jspdf && window.jspdf.jsPDF)) { toast('Pustaka PDF gagal dimuat. Periksa koneksi internet.', 'err'); return false; } return true; }
+function pdfDoc(orient = 'p') {
+  const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: orient, unit: 'mm', format: 'a4' });
+  if (typeof doc.autoTable !== 'function') { toast('Plugin tabel PDF gagal dimuat.', 'err'); return null; }
+  return doc;
+}
+// jsPDF core fonts hanya mendukung WinAnsi: ganti simbol yang tidak tersedia
+function pdfTxt(s) {
+  return String(s ?? '').replace(/X̿/g, 'X-dbar').replace(/X̄/g, 'X-bar').replace(/R̄/g, 'R-bar').replace(/S̄/g, 'S-bar').replace(/MR̄/g, 'MR-bar').replace(/P̄/g, 'P-bar').replace(/NP̄/g, 'NP-bar').replace(/C̄/g, 'C-bar').replace(/Ū/g, 'U-bar')
+    .replace(/σ/g, 'sigma').replace(/μ/g, 'mu').replace(/≥/g, '>=').replace(/≤/g, '<=').replace(/±/g, '+/-').replace(/−/g, '-').replace(/–|—/g, '-').replace(/→/g, '->').replace(/↓/g, 'turun').replace(/↑/g, 'naik')
+    .replace(/[⛔⚠ℹ☁●○✕]/g, '').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/…/g, '...').replace(/₂/g, '2').replace(/₃/g, '3').replace(/₄/g, '4').replace(/[^\x00-\xFF]/g, '');
+}
+function pdfHeader(doc, title, sub) {
+  const W = doc.internal.pageSize.getWidth();
+  doc.setFillColor(15, 59, 102); doc.rect(0, 0, W, 20, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.text('SQMC', 12, 12.5);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('(Standart Quality Mutu Controller)', 31, 12.5);
+  doc.setFontSize(8); doc.text(pdfTxt(new Date().toLocaleString('id-ID')), W - 12, 12.5, { align: 'right' });
+  doc.setTextColor(19, 34, 49); doc.setFont('helvetica', 'bold'); doc.setFontSize(13.5); doc.text(pdfTxt(title), 12, 30);
+  if (sub) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(74, 91, 108); doc.text(doc.splitTextToSize(pdfTxt(sub), W - 24), 12, 36); }
+  return sub ? 42 : 36;
+}
+function pdfFooter(doc, note) {
+  const n = doc.getNumberOfPages(), W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(123, 138, 153);
+    doc.text(doc.splitTextToSize(pdfTxt(note || 'Dokumen dihasilkan SQMC. Rekomendasi wajib diverifikasi QA/QC terhadap dokumen standar resmi edisi terbaru.'), W - 50), 12, H - 8);
+    doc.text(`Hal ${i}/${n}`, W - 12, H - 8, { align: 'right' });
+  }
+}
+const AT = (doc, y, head, body, extra = {}) => { doc.autoTable(Object.assign({ startY: y, head: [head.map(pdfTxt)], body: body.map(r => r.map(c => pdfTxt(c))), theme: 'grid', styles: { fontSize: 7.8, cellPadding: 1.6, lineColor: [221, 227, 234], lineWidth: 0.2, textColor: [19, 34, 49], overflow: 'linebreak' }, headStyles: { fillColor: [230, 238, 247], textColor: [15, 59, 102], fontStyle: 'bold' }, margin: { left: 12, right: 12 } }, extra)); return doc.lastAutoTable.finalY + 6; };
+function secTitle(doc, y, t) { const H = doc.internal.pageSize.getHeight(); if (y > H - 30) { doc.addPage(); y = 16; } doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(15, 59, 102); doc.text(pdfTxt(t), 12, y); return y + 3; }
+function pdfSpec(r) {
+  if (!pdfReady()) return; const doc = pdfDoc('p'); if (!doc) return;
+  const inp = r.input;
+  let y = pdfHeader(doc, 'Lembar Spesifikasi Standar Mutu', `${inp.name}${inp.code ? ' (' + inp.code + ')' : ''} - ${r.materialName}`);
+  y = AT(doc, y, ['Parameter', 'Nilai'], [
+    ['Jenis produk', (inp.category === 'other' ? inp.categoryOther : 'Sambungan pipa (fitting)') + ' - ' + (inp.ftype === 'Lainnya' ? inp.ftypeOther : inp.ftype)],
+    ['Ukuran / PN / Suhu maks', `${inp.size || '-'} / ${inp.pn ? 'PN ' + inp.pn : '-'} / ${inp.tmax ? inp.tmax + ' C' : '-'}`],
+    ['Material', r.materialName + (inp.materialOther ? ' (' + inp.materialOther + ')' : '')],
+    ['Bahan baku', inp.raw + (inp.rawDetail ? ' - ' + inp.rawDetail : '') + (numOrNull(inp.recycle) > 0 ? ` - daur ulang ${inp.recycle}% (${inp.recycleSrc})` : '')],
+    ['Sambungan / Proses', (JOINTS[inp.joint] || '-') + ' / ' + r.processName],
+    ['Lingkungan pemakaian', (inp.envs || []).map(k => ENVS[k]).concat(inp.envOther ? [inp.envOther] : []).join(', ') || '-'],
+    ['Fluida', (inp.fluids || []).map(k => FLUIDS[k]).concat(inp.fluidOther ? [inp.fluidOther] : []).join(', ') || '-']
+  ], { columnStyles: { 0: { cellWidth: 48, fontStyle: 'bold' } } });
+  if (r.warnings.length) { y = secTitle(doc, y, 'Peringatan kecocokan'); y = AT(doc, y, ['Level', 'Keterangan'], r.warnings.map(w => [{ bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[w.lvl], w.text]), { columnStyles: { 0: { cellWidth: 24, fontStyle: 'bold' } } }); }
+  y = secTitle(doc, y, 'A. Standar mutu yang harus dipenuhi');
+  y = AT(doc, y, ['Kode', 'Judul', 'Kategori', 'Alasan', 'Tautan resmi'], r.standards.map(s => [stdCode(s) + (s.year ? '' : ' (cek edisi)'), s.title, s.cat, s.reason, s.url]), { columnStyles: { 0: { cellWidth: 28, fontStyle: 'bold' }, 4: { cellWidth: 36, fontSize: 6.5, textColor: [29, 92, 153] } } });
+  y = secTitle(doc, y, 'B. Nilai toleransi produk');
+  const tb = []; if (r.weight) tb.push(['Berat bersih per unit', fmt(r.weight.target, 3) + ' g', '+/-' + fmt(r.weight.tolAbs, 3) + ' g (' + fmt(r.weight.tolPct, 2) + '%)', fmt(r.weight.lsl, 3), fmt(r.weight.usl, 3), r.weight.basis]);
+  r.dims.forEach(d => tb.push([d.name, fmt(d.nominal) + ' ' + d.unit, (d.plus !== null || d.minus !== null) ? `+${fmt(Math.abs(d.plus ?? 0))} / -${fmt(Math.abs(d.minus ?? 0))}` : '-', fmt(d.lsl), fmt(d.usl), d.basis]));
+  y = AT(doc, y, ['Karakteristik', 'Nominal', 'Toleransi', 'LSL', 'USL', 'Dasar'], tb, { columnStyles: { 5: { cellWidth: 60, fontSize: 6.8 } } });
+  y = secTitle(doc, y, 'C. Batas cacat & rencana sampling (ISO 2859-1, normal, tunggal)');
+  y = AT(doc, y, ['Kelas', 'AQL', 'Kode', 'n', 'Ac', 'Re', 'Catatan'], r.sampling.map(s => [s.cls, s.aql, s.letter || '-', (s.n ?? '-') + (s.full ? ' (100%)' : ''), s.ac ?? '-', s.re ?? '-', s.note || '']), { columnStyles: { 6: { cellWidth: 70 } } });
+  if (r.sampling.length) { doc.setFontSize(7.5); doc.setTextColor(74, 91, 108); doc.text(pdfTxt(`Lot ${inp.lot} unit, level ${inp.level}. Terima bila cacat <= Ac, tolak bila >= Re.`), 12, y - 2); y += 3; }
+  y = secTitle(doc, y, 'D. Katalog cacat & disposisi (terima / rework-finishing / tolak)');
+  y = AT(doc, y, ['Cacat', 'Kelas', 'Batas', 'Disposisi', 'Metode / tindakan'], r.defects.map(d => [d.name, d.cls, d.limit, { reject: 'TOLAK', rework: 'REWORK*', accept: 'TERIMA*' }[d.disp], d.method]), {
+    didParseCell: (h) => { if (h.section === 'body' && h.column.index === 3) { const t = h.cell.raw; h.cell.styles.fontStyle = 'bold'; h.cell.styles.textColor = t.startsWith('TOLAK') ? [198, 40, 40] : t.startsWith('REWORK') ? [168, 98, 0] : [46, 125, 50]; } }
+  });
+  doc.setFontSize(7.2); doc.setTextColor(74, 91, 108); doc.text(doc.splitTextToSize(pdfTxt('* Rework/terima hanya bila semua syarat terpenuhi: lokasi non-fungsional, dimensi/berat pasca-finishing dalam toleransi, tebal dinding >= minimum, prosedur perbaikan tervalidasi.'), 186), 12, y - 2); y += 6;
+  y = secTitle(doc, y, 'E. Rencana uji & frekuensi');
+  y = AT(doc, y, ['Uji / pemeriksaan', 'Acuan', 'Frekuensi', 'Tahap'], r.tests.map(t => [t.name, t.std, t.freq, t.cls]));
+  y = secTitle(doc, y, 'Pengesahan');
+  AT(doc, y, ['Disusun (QC)', 'Diperiksa (QA)', 'Disetujui (Manajer Mutu)'], [['\n\n\n\nNama / tgl:', '\n\n\n\nNama / tgl:', '\n\n\n\nNama / tgl:']], { styles: { fontSize: 8, minCellHeight: 22 } });
+  pdfFooter(doc, 'Dokumen dihasilkan SQMC. Dokumen standar resmi tidak dilampirkan (hak cipta penerbit) - gunakan tautan resmi. Toleransi berat default adalah rekomendasi internal, validasi dengan Cpk >= 1,33.');
+  saveFile(`SQMC-Spesifikasi-${slug(inp.name)}.pdf`, doc.output('blob'), 'application/pdf');
+}
+function pdfStd(key) {
+  if (!pdfReady()) return; const s = STD[key]; if (!s) return; const doc = pdfDoc('p'); if (!doc) return;
+  let y = pdfHeader(doc, 'Ringkasan Standar: ' + stdCode(s), s.title);
+  y = AT(doc, y, ['Atribut', 'Keterangan'], [
+    ['Kode', stdCode(s)], ['Badan penerbit', s.body], ['Edisi', s.year ? String(s.year) + ' (diverifikasi SQMC)' : 'Belum diverifikasi - cek katalog resmi'], ['Kategori', s.cat],
+    ['Ruang lingkup (parafrase SQMC)', s.scope], ['Penggunaan di SQMC', s.use], ['Dokumen resmi', s.url]
+  ], { columnStyles: { 0: { cellWidth: 50, fontStyle: 'bold' } } });
+  doc.setFontSize(8.5); doc.setTextColor(74, 91, 108);
+  doc.text(doc.splitTextToSize(pdfTxt('Ringkasan ini dibuat oleh SQMC sebagai referensi cepat dan BUKAN pengganti dokumen standar. Persyaratan teknis lengkap (tabel dimensi, parameter uji, kriteria lulus) hanya terdapat di dokumen resmi yang dapat dibeli dari penerbit atau badan standardisasi nasional (BSN untuk SNI dan adopsi ISO di Indonesia).'), 186), 12, y);
+  pdfFooter(doc);
+  saveFile(`SQMC-Ringkasan-${slug(s.code)}.pdf`, doc.output('blob'), 'application/pdf');
+}
+async function pdfSPC(res) {
+  if (!pdfReady()) return; const doc = pdfDoc('l'); if (!doc) return;
+  const W = doc.internal.pageSize.getWidth();
+  let y = pdfHeader(doc, `Laporan ${res.title} - ${res.varName}`, `Sumber: ${res.sourceName || '-'} | ${res.k} ${res.xLabel.toLowerCase()}${res.constN ? ' | n = ' + res.constN : ''} | Tes aktif: ${(res.opts.tests || []).join(', ')}`);
+  try {
+    const img = await Plotly.toImage($('#chartMain'), { format: 'png', width: 1500, height: res.disp ? 780 : 480, scale: 1 });
+    const h = (W - 24) * (res.disp ? 780 / 1500 : 480 / 1500); doc.addImage(img, 'PNG', 12, y, W - 24, h); y += h + 4;
+  } catch (e) { }
+  const lim = (p) => { const u = [...p.ucl].reverse().find(isNum), c = [...p.cl].reverse().find(isNum), l = [...p.lcl].reverse().find(isNum); return [fmt(u, 5), fmt(c, 5), fmt(l, 5)]; };
+  doc.addPage(); y = 16;
+  y = secTitle(doc, y, 'Ringkasan batas kendali (nilai titik terakhir bila batas bervariasi)');
+  const rows = [[res.mainName, ...lim(res.main), res.main.flags.filter(f => f.length).length]]; if (res.disp) rows.push([res.dispName, ...lim(res.disp), res.disp.flags.filter(f => f.length).length]);
+  y = AT(doc, y, ['Peta', 'UCL', 'CL', 'LCL', 'Titik gagal tes'], rows);
+  if (res.kind === 'variable') y = AT(doc, y, ['Rata-rata proses', 'sigma within', 'Metode sigma', 'Observasi'], [[fmt(res.mean, 5), fmt(res.sigmaWithin, 5), { imr: 'MR-bar/1,128', xbarr: 'R-bar/d2', xbars: 'S-bar/c4' }[res.type], res.values.length]]);
+  y = secTitle(doc, y, 'Interpretasi');
+  y = AT(doc, y, ['Status', 'Keterangan'], interpret(res).map(x => [{ ok: 'OK', bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[x.c], x.t.replace(/<[^>]+>/g, '')]), { columnStyles: { 0: { cellWidth: 24, fontStyle: 'bold' } } });
+  const v = violationList(res.main, res.labels).map(x => [res.mainName, x.i, x.label, fmt(x.val, 5), x.tests.map(t => 'Tes ' + t + ': ' + TESTS[t]).join('; ')]);
+  if (res.disp) violationList(res.disp, res.labels).forEach(x => v.push([res.dispName, x.i, x.label, fmt(x.val, 5), x.tests.map(t => 'Tes ' + t).join('; ')]));
+  if (v.length) { y = secTitle(doc, y, 'Hasil tes penyebab khusus'); y = AT(doc, y, ['Peta', res.xLabel, 'Label', 'Nilai', 'Tes gagal'], v); }
+  if (res.cap) {
+    const c = res.cap; doc.addPage(); y = 16; y = secTitle(doc, y, 'Analisis kapabilitas proses');
+    try { const img = await Plotly.toImage($('#chartCap'), { format: 'png', width: 1300, height: 420, scale: 1 }); const h = (W - 24) * 420 / 1300; doc.addImage(img, 'PNG', 12, y, W - 24, h); y += h + 4; } catch (e) { }
+    const f2 = (x) => fmtFix(x, 2);
+    y = AT(doc, y, ['LSL', 'Target', 'USL', 'Mean', 'N', 'sigma within', 'sigma overall', 'Cp', 'Cpk', 'Pp', 'Ppk', 'PPM exp. within', 'PPM exp. overall', 'PPM observasi'], [[fmt(c.lsl), fmt(c.target), fmt(c.usl), fmt(c.mean, 5), c.N, fmt(c.sigmaW, 5), fmt(c.sigmaO, 5), f2(c.Cp), f2(c.Cpk), f2(c.Pp), f2(c.Ppk), fmt(c.ppmW.tot, 1), fmt(c.ppmO.tot, 1), fmt(c.ppmObs.tot, 1)]], { styles: { fontSize: 7.2, cellPadding: 1.4 } });
+  }
+  pdfFooter(doc, 'Dihasilkan SQMC sesuai metode ISO 7870-2 (peta kendali Shewhart) & ISO 22514-2 (kapabilitas). Batas kendali bukan batas spesifikasi.');
+  saveFile(`SQMC-${slug(res.title + '-' + res.varName)}.pdf`, doc.output('blob'), 'application/pdf');
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+(async function boot() {
+  App.render();
+  initDownloads();
+  await Store.init();
+  App.refresh();
+})();
+// ekspor untuk pengujian otomatis
+window.SQMC = { computeVariable, computeAttribute, capability, andersonDarling, aqlPlan, iso2768Tol, buildSpec, consts, runTests, parseNum, Phi };
+</script>
+</body>
+</html>
