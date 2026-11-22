@@ -646,7 +646,7 @@ function buildSpec(inp) {
   const sampling = [];
   if (lot !== null && lot >= 2) {
     const pc = aqlPlan(lot, lvl, 0.065);
-    sampling.push({ cls: 'Kritis', aql: '0 (zero acceptance)', ...(pc ? { letter: pc.planLetter, n: pc.n, ac: 0, re: 1, full: pc.full } : {}), note: 'Rekomendasi SQMC: Ac = 0. Untuk karakteristik keselamatan (kebocoran) lazim inspeksi 100%.' });
+    sampling.push({ cls: 'Kritis', aql: '0 (zero acceptance)', ...(pc ? { letter: pc.letter, planLetter: pc.planLetter, n: pc.n, ac: 0, re: 1, full: pc.full } : {}), note: 'Rekomendasi SQMC: Ac = 0. Untuk karakteristik keselamatan (kebocoran) lazim inspeksi 100%.' });
     [['Mayor', numOrNull(inp.aqlMajor) ?? 1.0], ['Minor', numOrNull(inp.aqlMinor) ?? 2.5]].forEach(([c, a]) => {
       const p = aqlPlan(lot, lvl, a);
       sampling.push({ cls: c, aql: fmt(a), ...(p ? { letter: p.letter, planLetter: p.planLetter, n: p.n, ac: p.ac, re: p.re, full: p.full, arrow: p.arrow } : {}), note: p ? (p.full ? 'Ukuran sampel ≥ ukuran lot → inspeksi 100%.' : (p.arrow ? `Mengikuti panah tabel (${p.arrow}) ke rencana kode ${p.planLetter}.` : '')) : 'AQL tidak tersedia di tabel.' });
@@ -1210,7 +1210,7 @@ function renderSpecOut(r) {
 
   <div class="card"><h3>C · Batas cacat & rencana sampling (ISO 2859-1, inspeksi normal, sampling tunggal)</h3>
     ${r.sampling.length ? `<div class="tw" style="margin-top:10px"><table class="t"><thead><tr><th>Kelas cacat</th><th class="num">AQL</th><th class="num">Kode</th><th class="num">Ukuran sampel n</th><th class="num">Terima (Ac)</th><th class="num">Tolak (Re)</th><th>Catatan</th></tr></thead><tbody>
-      ${r.sampling.map(s => `<tr><td><span class="badge ${s.cls === 'Kritis' ? 'b-bad' : s.cls === 'Mayor' ? 'b-warn' : 'b-info'}">${s.cls}</span></td><td class="num">${esc(s.aql)}</td><td class="num">${esc(s.letter || '—')}</td><td class="num">${s.n ?? '—'}${s.full ? ' (100%)' : ''}</td><td class="num">${s.ac ?? '—'}</td><td class="num">${s.re ?? '—'}</td><td style="font-size:.8rem">${esc(s.note || '')}</td></tr>`).join('')}
+      ${r.sampling.map(s => `<tr><td><span class="badge ${s.cls === 'Kritis' ? 'b-bad' : s.cls === 'Mayor' ? 'b-warn' : 'b-info'}">${s.cls}</span></td><td class="num">${esc(s.aql)}</td><td class="num">${esc(s.letter || '—')}${s.planLetter && s.planLetter !== s.letter ? '→' + esc(s.planLetter) : ''}</td><td class="num">${s.n ?? '—'}${s.full ? ' (100%)' : ''}</td><td class="num">${s.ac ?? '—'}</td><td class="num">${s.re ?? '—'}</td><td style="font-size:.8rem">${esc(s.note || '')}</td></tr>`).join('')}
     </tbody></table></div>
     <p class="hint">Lot ${fmt(numOrNull(inp.lot))} unit, level ${esc(inp.level)}. Lot DITERIMA bila jumlah unit cacat dalam sampel ≤ Ac, DITOLAK bila ≥ Re. Tabel diturunkan dari tabel master ISO 2859-1 (identik ANSI/ASQ Z1.4) — cocokkan dengan dokumen resmi edisi 2026 sebelum dipakai kontraktual.</p>`
       : '<div class="empty">Isi ukuran lot untuk menghitung rencana sampling.</div>'}
@@ -1476,9 +1476,12 @@ function setTable(arr, fileName, wb, src) {
   const lower = headers.map(h => h.toLowerCase());
   const xCols = lower.map((h, i) => /^x\d+$|^ukur|^nilai\d|^sample\d|^obs\d/.test(h) && numCols[i] ? i : -1).filter(i => i >= 0);
   const labelCol = lower.findIndex(h => /tanggal|date|waktu|time/.test(h));
-  const cnt = lower.findIndex(h => /cacat|defect|reject|ng/.test(h));
-  const insp = lower.findIndex(h => /diperiksa|inspect|sampel size|sample size|^n$|jumlah sampel|ukuran sampel/.test(h));
-  if (cnt >= 0 && numCols[cnt]) { Object.assign(S.cfg, { dataKind: 'attribute', cntCol: cnt, nCol: insp >= 0 ? insp : -1, chart: 'p' }); }
+  const cnt = lower.findIndex((h, i) => /cacat|defect|reject|tolak|^ng$/.test(h) && numCols[i]);
+  const insp = lower.findIndex((h, i) => /diperiksa|inspect|sample size|^n$|jumlah sampel|ukuran sampel/.test(h) && numCols[i]);
+  if (cnt >= 0) {
+    const isCount = /jumlah.?cacat|defects\b|cacat.?per/.test(lower[cnt]);
+    Object.assign(S.cfg, { dataKind: 'attribute', cntCol: cnt, nCol: insp >= 0 ? insp : -1, chart: isCount ? (insp >= 0 ? 'u' : 'c') : 'p' });
+  }
   else if (xCols.length >= 2) { Object.assign(S.cfg, { dataKind: 'variable', layout: 'wide', valCols: xCols, chart: 'auto' }); }
   else { const vc = numCols.lastIndexOf(true); Object.assign(S.cfg, { dataKind: 'variable', layout: 'single', valCol: vc >= 0 ? vc : 0, chart: 'auto' }); }
   S.cfg.labelCol = labelCol;
@@ -1861,7 +1864,7 @@ function pdfSpec(r) {
   r.dims.forEach(d => tb.push([d.name, fmt(d.nominal) + ' ' + d.unit, (d.plus !== null || d.minus !== null) ? `+${fmt(Math.abs(d.plus ?? 0))} / -${fmt(Math.abs(d.minus ?? 0))}` : '-', fmt(d.lsl), fmt(d.usl), d.basis]));
   y = AT(doc, y, ['Karakteristik', 'Nominal', 'Toleransi', 'LSL', 'USL', 'Dasar'], tb, { columnStyles: { 5: { cellWidth: 60, fontSize: 6.8 } } });
   y = secTitle(doc, y, 'C. Batas cacat & rencana sampling (ISO 2859-1, normal, tunggal)');
-  y = AT(doc, y, ['Kelas', 'AQL', 'Kode', 'n', 'Ac', 'Re', 'Catatan'], r.sampling.map(s => [s.cls, s.aql, s.letter || '-', (s.n ?? '-') + (s.full ? ' (100%)' : ''), s.ac ?? '-', s.re ?? '-', s.note || '']), { columnStyles: { 6: { cellWidth: 70 } } });
+  y = AT(doc, y, ['Kelas', 'AQL', 'Kode', 'n', 'Ac', 'Re', 'Catatan'], r.sampling.map(s => [s.cls, s.aql, (s.letter || '-') + (s.planLetter && s.planLetter !== s.letter ? '->' + s.planLetter : ''), (s.n ?? '-') + (s.full ? ' (100%)' : ''), s.ac ?? '-', s.re ?? '-', s.note || '']), { columnStyles: { 6: { cellWidth: 70 } } });
   if (r.sampling.length) { doc.setFontSize(7.5); doc.setTextColor(74, 91, 108); doc.text(pdfTxt(`Lot ${inp.lot} unit, level ${inp.level}. Terima bila cacat <= Ac, tolak bila >= Re.`), 12, y - 2); y += 3; }
   y = secTitle(doc, y, 'D. Katalog cacat & disposisi (terima / rework-finishing / tolak)');
   y = AT(doc, y, ['Cacat', 'Kelas', 'Batas', 'Disposisi', 'Metode / tindakan'], r.defects.map(d => [d.name, d.cls, d.limit, { reject: 'TOLAK', rework: 'REWORK*', accept: 'TERIMA*' }[d.disp], d.method]), {
