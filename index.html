@@ -181,12 +181,12 @@ table.t td.num,table.t th.num{text-align:right;font-family:var(--mono);font-size
 .b-ok{background:var(--ok-bg);color:#0e6027}.b-warn{background:var(--warn-bg);color:#684e00}.b-bad{background:#ffd7d9;color:#a2191f}.b-info{background:var(--brand-100);color:var(--brand-800)}.b-gray{background:var(--g-20);color:var(--g-70)}
 
 /* ---------------- inline notification (Carbon) ---------------- */
-.alert{position:relative;border-radius:var(--radius-s);padding:12px 14px 12px 44px;font-size:.84rem;margin:8px 0;border:1px solid;border-left-width:3px;color:var(--g-100);line-height:1.5}
-.alert::before{content:'';position:absolute;left:14px;top:12px;width:18px;height:18px;background:var(--ic) center/contain no-repeat}
-.alert.ok{background:var(--ok-bg);border-color:#a7f0ba;border-left-color:var(--ok-bd);--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23198038'/%3E%3Cpath fill='white' d='M8.5 13.4L5.3 10.2l1-1 2.2 2.2 5.2-5.2 1 1z'/%3E%3C/svg%3E")}
-.alert.warn{background:var(--warn-bg);border-color:#f8e6a0;border-left-color:var(--warn-bd);--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23f1c21b' d='M10 1l9.5 17h-19z'/%3E%3Cpath fill='%23000' d='M9.2 7h1.6v5.5H9.2zM10 16.2a1 1 0 110-2 1 1 0 010 2z'/%3E%3C/svg%3E")}
-.alert.bad{background:var(--bad-bg);border-color:#ffd7d9;border-left-color:var(--bad-bd);--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23da1e28'/%3E%3Cpath fill='white' d='M6.5 7.5l1-1 2.5 2.5 2.5-2.5 1 1L11 10l2.5 2.5-1 1L10 11l-2.5 2.5-1-1L9 10z'/%3E%3C/svg%3E")}
-.alert.info{background:var(--info-bg);border-color:#d0e2ff;border-left-color:var(--info-bd);--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%230043ce'/%3E%3Cpath fill='white' d='M9.2 8.5h1.6V15H9.2zM10 7.2a1 1 0 110-2 1 1 0 010 2z'/%3E%3C/svg%3E")}
+.alert{position:relative;border-radius:var(--radius-s);padding:9px 12px 9px 36px;font-size:.82rem;margin:8px 0;border:1px solid;color:var(--g-90);line-height:1.5}
+.alert::before{content:'';position:absolute;left:12px;top:11px;width:14px;height:14px;background:var(--ic) center/contain no-repeat}
+.alert.ok{background:#f3fbf5;border-color:#c6e9d0;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23198038'/%3E%3Cpath fill='white' d='M8.5 13.4L5.3 10.2l1-1 2.2 2.2 5.2-5.2 1 1z'/%3E%3C/svg%3E")}
+.alert.warn{background:#fffbeb;border-color:#f3e2a6;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23f1c21b' d='M10 1l9.5 17h-19z'/%3E%3Cpath fill='%23000' d='M9.2 7h1.6v5.5H9.2zM10 16.2a1 1 0 110-2 1 1 0 010 2z'/%3E%3C/svg%3E")}
+.alert.bad{background:#fff6f6;border-color:#f6cdd0;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%23da1e28'/%3E%3Cpath fill='white' d='M6.5 7.5l1-1 2.5 2.5 2.5-2.5 1 1L11 10l2.5 2.5-1 1L10 11l-2.5 2.5-1-1L9 10z'/%3E%3C/svg%3E")}
+.alert.info{background:#f5f8fd;border-color:#d6e3f5;--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='9' fill='%230043ce'/%3E%3Cpath fill='white' d='M9.2 8.5h1.6V15H9.2zM10 7.2a1 1 0 110-2 1 1 0 010 2z'/%3E%3C/svg%3E")}
 
 /* ---------------- KPI (Fiori analytical card header) ---------------- */
 .kpi{background:#fff;border-radius:var(--radius-l);box-shadow:var(--shadow-1);padding:16px 18px}
@@ -269,6 +269,51 @@ details.acc[open] summary::after{transform:rotate(180deg)}
 details.acc summary::-webkit-details-marker{display:none}
 details.acc[open] summary{border-bottom:1px solid var(--g-20);margin-bottom:10px}
 .formula{font-family:var(--mono);font-size:.8rem;background:var(--g-10);border:1px solid var(--g-30);border-radius:var(--radius-s);padding:12px 14px;overflow-x:auto;white-space:pre}
+/* ---------------- issue list (pengganti tumpukan alert) ---------------- */
+.issues{border:1px solid var(--g-30);border-radius:var(--radius);background:#fff;overflow:hidden}
+.issues-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:var(--g-10);border-bottom:1px solid var(--g-30);font-size:.8rem;color:var(--g-70);flex-wrap:wrap}
+.issues-head b{color:var(--g-100);font-weight:600}
+.issues-head .cnt{display:flex;gap:14px}
+.issues-head .cnt span{display:inline-flex;align-items:center;gap:6px}
+.sev{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sev.bad{background:var(--bad)} .sev.warn{background:#d2a106} .sev.info{background:var(--brand-500)} .sev.ok{background:var(--ok-bd)}
+.issue{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:4px 12px;padding:12px 16px;border-bottom:1px solid var(--g-20);align-items:start}
+.issue:last-child{border-bottom:none}
+.issue .ic{width:16px;height:16px;margin-top:2px}
+.issue .ttl{font-weight:600;font-size:.875rem;color:var(--g-100)}
+.issue .dsc{grid-column:2/4;font-size:.82rem;color:var(--g-70);line-height:1.5}
+.issue .whr{grid-column:2/4;font-family:var(--mono);font-size:.75rem;color:var(--g-60)}
+.issue .lvl{font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.issue .lvl.bad{color:var(--bad)} .issue .lvl.warn{color:#8e6a00} .issue .lvl.info{color:var(--brand-600)} .issue .lvl.ok{color:var(--ok)}
+/* status strip */
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--g-30);border-radius:var(--radius);background:#fff;margin-bottom:14px;overflow:hidden}
+.stat-strip > div{padding:12px 16px;border-right:1px solid var(--g-20)}
+.stat-strip > div:last-child{border-right:none}
+.stat-strip .k{font-size:.72rem;color:var(--g-60);letter-spacing:.32px}
+.stat-strip .v{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:600;color:var(--g-100);margin-top:4px}
+.stat-strip .s{font-size:.75rem;color:var(--g-60);margin-top:2px}
+/* neutral org tag */
+.org{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.06em;color:var(--g-70);border:1px solid var(--g-40);border-radius:3px;padding:0 5px;line-height:16px}
+/* library table */
+.lib-toolbar{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--g-30);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;background:#fff}
+.lib-toolbar .search{flex:1;min-width:220px;position:relative}
+.lib-toolbar .search svg{position:absolute;left:14px;top:12px;width:16px;height:16px;color:var(--g-60)}
+.lib-toolbar input{background:#fff;border-bottom:none;padding-left:40px;height:44px;border-radius:var(--radius) 0 0 0}
+.lib-toolbar select{background-color:#fff;border-bottom:none;border-left:1px solid var(--g-20);height:44px;border-radius:0;width:auto;min-width:150px}
+.lib-toolbar .count{display:flex;align-items:center;padding:0 16px;font-size:.78rem;color:var(--g-60);border-left:1px solid var(--g-20);white-space:nowrap}
+.lib-table{border-radius:0 0 var(--radius) var(--radius)}
+.lib-table tr.lr{cursor:pointer}
+.lib-table tr.lr td{vertical-align:middle}
+.lib-table .chev{width:16px;height:16px;transition:transform .15s;color:var(--g-60)}
+.lib-table tr.lr.open .chev{transform:rotate(90deg)}
+.lib-table tr.lr.open td{background:var(--brand-50)}
+.lib-table tr.ld td{background:#fbfcfe;padding:14px 16px 16px 48px}
+.lib-table .ed{font-family:var(--mono);font-size:.8rem}
+.lib-table .ed small{display:block;font-family:'IBM Plex Sans',sans-serif;font-size:.7rem}
+.dl-grid{display:grid;grid-template-columns:140px minmax(0,1fr);gap:6px 16px;font-size:.84rem}
+.dl-grid dt{color:var(--g-60)} .dl-grid dd{margin:0;color:var(--g-100)}
+@media(max-width:640px){.hide-sm{display:none}.dl-grid{grid-template-columns:1fr}.lib-table tr.ld td{padding-left:16px}.lib-toolbar select{flex:1}}
+
 .hidden{display:none!important}
 .capgrid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
 </style>
@@ -703,7 +748,7 @@ function buildSpec(inp) {
       break;
     case 'copper': addS('en1254_1', 'Fitting tembaga ujung kapiler.'); break;
     case 'brass': addS(inp.joint === 'press' ? 'en1254_2' : 'en1254_1', 'Fitting paduan tembaga (kuningan) plumbing — pilih bagian EN 1254 yang sesuai jenis ujung.'); break;
-    default: W.push({ lvl: 'warn', text: 'Material "Lainnya": SQMC tidak dapat memetakan standar produk otomatis. Tentukan standar produk secara manual dengan engineer QA.' });
+    default: W.push({ title: 'Standar produk tidak terpetakan otomatis', lvl: 'warn', text: 'Material "Lainnya": SQMC tidak dapat memetakan standar produk otomatis. Tentukan standar produk secara manual dengan engineer QA.' });
   }
   // --- joints
   if (inp.joint === 'taper') { addS('iso7_1', 'Ujung berulir tirus.'); addS('iso7_2', 'Verifikasi ulir dengan gauge batas.'); }
@@ -725,7 +770,7 @@ function buildSpec(inp) {
   if (envs.includes('fresh') && metal) addS('iso12944', 'Kategori Im1 (air tawar).');
   if (envs.includes('sea') && metal) { addS('iso12944', 'Kategori Im2/Im4 (air laut/payau).'); addS('iso9227', 'Validasi lapisan dengan uji kabut garam.'); }
   if (envs.includes('outdoor')) { if (metal) { addS('iso9223', 'Estimasi korosivitas atmosfer.'); addS('iso12944', 'Kategori atmosfer C1–CX.'); } else addS('iso4892', 'Ketahanan UV material plastik.'); }
-  if (envs.includes('chem') || fluids.includes('chem')) { if (!metal) addS('tr10358', 'Kecocokan kimia termoplastik.'); else W.push({ lvl: 'warn', text: 'Lingkungan/fluida kimia: evaluasi kompatibilitas logam terhadap bahan kimia spesifik (data ketahanan korosi pemasok material).' }); }
+  if (envs.includes('chem') || fluids.includes('chem')) { if (!metal) addS('tr10358', 'Kecocokan kimia termoplastik.'); else W.push({ title: 'Kompatibilitas kimia material logam', lvl: 'warn', text: 'Lingkungan/fluida kimia: evaluasi kompatibilitas logam terhadap bahan kimia spesifik (data ketahanan korosi pemasok material).' }); }
   if (fluids.includes('potable')) addS('nsf61', 'Pembuktian keamanan material kontak air minum.');
   // --- system standards (always)
   addS('iso9001', 'Sistem manajemen mutu pabrik (edisi terbaru 2026).');
@@ -735,17 +780,17 @@ function buildSpec(inp) {
   addS('iso10012', 'Validitas sistem pengukuran (kalibrasi alat ukur).');
 
   // --- compatibility warnings
-  if (mat.tmax !== null && T !== null && T > mat.tmax) W.push({ lvl: mat.tSoft ? 'warn' : 'bad', text: `Suhu operasi ${fmt(T)} °C melebihi batas acuan ${mat.tmax} °C untuk ${mat.name}. ${inp.material === 'pvcu' ? 'ISO 1452-3 hanya mencakup komponen hingga 45 °C — pertimbangkan PP-R/PP-RCT atau PVC-C.' : mat.tSoft ? 'Periksa kelas aplikasi ISO 10508 & derating tekanan.' : 'Pertimbangkan material lain atau derating tekanan sesuai standar.'}` });
-  if (inp.material === 'pvcu' && fluids.includes('hot')) W.push({ lvl: 'bad', text: 'PVC-U tidak untuk air panas. Gunakan PP-R/PP-RCT, PE-X, atau PVC-C.' });
-  if (fluids.includes('gas') && ['pvcu', 'pvcc', 'ppr'].includes(inp.material)) W.push({ lvl: 'bad', text: 'Material ini tidak lazim/tidak sesuai untuk jaringan gas. Untuk gas plastik gunakan PE sesuai seri ISO 4437.' });
-  if (fam !== 'plastik' && envs.includes('soil') && !inp.galv && !['ss316', 'ss304', 'ductile'].includes(inp.material)) W.push({ lvl: 'warn', text: 'Logam tertanam tanpa lapisan pelindung berisiko korosi tinggi (Im3). Tentukan sistem coating/wrapping dan pertimbangkan proteksi katodik.' });
-  if (inp.material === 'ss304' && (envs.includes('sea') || fluids.includes('chem'))) W.push({ lvl: 'warn', text: 'SS304 rentan pitting/crevice corrosion di lingkungan klorida (air laut). Pertimbangkan SS316/316L atau duplex.' });
-  if (inp.material === 'brass' && (envs.includes('sea') || fluids.includes('potable'))) W.push({ lvl: 'warn', text: 'Kuningan biasa rentan dezincification di air agresif/laut. Gunakan kuningan DZR (mis. CW602N) dan cek batas kandungan Pb untuk air minum.' });
-  if (['csForged', 'csBW', 'malleable'].includes(inp.material) && envs.includes('sea') && !inp.galv) W.push({ lvl: 'bad', text: 'Baja karbon/besi cor tanpa lapisan di air laut akan terkorosi cepat. Wajib sistem proteksi (coating + CP) atau ganti material.' });
-  if (fam === 'plastik' && envs.includes('outdoor')) W.push({ lvl: 'warn', text: inp.material === 'pe100' ? 'PE terpapar UV: gunakan compound hitam ber-carbon black atau proteksi UV.' : 'Plastik terpapar UV: pastikan stabilizer UV/opasitas sesuai standar produk, atau beri pelindung.' });
-  if (fam === 'plastik' && numOrNull(inp.recycle) > 0) W.push({ lvl: inp.recycleSrc === 'external' ? 'bad' : 'warn', text: inp.recycleSrc === 'external' ? `Material daur ulang eksternal ${fmt(numOrNull(inp.recycle))}%: standar produk perpipaan bertekanan umumnya TIDAK mengizinkan material daur ulang dari luar. Verifikasi klausul material standar terkait.` : `Material rework internal ${fmt(numOrNull(inp.recycle))}%: umumnya hanya diizinkan material rework milik sendiri yang bersih & berasal dari produksi produk sejenis. Verifikasi klausul material standar terkait dan validasi dengan uji tekanan.` });
-  if (fluids.includes('potable')) W.push({ lvl: 'info', text: 'Kontak air minum: wajib bukti uji efek terhadap kualitas air dari laboratorium terakreditasi dan kepatuhan regulasi kualitas air minum yang berlaku.' });
-  if (PN !== null && fam === 'plastik' && T !== null && T > 20) W.push({ lvl: 'info', text: `Tekanan nominal PN ${fmt(PN)} umumnya berlaku pada suhu referensi 20 °C. Pada ${fmt(T)} °C gunakan faktor derating tekanan dari standar produk.` });
+  if (mat.tmax !== null && T !== null && T > mat.tmax) W.push({ title: 'Suhu operasi melebihi batas material', lvl: mat.tSoft ? 'warn' : 'bad', text: `Suhu operasi ${fmt(T)} °C melebihi batas acuan ${mat.tmax} °C untuk ${mat.name}. ${inp.material === 'pvcu' ? 'ISO 1452-3 hanya mencakup komponen hingga 45 °C — pertimbangkan PP-R/PP-RCT atau PVC-C.' : mat.tSoft ? 'Periksa kelas aplikasi ISO 10508 & derating tekanan.' : 'Pertimbangkan material lain atau derating tekanan sesuai standar.'}` });
+  if (inp.material === 'pvcu' && fluids.includes('hot')) W.push({ title: 'PVC-U tidak untuk air panas', lvl: 'bad', text: 'PVC-U tidak untuk air panas. Gunakan PP-R/PP-RCT, PE-X, atau PVC-C.' });
+  if (fluids.includes('gas') && ['pvcu', 'pvcc', 'ppr'].includes(inp.material)) W.push({ title: 'Material tidak sesuai untuk jaringan gas', lvl: 'bad', text: 'Material ini tidak lazim/tidak sesuai untuk jaringan gas. Untuk gas plastik gunakan PE sesuai seri ISO 4437.' });
+  if (fam !== 'plastik' && envs.includes('soil') && !inp.galv && !['ss316', 'ss304', 'ductile'].includes(inp.material)) W.push({ title: 'Logam tertanam tanpa lapisan pelindung', lvl: 'warn', text: 'Logam tertanam tanpa lapisan pelindung berisiko korosi tinggi (Im3). Tentukan sistem coating/wrapping dan pertimbangkan proteksi katodik.' });
+  if (inp.material === 'ss304' && (envs.includes('sea') || fluids.includes('chem'))) W.push({ title: 'Risiko pitting SS304 di lingkungan klorida', lvl: 'warn', text: 'SS304 rentan pitting/crevice corrosion di lingkungan klorida (air laut). Pertimbangkan SS316/316L atau duplex.' });
+  if (inp.material === 'brass' && (envs.includes('sea') || fluids.includes('potable'))) W.push({ title: 'Risiko dezincification pada kuningan', lvl: 'warn', text: 'Kuningan biasa rentan dezincification di air agresif/laut. Gunakan kuningan DZR (mis. CW602N) dan cek batas kandungan Pb untuk air minum.' });
+  if (['csForged', 'csBW', 'malleable'].includes(inp.material) && envs.includes('sea') && !inp.galv) W.push({ title: 'Korosi cepat di air laut', lvl: 'bad', text: 'Baja karbon/besi cor tanpa lapisan di air laut akan terkorosi cepat. Wajib sistem proteksi (coating + CP) atau ganti material.' });
+  if (fam === 'plastik' && envs.includes('outdoor')) W.push({ title: 'Paparan sinar UV', lvl: 'warn', text: inp.material === 'pe100' ? 'PE terpapar UV: gunakan compound hitam ber-carbon black atau proteksi UV.' : 'Plastik terpapar UV: pastikan stabilizer UV/opasitas sesuai standar produk, atau beri pelindung.' });
+  if (fam === 'plastik' && numOrNull(inp.recycle) > 0) W.push({ title: 'Penggunaan material daur ulang', lvl: inp.recycleSrc === 'external' ? 'bad' : 'warn', text: inp.recycleSrc === 'external' ? `Material daur ulang eksternal ${fmt(numOrNull(inp.recycle))}%: standar produk perpipaan bertekanan umumnya TIDAK mengizinkan material daur ulang dari luar. Verifikasi klausul material standar terkait.` : `Material rework internal ${fmt(numOrNull(inp.recycle))}%: umumnya hanya diizinkan material rework milik sendiri yang bersih & berasal dari produksi produk sejenis. Verifikasi klausul material standar terkait dan validasi dengan uji tekanan.` });
+  if (fluids.includes('potable')) W.push({ title: 'Material kontak air minum', lvl: 'info', text: 'Kontak air minum: wajib bukti uji efek terhadap kualitas air dari laboratorium terakreditasi dan kepatuhan regulasi kualitas air minum yang berlaku.' });
+  if (PN !== null && fam === 'plastik' && T !== null && T > 20) W.push({ title: 'Derating tekanan pada suhu tinggi', lvl: 'info', text: `Tekanan nominal PN ${fmt(PN)} umumnya berlaku pada suhu referensi 20 °C. Pada ${fmt(T)} °C gunakan faktor derating tekanan dari standar produk.` });
 
   // --- weight tolerance
   const proc = PROCESS[inp.process] || PROCESS[mat.proc] || PROCESS.machining;
@@ -1313,7 +1358,22 @@ function updateDimPreview(i) {
   if (d.mode === 'iso2768') { const t = iso2768Tol(nom, d.cls || 'm'); el.textContent = t === null ? 'Di luar rentang tabel untuk kelas ini' : `±${fmt(t)} → ${fmt(nom - t)} … ${fmt(nom + t)} ${d.unit}`; }
   else { const p = numOrNull(d.plus), m = numOrNull(d.minus); el.textContent = (p !== null || m !== null) ? `Batas: ${m !== null ? fmt(nom - Math.abs(m)) : '—'} … ${p !== null ? fmt(nom + Math.abs(p)) : '—'} ${d.unit}` : ''; }
 }
-function bodyBadge(b) { return `<span class="badge b-${b.toLowerCase()}">${b}</span>`; }
+
+const SEV_LABEL = { bad: 'Kritis', warn: 'Perhatian', info: 'Info', ok: 'Sesuai' };
+const SEV_ICON = {
+  bad: '<svg class="ic" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#da1e28"/><path d="M5.5 5.5l5 5m0-5l-5 5" stroke="#fff" stroke-width="1.6"/></svg>',
+  warn: '<svg class="ic" viewBox="0 0 16 16"><path d="M8 1.2l7 13H1z" fill="#f1c21b"/><path d="M8 6v4" stroke="#1d2b3d" stroke-width="1.5"/><circle cx="8" cy="12" r=".9" fill="#1d2b3d"/></svg>',
+  info: '<svg class="ic" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="none" stroke="#1767cf" stroke-width="1.5"/><path d="M8 7v4.5" stroke="#1767cf" stroke-width="1.5"/><circle cx="8" cy="4.8" r=".9" fill="#1767cf"/></svg>',
+  ok: '<svg class="ic" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#198038"/><path d="M4.8 8.2l2.1 2.1 4.3-4.4" fill="none" stroke="#fff" stroke-width="1.6"/></svg>'
+};
+/** items: [{c:'bad'|'warn'|'info'|'ok', title, text, where}] — daftar temuan bergaya enterprise */
+function renderIssues(items, heading, emptyText) {
+  const n = (c) => items.filter(x => x.c === c).length;
+  const counts = ['bad', 'warn', 'info'].filter(c => n(c)).map(c => `<span><i class="sev ${c}"></i>${n(c)} ${SEV_LABEL[c].toLowerCase()}</span>`).join('');
+  return `<div class="issues"><div class="issues-head"><b>${esc(heading)}</b><div class="cnt">${counts || `<span><i class="sev ok"></i>${esc(emptyText || 'Tidak ada temuan')}</span>`}</div></div>
+    ${items.map(x => `<div class="issue">${SEV_ICON[x.c] || SEV_ICON.info}<div class="ttl">${esc(x.title)}</div><span class="lvl ${x.c}">${SEV_LABEL[x.c]}</span>${x.where ? `<div class="whr">${esc(x.where)}</div>` : ''}${x.text ? `<div class="dsc">${x.html ? x.text : esc(x.text)}</div>` : ''}</div>`).join('')}</div>`;
+}
+function bodyBadge(b) { return `<span class="org">${b}</span>`; }
 function stdCode(s) { return s.year ? `${s.code}${s.code.includes(':') || s.body === 'SNI' ? '' : ':' + s.year}` : s.code; }
 function renderSpecOut(r) {
   const out = $('#specOut'); const inp = r.input;
@@ -1332,7 +1392,7 @@ function renderSpecOut(r) {
       <div class="kpi"><div class="k">Sampling (Mayor)</div><div class="v">${r.sampling[1] && r.sampling[1].n ? 'n=' + r.sampling[1].n : '—'}</div><div class="s">${r.sampling[1] && r.sampling[1].n ? 'Ac ' + r.sampling[1].ac + ' / Re ' + r.sampling[1].re : 'Isi ukuran lot'}</div></div>
     </div>
     <p class="muted" style="margin-top:10px;font-size:.82rem">Lingkungan: ${esc(envs.join(', ') || '—')} · Fluida: ${esc(fluids.join(', ') || '—')} · Sambungan: ${esc(JOINTS[inp.joint] || '')} · Proses: ${esc(r.processName)}</p>
-    ${r.warnings.map(w => `<div class="alert ${w.lvl === 'bad' ? 'bad' : w.lvl === 'warn' ? 'warn' : 'info'}">${esc(w.text)}</div>`).join('')}
+    <div style="margin-top:14px">${renderIssues(r.warnings.map(w => ({ c: w.lvl, title: w.title || 'Catatan', text: w.text })), 'Pemeriksaan kecocokan material & aplikasi', 'Tidak ditemukan ketidaksesuaian')}</div>
   </div>
   <div class="anchor-bar" id="anchorBar">${[['sp-a', 'Standar'], ['sp-b', 'Toleransi'], ['sp-c', 'Sampling'], ['sp-d', 'Cacat & disposisi'], ['sp-e', 'Rencana uji']].map(([id, l]) => `<button data-anchor="${id}">${l}</button>`).join('')}</div>
 
@@ -1744,25 +1804,35 @@ function runSPC(silent) {
 function violationList(part, labels) {
   const out = []; part.flags.forEach((f, i) => { if (f.length) out.push({ i: i + 1, label: labels ? labels[i] : String(i + 1), tests: f, val: part.points[i] }); }); return out;
 }
+const TEST_ACTION = { 1: 'Investigasi kejadian khusus: setting mesin, lot bahan baku, operator, alat ukur.', 2: 'Indikasi pergeseran rata-rata proses (shift). Cek perubahan setting atau lot material.', 3: 'Indikasi tren: keausan tool/cetakan, perubahan suhu, atau drift alat ukur.', 4: 'Indikasi overadjustment atau dua sumber bergantian (2 mesin/cavity).', 5: 'Indikasi pergeseran rata-rata kecil–sedang.', 6: 'Indikasi pergeseran rata-rata kecil.', 7: 'Variasi terlalu kecil: cek stratifikasi subgrup atau batas kendali yang sudah usang.', 8: 'Indikasi campuran populasi (mixture) dari beberapa sumber.' };
+function capVerdict(k) { return !isNum(k) ? ['—', 'info'] : k >= 1.67 ? ['Sangat baik', 'ok'] : k >= 1.33 ? ['Capable', 'ok'] : k >= 1 ? ['Marginal', 'warn'] : ['Tidak capable', 'bad']; }
 function interpret(res) {
   const v = violationList(res.main, res.labels), vd = res.disp ? violationList(res.disp, res.labels) : [];
-  const L = [];
-  if (!v.length && !vd.length) L.push({ c: 'ok', t: 'Proses <b>terkendali secara statistik</b>: tidak ada titik yang melanggar tes yang diaktifkan. Variasi hanya berasal dari penyebab umum (common cause).' });
+  const L = []; const xl = res.xLabel.toLowerCase();
+  const list = (idx) => `${res.xLabel} ${idx.slice(0, 14).join(', ')}${idx.length > 14 ? ', …' : ''}`;
+  if (!v.length && !vd.length) L.push({ c: 'ok', title: 'Proses terkendali secara statistik', text: 'Tidak ada titik yang melanggar tes yang diaktifkan. Variasi berasal dari penyebab umum (common cause).' });
   else {
     const byTest = {}; v.forEach(x => x.tests.forEach(t => (byTest[t] = byTest[t] || []).push(x.i)));
-    L.push({ c: 'bad', t: `Proses <b>TIDAK terkendali</b>: ${v.length} titik pada peta ${esc(res.mainName)}${vd.length ? ` dan ${vd.length} titik pada peta ${esc(res.dispName)}` : ''} menunjukkan penyebab khusus (special cause).` });
-    Object.entries(byTest).forEach(([t, idx]) => L.push({ c: 'warn', t: `Tes ${t} (${TESTS[t]}): ${res.xLabel.toLowerCase()} ${idx.slice(0, 12).join(', ')}${idx.length > 12 ? '…' : ''}. ${{ 1: 'Investigasi kejadian khusus (setting mesin, bahan baku, operator, alat ukur).', 2: 'Indikasi pergeseran rata-rata proses (shift).', 3: 'Indikasi tren (keausan tool/cetakan, perubahan suhu).', 4: 'Indikasi overadjustment atau dua sumber bergantian (2 mesin/cavity).', 5: 'Indikasi pergeseran rata-rata kecil-sedang.', 6: 'Indikasi pergeseran rata-rata kecil.', 7: 'Variasi terlalu kecil — cek stratifikasi atau batas kendali usang.', 8: 'Indikasi campuran populasi (mixture).' }[t]}` }));
-    if (vd.length) L.push({ c: 'warn', t: `Peta ${esc(res.dispName)} melanggar batas pada ${res.xLabel.toLowerCase()} ${vd.map(x => x.i).join(', ')}: variabilitas dalam subgrup tidak stabil, batas peta ${esc(res.mainName)} kurang dapat diandalkan.` });
+    L.push({ c: 'bad', title: 'Proses tidak terkendali', text: `${v.length} titik pada peta ${res.mainName}${vd.length ? ` dan ${vd.length} titik pada peta ${res.dispName}` : ''} menunjukkan penyebab khusus (special cause).` });
+    Object.keys(byTest).sort((a, b) => a - b).forEach(t => L.push({ c: 'warn', title: `Tes ${t} — ${TESTS[t]}`, where: list(byTest[t]), text: TEST_ACTION[t] }));
+    if (vd.length) L.push({ c: 'warn', title: `Peta ${res.dispName} di luar batas kendali`, where: list(vd.map(x => x.i)), text: `Variabilitas dalam subgrup tidak stabil, sehingga batas peta ${res.mainName} kurang dapat diandalkan.` });
   }
   if (res.cap) {
-    const cp = res.cap;
-    const k = isNum(cp.Cpk) ? cp.Cpk : NaN;
-    if (isNum(k)) L.push({ c: k >= 1.33 ? 'ok' : k >= 1 ? 'warn' : 'bad', t: `Kapabilitas: Cpk = <b>${fmtFix(k, 2)}</b> ${k >= 1.67 ? '(sangat baik, ≥ 1,67)' : k >= 1.33 ? '(capable, ≥ 1,33)' : k >= 1 ? '(marginal 1,00–1,33 — perlu perbaikan)' : '(TIDAK capable < 1,00 — produk di luar spesifikasi diperkirakan ' + fmt(cp.ppmW.tot, 0) + ' PPM)'}.${isNum(cp.Cp) && isNum(k) && cp.Cp - k > 0.25 ? ' Cp jauh di atas Cpk → proses tidak terpusat; geser rata-rata ke target.' : ''}` });
-    if (v.length) L.push({ c: 'warn', t: 'Catatan: indeks kapabilitas hanya bermakna bila proses stabil. Hilangkan penyebab khusus terlebih dahulu (ISO 22514-2).' });
-    if (res.ad && res.ad.p < 0.05) L.push({ c: 'warn', t: `Uji normalitas Anderson-Darling: p = ${fmtFix(res.ad.p, 3)} (< 0,05) → data tidak berdistribusi normal; Cp/Cpk berbasis normal bisa bias.` });
-    L.push({ c: 'info', t: `Rekomendasi toleransi minimum agar Cpk ≥ 1,33 (bila proses terpusat): ±${fmt(4 * res.sigmaWithin, 4)} ${esc(res.unit || '')} (= ±4σ dalam-subgrup).` });
+    const cp = res.cap, k = cp.Cpk, [vt, vc] = capVerdict(k);
+    if (isNum(k)) L.push({ c: vc, title: `Kapabilitas ${vt.toLowerCase()} (Cpk ${fmtFix(k, 2)})`, text: (k >= 1.33 ? 'Memenuhi target Cpk ≥ 1,33.' : `Di bawah target Cpk ≥ 1,33; ekspektasi di luar spesifikasi ±${fmt(cp.ppmW.tot, 0)} PPM.`) + (isNum(cp.Cp) && cp.Cp - k > 0.25 ? ' Cp jauh di atas Cpk: proses tidak terpusat, geser rata-rata ke target.' : '') });
+    if (v.length) L.push({ c: 'warn', title: 'Indeks kapabilitas belum sah', text: 'Indeks kapabilitas hanya bermakna bila proses stabil. Hilangkan penyebab khusus terlebih dahulu (ISO 22514-2).' });
+    if (res.ad && res.ad.p < 0.05) L.push({ c: 'warn', title: 'Data tidak berdistribusi normal', where: `Anderson-Darling p = ${fmtFix(res.ad.p, 3)}`, text: 'Cp/Cpk berbasis distribusi normal bisa bias. Pertimbangkan transformasi data atau metode non-normal.' });
+    L.push({ c: 'info', title: 'Toleransi minimum yang disarankan', where: `±${fmt(4 * res.sigmaWithin, 4)} ${res.unit || ''} (±4σ dalam-subgrup)`, text: 'Toleransi sebesar ini menghasilkan Cpk ≥ 1,33 bila proses terpusat pada target.' });
   }
   return L;
+}
+function statStrip(res) {
+  const v = violationList(res.main, res.labels).length + (res.disp ? violationList(res.disp, res.labels).length : 0);
+  const cells = [[ 'Stabilitas proses', v ? 'Tidak terkendali' : 'Terkendali', v ? 'bad' : 'ok', v ? `${v} titik gagal tes` : 'Semua titik dalam pola acak' ]];
+  if (res.cap) { const [vt, vc] = capVerdict(res.cap.Cpk); cells.push(['Kapabilitas (Cpk)', `${fmtFix(res.cap.Cpk, 2)} · ${vt}`, vc, `Ppk ${fmtFix(res.cap.Ppk, 2)} · target ≥ 1,33`]); }
+  if (res.ad) cells.push(['Normalitas (Anderson-Darling)', res.ad.p >= 0.05 ? 'Normal' : 'Tidak normal', res.ad.p >= 0.05 ? 'ok' : 'warn', `p = ${fmtFix(res.ad.p, 3)}`]);
+  if (res.kind === 'attribute') cells.push(['Rata-rata', fmt(res.main.center, 5), 'info', ['p', 'np'].includes(res.type) ? `${fmtFix(res.main.center * 100, 2)}% unit cacat` : 'cacat per unit']);
+  return `<div class="stat-strip">${cells.map(([k, val, c, sub]) => `<div><div class="k">${k}</div><div class="v"><i class="sev ${c}"></i>${esc(val)}</div><div class="s">${esc(sub)}</div></div>`).join('')}</div>`;
 }
 function drawSPCResult(res) {
   const out = $('#spcOut');
@@ -1778,7 +1848,7 @@ function drawSPCResult(res) {
   <div class="card"><h3>Ringkasan batas kendali</h3>
     <div class="grid ${res.disp ? 'g2' : 'g3'}" style="margin-top:10px">${summaryKPIs(res)}</div>
   </div>
-  <div class="card"><h3>Interpretasi</h3>${L.map(x => `<div class="alert ${x.c}">${x.t}</div>`).join('')}</div>
+  <div class="card"><div class="card-head"><h3>Interpretasi</h3><span class="muted" style="font-size:.75rem">ISO 7870-2 · ISO 22514-2</span></div>${statStrip(res)}${renderIssues(L, 'Temuan & tindakan yang disarankan')}</div>
   ${v.length || vd.length ? `<div class="card"><h3>Hasil tes untuk penyebab khusus</h3><div class="tw" style="margin-top:10px;max-height:320px;overflow:auto"><table class="t"><thead><tr><th>Peta</th><th class="num">${res.xLabel}</th><th>Label</th><th class="num">Nilai</th><th>Tes gagal</th></tr></thead><tbody>
     ${v.map(x => `<tr><td>${esc(res.mainName)}</td><td class="num">${x.i}</td><td>${esc(x.label)}</td><td class="num">${fmt(x.val)}</td><td>${x.tests.map(t => `<span class="badge b-bad" title="${esc(TESTS[t])}">Tes ${t}</span>`).join(' ')}</td></tr>`).join('')}
     ${vd.map(x => `<tr><td>${esc(res.dispName)}</td><td class="num">${x.i}</td><td>${esc(x.label)}</td><td class="num">${fmt(x.val)}</td><td>${x.tests.map(t => `<span class="badge b-bad">Tes ${t}</span>`).join(' ')}</td></tr>`).join('')}
@@ -1890,18 +1960,30 @@ function spcToCSV(res) {
    ===================================================================== */
 function viewLib(root) {
   const cats = [...new Set(Object.values(STD).map(s => s.cat))];
+  const open = new Set();
   root.innerHTML = `
-  <div class="page-head"><div><h2>Pustaka Standar</h2><p>Basis pengetahuan standar yang dipakai mesin rekomendasi SQMC. Tautan "Resmi" menuju katalog penerbit (pembelian/pratinjau). "Ringkasan PDF" adalah dokumen ringkas buatan SQMC — bukan salinan dokumen standar.</p></div></div>
-  <div class="alert warn"><b>Hak cipta:</b> dokumen ISO, SNI, ASME, ASTM, dan EN adalah karya berhak cipta yang dijual resmi oleh ISO/BSN/ASME/ASTM/CEN. Unduhan PDF penuh dari sumber tidak resmi berisiko pelanggaran hak cipta dan bisa berisi versi kedaluwarsa.</div>
-  <div class="card"><div class="row"><input type="text" class="grow" id="libQ" placeholder="Cari kode atau kata kunci (mis. PVC, ulir, sampling)"><select id="libCat" style="max-width:240px"><option value="">Semua kategori</option>${cats.map(c => opt(c, c, '')).join('')}</select><select id="libBody" style="max-width:140px"><option value="">Semua badan</option>${['ISO', 'SNI', 'ASME', 'ASTM', 'EN'].map(b => opt(b, b, '')).join('')}</select></div></div>
-  <div id="libList"></div>`;
+  <div class="page-head"><div><h2>Pustaka Standar</h2><p>Basis pengetahuan standar yang dipakai mesin rekomendasi SQMC. Buka baris untuk melihat ruang lingkup, tautan katalog resmi, dan ringkasan PDF.</p></div></div>
+  <div class="lib-toolbar">
+    <div class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><input type="text" id="libQ" placeholder="Cari kode, judul, atau kata kunci" aria-label="Cari standar"></div>
+    <select id="libCat" aria-label="Kategori"><option value="">Semua kategori</option>${cats.map(c => opt(c, c, '')).join('')}</select>
+    <select id="libBody" aria-label="Badan penerbit"><option value="">Semua penerbit</option>${['ISO', 'SNI', 'ASME', 'ASTM', 'EN'].map(b => opt(b, b, '')).join('')}</select>
+    <div class="count" id="libCount"></div>
+  </div>
+  <div class="tw lib-table"><table class="t"><thead><tr><th style="width:36px"></th><th>Kode</th><th>Judul</th><th class="hide-sm">Kategori</th><th class="hide-sm">Penerbit</th><th>Edisi</th></tr></thead><tbody id="libBodyRows"></tbody></table></div>
+  <p class="hint" style="margin-top:10px">Dokumen ISO, SNI, ASME, ASTM, dan EN berhak cipta dan dijual resmi oleh penerbitnya. Ringkasan PDF adalah dokumen buatan SQMC, bukan salinan standar. Edisi bertanda "—" belum diverifikasi; cek katalog resmi.</p>`;
+  const chev = '<svg class="chev" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3.3L10.7 8 6 12.7l-.7-.7L9.3 8 5.3 4z"/></svg>';
   const draw = () => {
-    const q = $('#libQ').value.toLowerCase(), cat = $('#libCat').value, body = $('#libBody').value;
-    const items = Object.entries(STD).filter(([k, s]) => (!cat || s.cat === cat) && (!body || s.body === body) && (!q || (s.code + ' ' + s.title + ' ' + s.scope + ' ' + s.use).toLowerCase().includes(q)));
-    $('#libList').innerHTML = items.length ? items.map(([k, s]) => `<details class="acc"><summary><span>${bodyBadge(s.body)} <b class="mono">${esc(stdCode(s))}</b> ${s.year ? `<span class="badge b-ok">diverifikasi</span>` : '<span class="badge b-gray">cek edisi</span>'} <span style="font-weight:500">— ${esc(s.title)}</span></span><span class="muted" style="font-weight:400;font-size:.78rem;white-space:nowrap">${esc(s.cat)}</span></summary>
-      <p><b>Ruang lingkup:</b> ${esc(s.scope)}</p><p><b>Dipakai di SQMC untuk:</b> ${esc(s.use)}</p>
-      <div class="row" style="margin:8px 0 12px"><a class="btn sm sec" href="${esc(s.url)}" target="_blank" rel="noopener">${ICON.ext} Halaman resmi</a><button class="btn sm acc" data-stdpdf="${k}">${ICON.dl} Ringkasan PDF</button></div></details>`).join('') : '<div class="empty">Tidak ada standar yang cocok.</div>';
-    $$('#libList [data-stdpdf]').forEach(b => b.onclick = () => pdfStd(b.dataset.stdpdf));
+    const q = $('#libQ').value.toLowerCase().trim(), cat = $('#libCat').value, body = $('#libBody').value;
+    const items = Object.entries(STD).filter(([k, s]) => (!cat || s.cat === cat) && (!body || s.body === body) && (!q || (s.code + ' ' + s.title + ' ' + s.scope + ' ' + s.use).toLowerCase().includes(q)))
+      .sort((a, b) => a[1].code.localeCompare(b[1].code, 'en', { numeric: true }));
+    $('#libCount').textContent = `${items.length} dari ${Object.keys(STD).length} standar`;
+    $('#libBodyRows').innerHTML = items.length ? items.map(([k, s]) => `
+      <tr class="lr ${open.has(k) ? 'open' : ''}" data-k="${k}" tabindex="0" aria-expanded="${open.has(k)}"><td>${chev}</td><td class="mono" style="white-space:nowrap;font-weight:600">${esc(s.code)}</td><td>${esc(s.title)}</td><td class="hide-sm" style="white-space:nowrap;color:var(--g-70)">${esc(s.cat)}</td><td class="hide-sm"><span class="org">${s.body}</span></td><td class="ed">${s.year ? s.year : '—'}</td></tr>
+      ${open.has(k) ? `<tr class="ld"><td colspan="6"><dl class="dl-grid"><dt>Ruang lingkup</dt><dd>${esc(s.scope)}</dd><dt>Dipakai di SQMC</dt><dd>${esc(s.use)}</dd><dt>Edisi</dt><dd>${s.year ? `${s.year} — diverifikasi SQMC (Nov 2026)` : 'Belum diverifikasi — cek edisi terbaru di katalog resmi'}</dd></dl>
+        <div class="row" style="margin-top:12px"><a class="btn sm sec" href="${esc(s.url)}" target="_blank" rel="noopener">${ICON.ext} Katalog resmi</a><button class="btn sm ghost" data-stdpdf="${k}">${ICON.dl} Ringkasan PDF</button></div></td></tr>` : ''}`).join('')
+      : `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--g-60)">Tidak ada standar yang cocok dengan filter.</td></tr>`;
+    $$('#libBodyRows tr.lr').forEach(tr => { const t = () => { const k = tr.dataset.k; open.has(k) ? open.delete(k) : open.add(k); draw(); }; tr.onclick = t; tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t(); } }; });
+    $$('#libBodyRows [data-stdpdf]').forEach(b => b.onclick = (e) => { e.stopPropagation(); pdfStd(b.dataset.stdpdf); });
   };
   $('#libQ').oninput = draw; $('#libCat').onchange = draw; $('#libBody').onchange = draw; draw();
 }
@@ -2002,7 +2084,7 @@ function pdfSpec(r) {
     ['Lingkungan pemakaian', (inp.envs || []).map(k => ENVS[k]).concat(inp.envOther ? [inp.envOther] : []).join(', ') || '-'],
     ['Fluida', (inp.fluids || []).map(k => FLUIDS[k]).concat(inp.fluidOther ? [inp.fluidOther] : []).join(', ') || '-']
   ], { columnStyles: { 0: { cellWidth: 48, fontStyle: 'bold' } } });
-  if (r.warnings.length) { y = secTitle(doc, y, 'Peringatan kecocokan'); y = AT(doc, y, ['Level', 'Keterangan'], r.warnings.map(w => [{ bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[w.lvl], w.text]), { columnStyles: { 0: { cellWidth: 24, fontStyle: 'bold' } } }); }
+  if (r.warnings.length) { y = secTitle(doc, y, 'Peringatan kecocokan'); y = AT(doc, y, ['Level', 'Temuan', 'Keterangan'], r.warnings.map(w => [{ bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[w.lvl], w.title || '', w.text]), { columnStyles: { 0: { cellWidth: 22, fontStyle: 'bold' }, 1: { cellWidth: 48, fontStyle: 'bold' } } }); }
   y = secTitle(doc, y, 'A. Standar mutu yang harus dipenuhi');
   y = AT(doc, y, ['Kode', 'Judul', 'Kategori', 'Alasan', 'Tautan resmi'], r.standards.map(s => [stdCode(s) + (s.year ? '' : ' (cek edisi)'), s.title, s.cat, s.reason, s.url]), { columnStyles: { 0: { cellWidth: 28, fontStyle: 'bold' }, 4: { cellWidth: 36, fontSize: 6.5, textColor: [29, 92, 153] } } });
   y = secTitle(doc, y, 'B. Nilai toleransi produk');
@@ -2051,7 +2133,7 @@ async function pdfSPC(res) {
   y = AT(doc, y, ['Peta', 'UCL', 'CL', 'LCL', 'Titik gagal tes'], rows);
   if (res.kind === 'variable') y = AT(doc, y, ['Rata-rata proses', 'sigma within', 'Metode sigma', 'Observasi'], [[fmt(res.mean, 5), fmt(res.sigmaWithin, 5), { imr: 'MR-bar/1,128', xbarr: 'R-bar/d2', xbars: 'S-bar/c4' }[res.type], res.values.length]]);
   y = secTitle(doc, y, 'Interpretasi');
-  y = AT(doc, y, ['Status', 'Keterangan'], interpret(res).map(x => [{ ok: 'OK', bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[x.c], x.t.replace(/<[^>]+>/g, '')]), { columnStyles: { 0: { cellWidth: 24, fontStyle: 'bold' } } });
+  y = AT(doc, y, ['Status', 'Temuan', 'Lokasi', 'Keterangan / tindakan'], interpret(res).map(x => [{ ok: 'SESUAI', bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[x.c], x.title, x.where || '-', x.text || '']), { columnStyles: { 0: { cellWidth: 22, fontStyle: 'bold' }, 1: { cellWidth: 62 }, 2: { cellWidth: 55 } } });
   const v = violationList(res.main, res.labels).map(x => [res.mainName, x.i, x.label, fmt(x.val, 5), x.tests.map(t => 'Tes ' + t + ': ' + TESTS[t]).join('; ')]);
   if (res.disp) violationList(res.disp, res.labels).forEach(x => v.push([res.dispName, x.i, x.label, fmt(x.val, 5), x.tests.map(t => 'Tes ' + t).join('; ')]));
   if (v.length) { y = secTitle(doc, y, 'Hasil tes penyebab khusus'); y = AT(doc, y, ['Peta', res.xLabel, 'Label', 'Nilai', 'Tes gagal'], v); }
