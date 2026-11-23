@@ -1,9 +1,16 @@
-# SQMC — Standart Quality Mutu Controller
+# SQMC — Standard Quality Mutu Controller
 
 Web app pengendali mutu untuk industri manufaktur (contoh awal: **sambungan pipa / fitting**).
 Satu file `index.html`, tanpa build step, siap di-deploy ke Vercel / GitHub Pages / hosting statis apa pun.
 
-## Fitur v1.0
+## Antarmuka (v1.1)
+
+- **Logo & identitas** sesuai brand SQMC (simbol vektor SVG + wordmark), favicon, dan header PDF berlogo.
+- **UI shell ala IBM Carbon:** header putih 56 px, panel navigasi kiri dikelompokkan per tahap PDCA (Plan / Do / Check & Act / Referensi), dan menu hamburger di layar < 1056 px.
+- **Pola SAP Fiori:** *dynamic page header* dengan breadcrumb, *launchpad tiles* di Beranda, *object page anchor bar* pada hasil spesifikasi, dan *analytical list page* (panel konfigurasi sticky + konten analisis) pada Peta Kendali.
+- **Komponen gaya Carbon:** field input, data table, inline notification, tag, dan progress indicator. Palet warna diambil dari logo (navy `#0A1F44`, biru `#1E7AE5`, abu `#DFE3E7`).
+
+## Fitur
 
 | Menu | Fungsi |
 |---|---|
