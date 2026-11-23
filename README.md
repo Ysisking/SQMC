@@ -23,7 +23,7 @@ Satu file `index.html`, tanpa build step, siap di-deploy ke Vercel / GitHub Page
 ## Catatan penting
 
 - **Dokumen standar resmi tidak disertakan.** ISO/SNI/ASME/ASTM/EN berhak cipta dan dijual oleh penerbitnya. SQMC menautkan ke halaman resmi dan membuat *ringkasan* PDF sendiri.
-- Standar berlabel **"cek edisi"** belum diverifikasi tahun edisinya. Yang sudah diverifikasi (Nov 2026): ISO 9001:2026, ISO 2859-1:2026, ISO 7870-2:2023, ISO 1452-3:2009, ISO 4427-3:2019, ISO 15874-3:2013, ISO 49:1994, ISO 12944-2:2017, SNI 06-0135-1987, SNI 06-0178-1987, SNI 4829-3:2015.
+- **Status edisi (dicek ke katalog resmi, Nov 2026):** 46 berlaku, 7 berlaku tetapi sedang direvisi (ISO 1452-3, ISO 4427-3, ISO 15874-3, ISO 2531, ISO 4892-2, ISO 6506-1, ISO 21809-1), 1 rancangan (RSNI3 139-2024), 5 edisi belum dapat dipastikan (ASME B1.20.1, ISO 7005-1, ISO/TR 10358, EN 10204, SNI ISO 15874-3). Edisi baru 2025–2026 yang sudah diterapkan: ISO 9001:2026, ISO 2859-1:2026, ISO 22514-2:2026, ISO 10012:2026, ISO 4437-3:2026, ISO 15589-1:2026, ISO 15875-3:2025, ISO 1183-1:2025.
 - Toleransi berat default per proses (±1–5%) adalah **rekomendasi internal**, bukan kutipan ISO. Validasi dengan Cpk ≥ 1,33.
 - Konstanta d₂/d₃ dihitung numerik (6 desimal); c₄ dihitung eksak via fungsi gamma. Hasil X̄-R, I-MR, P, Cp/Cpk/Ppk, dan AD telah dicocokkan dengan numpy/scipy.
 
