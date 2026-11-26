@@ -10,6 +10,13 @@ Satu file `index.html`, tanpa build step, siap di-deploy ke Cloudflare Pages / G
 - **Pola SAP Fiori:** *dynamic page header* dengan breadcrumb, *launchpad tiles* di Beranda, *object page anchor bar* pada hasil spesifikasi, dan *analytical list page* (panel konfigurasi sticky + konten analisis) pada Peta Kendali.
 - **Komponen gaya Carbon:** field input, data table, inline notification, tag, dan progress indicator. Palet warna diambil dari logo (navy `#0A1F44`, biru `#1E7AE5`, abu `#DFE3E7`).
 
+## Baru di v1.4
+
+- **Data contoh di setiap modul**: tombol *Muat data contoh* di kepala halaman Spesifikasi, PFMEA, Control Plan, Input Data, Peta Kendali, MSA & Kalibrasi, Pareto, dan NCR & 8D. Beranda menyediakan *Muat semua data contoh* dan *Hapus data contoh* (hanya item bertanda contoh yang dihapus).
+- **Panduan per modul**: dibaca langsung di web (hanya-baca, alamat `#panduan-<modul>`, mis. `#panduan-msa`) atau diunduh sebagai PDF per modul / semua modul sekaligus. Isi: tujuan, standar acuan, langkah kerja, cara membaca hasil, kesalahan umum, dan data contoh.
+- **Animasi logo pembuka**: simbol SQMC tersusun bertahap (bidang, segitiga, pita biru, garis ukur, wordmark) saat tautan pertama kali dibuka; tampil sekali per sesi tab, bisa dilewati dengan klik, dan dipersingkat bila perangkat meminta *reduced motion*.
+- **Mode gelap & terang**: tombol tampilan di header (Terang / Gelap / Ikuti sistem), tersimpan di browser, mengikuti tema penampil claude.ai saat mode sistem. Grafik ikut tema; ekspor PNG/PDF tetap versi terang agar siap cetak.
+
 ## Fitur
 
 | Menu | Fungsi |
