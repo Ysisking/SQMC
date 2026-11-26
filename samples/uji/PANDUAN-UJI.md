@@ -44,3 +44,21 @@ Pemisah desimal di layar SQMC memakai koma (format Indonesia). Tes pola default 
 | S5 | Elbow · **SS 304** · butt-weld · forming · 520 g · toleransi kustom **±10 g** · air laut + udara terbuka · dimensi OD 60,3 ISO 2768-1 kelas **m** · lot 150, AQL 0,65 / 2,5 | **ASME B16.9**, **ASTM A403**, ASTM A967, ISO 12944-2, ISO 9223. ⚠ SS304 rentan pitting di air laut → sarankan 316/316L. Berat 510 – 530 g. OD 60,0 – 60,6 mm (±0,3). Kritis 100% (n ≥ lot) · Mayor **F** n=20 Ac0/Re1 · Minor **F** n=20 Ac1/Re2. |
 
 **Cek tambahan:** **Simpan** → muncul di daftar · **Unduh PDF** (5 bagian + kolom pengesahan) · **Kalkulator disposisi** (pilih "Flash / sirip", centang semua syarat → *REWORK / FINISHING DIIZINKAN*; hilangkan satu centang → *TOLAK*) · **Buat dataset SPC** → LSL/USL berat otomatis terisi.
+
+---
+
+## D. Modul v1.3 — MSA, EWMA/CUSUM, Pareto, PFMEA, Control Plan, NCR
+
+| # | File / langkah | Pengaturan | Hasil yang seharusnya muncul |
+|---|---|---|---|
+| 11 | **MSA & Kalibrasi → Gage R&R** → unggah `11_msa_gage-rr_10part-3op-3ulangan.csv` | Kolom terdeteksi otomatis (part, operator, ulangan_1–3) · LSL 9,5 · USL 10,5 | 10 part × 3 operator × 3 ulangan = 90. Interaksi P×O **p = 0,875 → digabung**. GRR: %Kontribusi 1,57 · **%Study Var 12,53** · **%Toleransi 19,61** → *diterima bersyarat*. Repeatability %SV 10,93 · Reproducibility %SV 6,12 (operator p = 0,0001). Part-to-part %SV 99,21. **ndc = 11**. Interpretasi: repeatability dominan. |
+| 12 | **MSA → Type-1** → unggah `12_msa_type1_50-ukur_ref-25.csv` | Referensi 25,000 · LSL 24,95 · USL 25,05 · resolusi 0,001 · K 20% | n = 50 · rata-rata 25,00068 · s 0,00177 · **Cg 1,88 · Cgk 1,75 → layak**. Bias 0,00068, t = 2,726, **p = 0,009 → bias signifikan** (kecil, tetapi nyata). Resolusi 1,0% toleransi ✓. |
+| 13 | **Analisis Pareto → Tempel / unggah** → `13_pareto_jenis-cacat_dan-biaya.csv` | Urut **jumlah** | 8 kategori, total 114. Vital few = Flash (40,4%), Short shot (58,8%), Sink mark (73,7%), Dimensi socket (84,2% kumulatif). |
+| 13b | file yang sama | Urut **biaya (COPQ)** | Sink mark & belang warna (biaya 0) keluar dari diagram. Vital few = **Short shot** Rp 178.500 (46,8%), **Dimensi socket** Rp 102.000 (73,5%), **Flash** Rp 55.200 (87,9%) — urutan berbeda dari Pareto frekuensi. |
+| 14a | **Peta Kendali** → `14_ewma-cusum_diameter_PERGESERAN-KECIL.csv` | Ukuran subgrup **1** · *Opsi estimasi*: μ historis **20,2**, σ historis **0,02** · jenis peta **I-MR**, tes pola **hanya tes 1** | Tidak ada titik di luar batas I (UCL 20,26 · LCL 20,14) — peta Shewhart **tidak menangkap** pergeseran +0,75σ yang dimulai di observasi 21. (Bila 8 tes aktif, hanya obs. 27 tertangkap Tes 6.) |
+| 14b | file & opsi sama | Jenis peta **EWMA** (λ 0,2 · L 3) | Sinyal EWMA di observasi **27** dan **38**. UCL akhir 20,22. |
+| 14c | file & opsi sama | Jenis peta **CUSUM** (k 0,5 · h 4) | h·σ = 0,08. C⁺ melewati batas di observasi **27** lalu terus-menerus **33–40** → pergeseran naik yang persisten. C⁻ tidak ada sinyal. |
+| 15 | **Spesifikasi** (skenario S1) → simpan → **PFMEA → Dari spesifikasi** | Baris 1 (Retak, S = 8): isi O = 6, D = 6. Baris 2 (Short shot, S = 8): O = 3, D = 7 | 14 mode kegagalan terisi dari katalog cacat plastik. AP baris 1 = **H**, baris 2 = **M**. Strip ringkasan: 1 High, 1 Medium, 1 "H tanpa tindakan". Uji AP lain: (9,2,5) = M · (7,4,7) = H · (5,4,5) = L · (3,9,9) = M. |
+| 16 | PFMEA → **Buat Control Plan** | — | Pindah ke Control Plan berisi ±10 karakteristik: bahan baku (10), parameter proses, berat bersih & dimensi dengan X̄-R (20), uji tekanan/oven/visual dengan sampling AQL (30), uji tipe (40), plus baris PFMEA ber-AP H. Pilih fase **Safe Launch** → muncul pemberitahuan kendali tambahan. |
+| 17 | **NCR & 8D → NCR baru** | Pilih spesifikasi S1 → jenis cacat "Bocor…" · qty NC 37 · scrap 30 + rework 7 | Kelas otomatis **Kritis**, produk terisi, petunjuk "Total terdisposisi 37 dari 37 ✓". Laporan 8D PDF hanya memuat butir yang diisi. NCR ini lalu muncul di **Pareto → Register NCR**. |
+| 18 | **MSA → Register alat ukur** | Tambah JS-01 (kalibrasi 15-10-2025, 12 bln), TB-02 (01-06-2026, 6 bln), MK-03 (20-09-2026, 12 bln) | Per 26-11-2026: JS-01 **Terlambat** (jatuh tempo 15-10-2026), TB-02 **≤ 30 hari** (01-12-2026), MK-03 **Valid**. Beranda → Status mutu menampilkan "1 terlambat". |

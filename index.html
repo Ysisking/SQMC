@@ -316,6 +316,22 @@ details.acc[open] summary{border-bottom:1px solid var(--g-20);margin-bottom:10px
 
 .hidden{display:none!important}
 .capgrid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+
+/* ===== v1.3 modul mutu ===== */
+.apb{min-width:24px;justify-content:center;font-weight:700;font-family:var(--mono)}
+.apm td,.apm th{padding:5px 8px!important;height:auto}
+.fm-wrap{max-height:72vh;overflow:auto;border:1px solid var(--g-20);border-radius:var(--radius-s)}
+.fm thead th{position:sticky;top:0;z-index:2}
+.grid-edit textarea{min-height:52px;height:52px;font-family:inherit;font-size:.8rem;line-height:1.35;padding:6px 8px;min-width:130px;resize:vertical}
+.grid-edit select{height:34px;font-size:.8rem;min-width:84px;padding:0 6px}
+.grid-edit input.sod{min-width:44px;width:48px;text-align:center;font-family:var(--mono)}
+.grid-edit input[type=date]{min-width:136px;height:34px;font-size:.8rem;padding:0 6px}
+textarea.txt{font-family:inherit;font-size:.86rem;min-height:72px}
+.why{display:flex;align-items:center;gap:8px;margin-bottom:6px}.why span{flex:0 0 54px;font-size:.75rem;font-weight:600;color:var(--g-70)}
+.sod ul{margin:6px 0 0 16px;font-size:.82rem;line-height:1.65;color:var(--g-90)}
+tr.vital td{background:var(--brand-50)}
+.status-row{margin-bottom:18px}
+.grid>*{min-width:0}
 </style>
 </head>
 <body>
@@ -329,7 +345,7 @@ details.acc[open] summary{border-bottom:1px solid var(--g-20);margin-bottom:10px
   </div>
 </header>
 <aside class="sidenav" id="sidenav" aria-label="Navigasi utama"><nav id="nav"></nav>
-  <div class="sidenav-foot">SQMC v1.1<br>Metode: ISO 7870-2 · ISO 22514-2 · ISO 2859-1</div>
+  <div class="sidenav-foot">SQMC v1.3<br>ISO 7870 · ISO 22514 · ISO 2859-1 · AIAG &amp; VDA core tools</div>
 </aside>
 <div class="scrim" id="scrim"></div>
 <div class="content">
@@ -459,6 +475,17 @@ const STD = {
   iso2859: { code: 'ISO 2859-1', year: 2026, status: 'berlaku', note: 'Edisi ke-3 (Jan 2026) menggantikan 1999 + Amd 1:2011; menambah prosedur skip-lot.', body: 'ISO', cat: 'Statistik & Sampling', title: 'Prosedur sampling untuk inspeksi atribut — Bagian 1: Skema sampling berbasis AQL untuk inspeksi lot-demi-lot', scope: 'Menetapkan ukuran sampel dan angka terima/tolak (Ac/Re) berdasarkan ukuran lot, level inspeksi, dan AQL, termasuk aturan perpindahan normal–ketat–longgar. Edisi ke-3 (2026) menambahkan prosedur skip-lot.', use: 'Dasar rencana sampling inspeksi akhir & penerimaan bahan baku di SQMC.', url: 'https://www.iso.org/standard/85464.html' },
   iso7870: { code: 'ISO 7870-2', year: 2023, status: 'berlaku', note: '', body: 'ISO', cat: 'Statistik & Sampling', title: 'Peta kendali — Bagian 2: Peta kendali Shewhart', scope: 'Panduan penggunaan peta kendali Shewhart untuk data variabel (X̄-R, X̄-s, I-MR) dan atribut (p, np, c, u), termasuk batas kendali, pola tidak acak, dan pengantar kapabilitas proses.', use: 'Dasar menu Peta Kendali SQMC.', url: 'https://www.iso.org/standard/78859.html' },
   iso22514: { code: 'ISO 22514-2', year: 2026, status: 'berlaku', note: 'Edisi ke-3 (Feb 2026) menggantikan 2017.', body: 'ISO', cat: 'Statistik & Sampling', title: 'Metode statistik dalam manajemen proses — Kapabilitas dan kinerja — Bagian 2', scope: 'Prosedur menghitung indeks kapabilitas & kinerja proses untuk model proses yang bergantung waktu, termasuk saat proses tidak tetap terkendali; hasil proses dikategorikan dalam 8 tipe distribusi.', use: 'Dasar analisis kapabilitas pada menu Peta Kendali.', url: ISO_SEARCH('ISO 22514-2') },
+  iso7870_4: { code: 'ISO 7870-4', year: 2021, status: 'berlaku', note: 'Edisi ke-2 (Sep 2021).', body: 'ISO', cat: 'Statistik & Sampling', title: 'Peta kendali — Bagian 4: Peta jumlah kumulatif (CUSUM)', scope: 'Prosedur merancang dan memakai skema CUSUM untuk data variabel dan atribut (bentuk tabular dan V-mask) untuk mendeteksi pergeseran kecil lebih cepat daripada peta Shewhart.', use: 'Dasar peta CUSUM tabular di menu Peta Kendali.', url: 'https://www.iso.org/standard/74101.html' },
+  iso7870_6: { code: 'ISO 7870-6', year: 2024, status: 'berlaku', note: 'Edisi ke-2 (Jul 2024).', body: 'ISO', cat: 'Statistik & Sampling', title: 'Peta kendali — Bagian 6: Peta EWMA untuk rata-rata proses', scope: 'Peta rata-rata bergerak berbobot eksponensial (EWMA) untuk mendeteksi pergeseran kecil–sedang rata-rata proses; cocok untuk laju produksi lambat atau pengujian mahal.', use: 'Dasar peta EWMA di menu Peta Kendali.', url: 'https://www.iso.org/standard/83852.html' },
+  iso22514_7: { code: 'ISO 22514-7', year: 2026, status: 'berlaku', note: 'Edisi ke-3 (Sep 2026) menggantikan 2021 + Amd 1:2024.', body: 'ISO', cat: 'Metrologi & MSA', title: 'Metode statistik dalam manajemen proses — Kapabilitas & kinerja — Bagian 7: Kapabilitas proses pengukuran', scope: 'Prosedur validasi sistem dan proses pengukuran berbasis ketidakpastian (pendekatan GUM) dengan kriteria penerimaan berupa rasio kapabilitas.', use: 'Rujukan kriteria resolusi dan kelayakan alat ukur di menu MSA.', url: ISO_SEARCH('ISO 22514-7') },
+  iso17025: { code: 'ISO/IEC 17025', year: 2017, status: 'berlaku', note: 'Dikonfirmasi ulang 2023.', body: 'ISO', cat: 'Metrologi & MSA', title: 'Persyaratan umum kompetensi laboratorium pengujian dan kalibrasi', scope: 'Persyaratan kompetensi, imparsialitas, dan operasi konsisten laboratorium; dasar akreditasi laboratorium uji dan kalibrasi.', use: 'Kriteria memilih laboratorium kalibrasi/uji (register alat ukur & uji tipe).', url: 'https://www.iso.org/standard/66912.html' },
+  iatf16949: { code: 'IATF 16949', year: 2016, status: 'revisi', note: 'Masih berlaku; Revisi 2 (edisi ke-2) sedang disusun IATF (komunike SC-2026-005, Jul 2026).', body: 'IATF', cat: 'Sistem Manajemen Mutu', title: 'Persyaratan sistem manajemen mutu untuk produksi otomotif dan suku cadang terkait', scope: 'Persyaratan tambahan di atas ISO 9001 untuk rantai pasok otomotif, termasuk penerapan core tools (APQP, FMEA, MSA, SPC, PPAP, Control Plan).', use: 'Rujukan bila produk dipasok ke industri otomotif; mendasari modul PFMEA, Control Plan, dan MSA.', url: 'https://www.iatfglobaloversight.org/' },
+  aiagMSA: { code: 'AIAG MSA edisi 4', year: 2010, status: 'berlaku', note: 'Edisi terbaru yang dapat dikonfirmasi (Jun 2010).', body: 'AIAG', cat: 'Core Tools Mutu', title: 'Measurement Systems Analysis — Reference Manual', scope: 'Metode evaluasi sistem pengukuran: bias, linearitas, stabilitas, Gage R&R (rentang, rata-rata & rentang, ANOVA), dan studi atribut, beserta kriteria penerimaan.', use: 'Dasar Gage R&R ANOVA, ndc, dan kriteria 10%/30% di menu MSA.', url: WEB_SEARCH('AIAG MSA 4th edition reference manual') },
+  vda5: { code: 'VDA 5 edisi 3', year: 2021, status: 'berlaku', note: 'Edisi ke-3 (Jul 2021); dilengkapi VDA 5.1 edisi 2 (Agu 2023) untuk metrologi inline.', body: 'VDA', cat: 'Core Tools Mutu', title: 'Mess- und Prüfprozesse — Eignung, Planung und Management (kelayakan proses ukur & uji)', scope: 'Manajemen proses ukur dan uji: perencanaan, pengelolaan alat ukur, pembuktian kelayakan berbasis ketidakpastian, dan kelayakan berkelanjutan.', use: 'Rujukan kriteria resolusi ≤ 5% toleransi dan studi Type-1 (Cg/Cgk).', url: WEB_SEARCH('VDA Band 5 Mess- und Prüfprozesse') },
+  aiagFMEA: { code: 'AIAG & VDA FMEA Handbook', year: 2019, status: 'berlaku', note: 'Edisi 1 (Jun 2019) + errata versi 2 (Jun 2020).', body: 'AIAG', cat: 'Core Tools Mutu', title: 'Failure Mode and Effects Analysis — Design FMEA, Process FMEA, FMEA-MSR', scope: 'Pendekatan 7 langkah FMEA dengan tabel rating S/O/D dan Action Priority (AP) High/Medium/Low menggantikan RPN.', use: 'Dasar modul PFMEA dan perhitungan Action Priority.', url: 'https://aiag.org/FMEA' },
+  aiagCP: { code: 'AIAG Control Plan edisi 1', year: 2024, status: 'berlaku', note: 'Terbit Mar 2024: Control Plan dipisah dari manual APQP dan ditambah persyaratan Safe Launch.', body: 'AIAG', cat: 'Core Tools Mutu', title: 'Control Plan — Reference Manual', scope: 'Persyaratan dan panduan menyusun rencana kendali per fase (prototipe, pra-peluncuran, safe launch, produksi) beserta tautannya ke APQP dan FMEA.', use: 'Struktur kolom dan fase modul Control Plan.', url: 'https://www.aiag.org/training-and-resources/manuals/details/CP-1' },
+  aiagAPQP: { code: 'AIAG APQP edisi 3', year: 2024, status: 'berlaku', note: 'Terbit Mar 2024 menggantikan APQP & Control Plan edisi 2.', body: 'AIAG', cat: 'Core Tools Mutu', title: 'Advanced Product Quality Planning — Reference Manual', scope: 'Kerangka perencanaan mutu produk baru: sourcing, manajemen perubahan, metrik program, manajemen risiko, dan gate review.', use: 'Konteks alur Plan (spesifikasi → PFMEA → Control Plan) di SQMC.', url: 'https://aiag.org/apqp-advanced-product-quality-planning-2023' },
+  cqi20: { code: 'AIAG CQI-20 edisi 2', year: 2018, status: 'berlaku', note: 'Edisi ke-2 (Sep 2018), menggabungkan CQI-20 & CQI-21.', body: 'AIAG', cat: 'Core Tools Mutu', title: 'Effective Problem Solving Guide', scope: 'Langkah pemecahan masalah terstruktur: deskripsi masalah, containment, akar masalah, tindakan korektif, verifikasi, dan pencegahan, termasuk peran pimpinan.', use: 'Rujukan alur 8D di modul NCR & 8D.', url: 'https://aiag.org/quality/shop-floor-quality/problem-solving' },
   iso2768: { code: 'ISO 2768-1', year: 1989, status: 'berlaku', note: 'Dikonfirmasi ulang 2022. Bagian 2 (geometri) sudah ditarik & diganti ISO 22081:2021.', body: 'ISO', cat: 'Dimensi & Toleransi', title: 'Toleransi umum — Bagian 1: Toleransi dimensi linier & sudut tanpa indikasi toleransi individual', scope: 'Kelas toleransi umum f (halus), m (sedang), c (kasar), v (sangat kasar) untuk dimensi hasil permesinan/pemotongan logam.', use: 'Toleransi default dimensi permesinan bila gambar teknik tidak mencantumkan toleransi individual.', url: ISO_SEARCH('ISO 2768-1') },
   iso8062: { code: 'ISO 8062-3', year: 2023, status: 'berlaku', note: 'Edisi 2023 menggantikan 2007.', body: 'ISO', cat: 'Dimensi & Toleransi', title: 'Spesifikasi geometris produk — Toleransi dimensi & geometri serta allowance permesinan untuk produk cor', scope: 'Grade toleransi dimensi coran (DCTG) dan allowance permesinan (RMAG) untuk benda cor.', use: 'Acuan toleransi dimensi benda cor (fitting besi cor). Nilai DCTG dipilih dari tabel resmi standar.', url: ISO_SEARCH('ISO 8062-3') },
   iso10012: { code: 'ISO 10012', year: 2026, status: 'berlaku', note: 'Edisi ke-2 (Feb 2026) menggantikan 2003; kini standar persyaratan yang dapat diaudit.', body: 'ISO', cat: 'Sistem Manajemen Mutu', title: 'Manajemen mutu — Persyaratan sistem manajemen pengukuran', scope: 'Persyaratan sistem manajemen pengukuran yang dapat diaudit: pengendalian proses ukur, konfirmasi metrologis & ketertelusuran alat ukur.', use: 'Memastikan data pengukuran yang masuk ke peta kendali valid (alat ukur terkalibrasi).', url: ISO_SEARCH('ISO 10012') },
@@ -834,14 +861,15 @@ function buildSpec(inp) {
    STORAGE (claude db → localStorage → memori)
    ===================================================================== */
 const LS_KEY = 'sqmc.v1';
+const STORE_KINDS = ['spec', 'dataset', 'ncr', 'fmea', 'cplan', 'msa', 'gage'];
 function lsGet() { try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
 function lsSet(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); return true; } catch (e) { return false; } }
 const Store = {
   mode: 'memory', db: null, uid: null,
-  data: { spec: [], dataset: [], draft: null },
+  data: { spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], draft: null },
   async init() {
     const l = lsGet();
-    if (l) { this.data = Object.assign({ spec: [], dataset: [], draft: null }, l); this.mode = 'local'; }
+    if (l) { this.data = Object.assign({ spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], draft: null }, l); this.mode = 'local'; }
     else if (lsSet(this.data)) this.mode = 'local';
     this.badge();
     if (!(window.claude && typeof window.claude.use === 'function')) return;
@@ -850,10 +878,10 @@ const Store = {
       const id = user ? await user.id().catch(() => null) : null;
       if (!db || !id) return;
       const snap = await withTimeout(db.collection('data/users/' + id).get(), 10000);
-      const remote = { spec: [], dataset: [] };
+      const remote = Object.fromEntries(STORE_KINDS.map(k => [k, []]));
       snap.docs.forEach(d => { const v = d.data(); if (v && remote[v.kind] && v.payload) remote[v.kind].push(v.payload); });
       this.db = db; this.uid = id; this.mode = 'cloud';
-      for (const kind of ['spec', 'dataset']) {
+      for (const kind of STORE_KINDS) {
         const map = new Map(remote[kind].map(o => [o.id, o]));
         for (const o of this.data[kind]) { const r = map.get(o.id); if (!r || (o.updatedAt || 0) > (r.updatedAt || 0)) { map.set(o.id, o); await this._remote(kind, o).catch(() => { }); } }
         this.data[kind] = Array.from(map.values());
@@ -1135,15 +1163,26 @@ const ICON = {
   guide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>',
   dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v3h16v-3"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17V5m0 0l-4 4m4-4l4 4"/><path d="M4 17v3h16v-3"/></svg>',
+  risk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".7" fill="currentColor"/></svg>',
+  plan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="17" rx="1.5"/><path d="M9 4V2.8h6V4"/><path d="M8.5 10h7M8.5 14h7M8.5 18h4"/></svg>',
+  gauge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h4v16H4z"/><path d="M8 7h12M8 11h8M8 15h5"/></svg>',
+  bars: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V8h3v12M10 20v-8h3v8M16 20v-4h3v4"/><path d="M4 5c5 0 10 2 15 9" stroke-dasharray="2 2"/></svg>',
+  flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
   ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>'
 };
 const ROUTES = [
   ['beranda', 'Beranda', 'home', '', ''],
   ['spesifikasi', 'Spesifikasi Standar', 'spec', 'Plan', 'P'],
+  ['fmea', 'PFMEA', 'risk', '', 'P', 'Plan'],
+  ['control-plan', 'Control Plan', 'plan', '', 'P', 'Plan'],
   ['input-data', 'Input Data', 'data', 'Do', 'D'],
-  ['peta-kendali', 'Peta Kendali', 'chart', 'Check & Act', 'C'],
+  ['peta-kendali', 'Peta Kendali', 'chart', 'Check', 'C'],
+  ['msa', 'MSA & Kalibrasi', 'gauge', '', 'C', 'Check'],
+  ['pareto', 'Analisis Pareto', 'bars', '', 'C', 'Check'],
+  ['ncr', 'NCR & 8D', 'flag', 'Act', 'A'],
   ['pustaka', 'Pustaka Standar', 'lib', 'Referensi', ''],
-  ['panduan', 'Panduan', 'guide', '', '']
+  ['panduan', 'Panduan', 'guide', '', '', 'Referensi']
 ];
 function setNav(open) {
   document.body.classList.toggle('nav-open', open);
@@ -1152,22 +1191,22 @@ function setNav(open) {
 const App = {
   route: 'beranda',
   state: { specResult: null, spc: { source: null, table: null, ds: null, result: null, cfg: {} }, dsEdit: null },
-  go(r) { if (location.hash !== '#' + r) location.hash = r; else this.render(); },
+  go(r) { if (location.hash !== '#' + r) { this._keepEdit = true; location.hash = r; } else this.render(); },
   refresh() { this.render(true); },
   render(soft) {
     const h = (location.hash || '').replace('#', '');
     this.route = ROUTES.some(r => r[0] === h) ? h : 'beranda';
     $('#nav').innerHTML = ROUTES.map(([k, l, ic, grp, step]) => `${grp ? `<div class="nav-group">${grp}</div>` : ''}<a href="#${k}" class="nav-link ${k === this.route ? 'active' : ''}" ${k === this.route ? 'aria-current="page"' : ''}>${ICON[ic]}<span>${l}</span>${step ? `<span class="pdca">${step}</span>` : ''}</a>`).join('');
     setNav(false);
-    const v = { 'beranda': viewHome, 'spesifikasi': viewSpec, 'peta-kendali': viewSPC, 'input-data': viewData, 'pustaka': viewLib, 'panduan': viewGuide }[this.route];
+    const v = { 'beranda': viewHome, 'spesifikasi': viewSpec, 'fmea': viewFMEA, 'control-plan': viewCP, 'peta-kendali': viewSPC, 'msa': viewMSA, 'pareto': viewPareto, 'ncr': viewNCR, 'input-data': viewData, 'pustaka': viewLib, 'panduan': viewGuide }[this.route];
     try { v($('#app')); } catch (e) { console.error(e); $('#app').innerHTML = `<div class="alert bad">Terjadi kesalahan saat menampilkan halaman: ${esc(e.message)}</div>`; }
     const ph = $('#app .page-head > div'), cur = ROUTES.find(r => r[0] === this.route);
-    if (ph && cur && this.route !== 'beranda' && !ph.querySelector('.crumbs')) ph.insertAdjacentHTML('afterbegin', `<nav class="crumbs" aria-label="Breadcrumb"><a href="#beranda">Beranda</a><span class="sep">/</span>${cur[3] ? `<span>${cur[3]}</span><span class="sep">/</span>` : ''}<span>${cur[1]}</span></nav>`);
+    if (ph && cur && this.route !== 'beranda' && !ph.querySelector('.crumbs')) ph.insertAdjacentHTML('afterbegin', `<nav class="crumbs" aria-label="Breadcrumb"><a href="#beranda">Beranda</a><span class="sep">/</span>${(cur[3] || cur[5]) ? `<span>${cur[3] || cur[5]}</span><span class="sep">/</span>` : ''}<span>${cur[1]}</span></nav>`);
     document.title = (cur && this.route !== 'beranda' ? cur[1] + ' — ' : '') + 'SQMC';
     if (!soft) window.scrollTo(0, 0);
   }
 };
-window.addEventListener('hashchange', () => App.render());
+window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (App._keepEdit) App._keepEdit = false; else { if (h !== 'fmea') App.state.fmeaEdit = null; if (h !== 'control-plan') App.state.cpEdit = null; if (h !== 'ncr') App.state.ncrEdit = null; } App.render(); });
 
 /* =====================================================================
    VIEW: BERANDA
@@ -1178,25 +1217,36 @@ function viewHome(root) {
   const lastRes = S.result;
   const resStatus = lastRes ? (violationList(lastRes.main, lastRes.labels).length || (lastRes.disp && violationList(lastRes.disp, lastRes.labels).length) ? ['Tidak terkendali', 'b-bad'] : ['Terkendali', 'b-ok']) : null;
   const tile = (href, ic, title, sub, num, unit, tag) => `<a class="tile" href="#${href}"><div class="ti">${ICON[ic]}</div>${tag || ''}<div class="tt">${title}</div><div class="ts">${sub}</div><div class="tn"><b>${num}</b><span>${unit}</span></div></a>`;
+  const fm = Store.list('fmea'), cps = Store.list('cplan'), ncr = Store.list('ncr'), gg = Store.list('gage'), msa = Store.list('msa');
   const steps = [
-    ['Plan', 'Tetapkan spesifikasi, standar acuan, toleransi & AQL', specs.length > 0],
+    ['Plan', 'Spesifikasi & standar acuan, PFMEA, Control Plan', specs.length > 0 || fm.length > 0],
     ['Do', 'Catat pengukuran produksi atau unggah CSV/XLSX', ds.length > 0],
-    ['Check', 'Peta kendali, 8 tes pola & kapabilitas proses', !!lastRes],
-    ['Act', 'Disposisi produk & perbaikan proses', false]
+    ['Check', 'Peta kendali, MSA, kapabilitas & Pareto', !!lastRes || msa.length > 0],
+    ['Act', 'NCR & 8D, disposisi, pencegahan berulang', ncr.some(n => n.status === 'closed')]
   ];
+  const ncrOpen = ncr.filter(n => n.status !== 'closed').length, ncrLateN = ncr.filter(ncrLate).length;
+  const calOver = gg.filter(g => calStatus(g).st === 'over').length, calSoon = gg.filter(g => calStatus(g).st === 'soon').length;
+  const hNo = sum(fm.map(f => fmeaStats(f).hNoAct)), lastMsa = msa.find(m => m.kind === 'grr');
   root.innerHTML = `
   <section class="welcome" style="--wm:url('${LOGO_MARK}')">
     <div class="crumbs">Beranda</div>
     <h1 style="margin-top:6px">Selamat datang di <b>SQMC</b></h1>
-    <p>Tetapkan standar mutu produk, kendalikan proses dengan peta kendali Shewhart, dan putuskan disposisi produk tidak sesuai — dalam satu alur PDCA.</p>
+    <p>Tetapkan standar mutu produk, analisis risiko proses (PFMEA) dan rencana kendali, buktikan alat ukur layak (MSA), kendalikan proses dengan peta kendali, lalu tuntaskan produk tidak sesuai dengan 8D — dalam satu alur PDCA.</p>
     <div class="row"><a class="btn acc" href="#spesifikasi">${ICON.plus} Spesifikasi baru</a><a class="btn sec" href="#peta-kendali">${ICON.chart} Analisis peta kendali</a></div>
   </section>
+  <div class="section-label"><h3>Status mutu</h3><span class="muted" style="font-size:.78rem">ringkasan dari seluruh modul</span></div>
+  <div class="status-row">${kpiStrip([['NCR terbuka', String(ncrOpen), ncrLateN ? 'bad' : ncrOpen ? 'warn' : 'ok', ncrLateN ? `${ncrLateN} lewat target` : `${ncr.length} tercatat`], ['Kalibrasi alat ukur', calOver ? `${calOver} terlambat` : calSoon ? `${calSoon} segera` : gg.length ? 'Semua valid' : 'Belum ada alat', calOver ? 'bad' : calSoon ? 'warn' : gg.length ? 'ok' : 'info', `${gg.length} alat terdaftar`], ['PFMEA AP High tanpa tindakan', String(hNo), hNo ? 'bad' : 'ok', `${fm.length} dokumen PFMEA`], ['MSA terakhir (GRR)', lastMsa ? pctTxt(isNum(lastMsa.summary.ptol) ? lastMsa.summary.ptol : lastMsa.summary.psv) : '—', lastMsa ? (lastMsa.verdict.tol || lastMsa.verdict.sv) : 'info', lastMsa ? esc(lastMsa.name) : 'belum ada studi']])}</div>
   <div class="section-label"><h3>Aplikasi</h3><span class="muted" style="font-size:.78rem">${dateID(Date.now())}</span></div>
   <div class="tiles">
     ${tile('spesifikasi', 'spec', 'Spesifikasi Standar', 'Standar acuan, toleransi, batas cacat & rencana sampling', specs.length, 'spesifikasi', '<span class="badge b-info tag">Plan</span>')}
     ${tile('input-data', 'data', 'Input Data', 'Pencatatan hasil pengukuran per subgrup', ds.length, `dataset · ${nVar} var · ${nAttr} atr`, '<span class="badge b-info tag">Do</span>')}
-    ${tile('peta-kendali', 'chart', 'Peta Kendali', 'I-MR, X̄-R, X̄-S, P, NP, C, U + kapabilitas', resStatus ? `<span class="badge ${resStatus[1]}" style="font-size:.8rem">${resStatus[0]}</span>` : '7', resStatus ? '' : 'jenis peta', '<span class="badge b-info tag">Check</span>')}
-    ${tile('pustaka', 'lib', 'Pustaka Standar', 'ISO · SNI · ASME · ASTM · EN beserta tautan resmi', Object.keys(STD).length, 'standar')}
+    ${tile('peta-kendali', 'chart', 'Peta Kendali', 'I-MR, X̄-R, X̄-S, EWMA, CUSUM, P, NP, C, U + kapabilitas', resStatus ? `<span class="badge ${resStatus[1]}" style="font-size:.8rem">${resStatus[0]}</span>` : '9', resStatus ? '' : 'jenis peta', '<span class="badge b-info tag">Check</span>')}
+    ${tile('fmea', 'risk', 'PFMEA', 'Risiko proses dengan Action Priority AIAG & VDA', fm.length, 'dokumen', '<span class="badge b-info tag">Plan</span>')}
+    ${tile('control-plan', 'plan', 'Control Plan', 'Rencana kendali otomatis dari spesifikasi & PFMEA', cps.length, 'dokumen', '<span class="badge b-info tag">Plan</span>')}
+    ${tile('msa', 'gauge', 'MSA & Kalibrasi', 'Gage R&R ANOVA, Type-1 Cg/Cgk, jadwal kalibrasi', gg.length, 'alat ukur', '<span class="badge b-info tag">Check</span>')}
+    ${tile('pareto', 'bars', 'Analisis Pareto', 'Prioritas cacat berdasarkan frekuensi & biaya', ncr.length, 'NCR sumber data', '<span class="badge b-info tag">Check</span>')}
+    ${tile('ncr', 'flag', 'NCR & 8D', 'Produk tidak sesuai, disposisi & pemecahan masalah', ncrOpen, 'NCR terbuka', '<span class="badge b-info tag">Act</span>')}
+    ${tile('pustaka', 'lib', 'Pustaka Standar', 'ISO · SNI · ASME · ASTM · EN · AIAG · VDA · IATF + tautan resmi', Object.keys(STD).length, 'standar')}
     ${tile('panduan', 'guide', 'Panduan & Metodologi', 'Rumus batas kendali, konstanta, tes pola, AQL', '8', 'tes pola')}
   </div>
   <div class="card"><div class="card-head"><h3>Siklus PDCA</h3><span class="pill-step">${steps.filter(x => x[2]).length} / 4 tahap berjalan</span></div>
@@ -1379,6 +1429,7 @@ function renderIssues(items, heading, emptyText) {
 function bodyBadge(b) { return `<span class="org">${b}</span>`; }
 const STD_VERIFIED = 'Nov 2026';
 function stdCode(s) {
+  if (['AIAG', 'VDA'].includes(s.body)) return s.year ? `${s.code} (${s.year})` : s.code;
   if (!s.year || s.body === 'SNI' || s.code.includes(':')) return s.code;
   if (s.body === 'ASME' || s.code.startsWith('NSF')) return `${s.code}-${s.year}`;
   if (s.body === 'ASTM') return `${s.code} (rev. ${s.year})`;
@@ -1493,7 +1544,7 @@ function viewData(root) {
       ${list.length ? list.map(d => `<div class="list-item" style="${editing && editing.id === d.id ? 'border-color:var(--pri2);background:var(--pri-soft)' : ''}"><div><b>${esc(d.name)}</b><div class="meta">${d.kind === 'variable' ? `Variabel · n=${d.n}` : 'Atribut'} · ${d.rows.length} baris · ${dateID(d.updatedAt)}</div></div><div class="row"><button class="btn sm sec" data-edit="${d.id}">Edit</button><button class="btn sm" data-an="${d.id}">Analisis</button></div></div>`).join('') : '<div class="empty">Belum ada dataset.</div>'}
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
       <h4>Cadangan data</h4>
-      <div class="row" style="margin-top:8px"><button class="btn sm sec" id="bkExport">${ICON.dl} Ekspor cadangan (JSON)</button><label class="btn sm sec" style="cursor:pointer">Impor cadangan<input type="file" accept=".json,application/json" id="bkImport" hidden></label></div>
+      <div class="row" style="margin-top:8px"><button class="btn sm sec" id="bkExport">${ICON.dl} Ekspor cadangan semua modul (JSON)</button><label class="btn sm sec" style="cursor:pointer">Impor cadangan<input type="file" accept=".json,application/json" id="bkImport" hidden></label></div>
     </div>
     <div id="dsEditor">${editing ? '' : '<div class="card"><div class="empty">Pilih dataset untuk diedit, atau buat dataset baru.</div></div>'}</div>
   </div>`;
@@ -1502,10 +1553,10 @@ function viewData(root) {
   $('#samples').onclick = loadSamples;
   root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => { App.state.dsEdit = b.dataset.edit; viewData(root); });
   root.querySelectorAll('[data-an]').forEach(b => b.onclick = () => openDatasetInSPC(b.dataset.an));
-  $('#bkExport').onclick = () => saveFile(`sqmc-cadangan-${todayISO()}.json`, JSON.stringify({ app: 'SQMC', version: 1, exportedAt: new Date().toISOString(), spec: Store.data.spec, dataset: Store.data.dataset }, null, 2), 'application/json');
+  $('#bkExport').onclick = () => saveFile(`sqmc-cadangan-${todayISO()}.json`, JSON.stringify(Object.assign({ app: 'SQMC', version: 2, exportedAt: new Date().toISOString() }, Object.fromEntries(STORE_KINDS.map(k => [k, Store.data[k] || []]))), null, 2), 'application/json');
   $('#bkImport').onchange = async (e) => {
     const file = e.target.files[0]; if (!file) return;
-    try { const j = JSON.parse(await file.text()); if (j.app !== 'SQMC') throw new Error('Bukan file cadangan SQMC'); let c = 0; for (const s of (j.spec || [])) { await Store.put('spec', s); c++; } for (const d of (j.dataset || [])) { await Store.put('dataset', d); c++; } toast(`${c} item diimpor`, 'ok'); viewData(root); }
+    try { const j = JSON.parse(await file.text()); if (j.app !== 'SQMC') throw new Error('Bukan file cadangan SQMC'); let c = 0; for (const k of STORE_KINDS) for (const o of (Array.isArray(j[k]) ? j[k] : [])) { if (o && o.id) { await Store.put(k, o); c++; } } toast(`${c} item diimpor`, 'ok'); viewData(root); }
     catch (err) { toast('Gagal impor: ' + err.message, 'err'); }
   };
   if (editing) renderDsEditor(editing);
@@ -1601,7 +1652,7 @@ function openDatasetInSPC(id) {
 /* =====================================================================
    VIEW: PETA KENDALI
    ===================================================================== */
-const SPC_DEFAULT = { dataKind: 'variable', layout: 'single', valCol: 0, valCols: [], subSize: 5, subCol: -1, labelCol: -1, cntCol: 0, nCol: -1, nConst: '', chart: 'auto', lsl: '', usl: '', target: '', varName: '', unit: '', tests: [1, 2, 3, 4, 5, 6, 7, 8], exclude: '', histMean: '', histSigma: '', sheet: 0 };
+const SPC_DEFAULT = { dataKind: 'variable', layout: 'single', valCol: 0, valCols: [], subSize: 5, subCol: -1, labelCol: -1, cntCol: 0, nCol: -1, nConst: '', chart: 'auto', lsl: '', usl: '', target: '', varName: '', unit: '', tests: [1, 2, 3, 4, 5, 6, 7, 8], exclude: '', histMean: '', histSigma: '', sheet: 0, lambda: '0.2', Lw: '3', kC: '0.5', hC: '4' };
 function viewSPC(root) {
   const S = App.state.spc; S.cfg = Object.assign({}, SPC_DEFAULT, S.cfg);
   const dsList = Store.list('dataset');
@@ -1725,8 +1776,10 @@ function renderCfg() {
   ` : ''}
   ${T ? `<div class="field"><label class="f">Kolom label (opsional, mis. tanggal)</label><select id="c_label">${colOpts(c.labelCol, true)}</select></div>` : ''}
   ${(T || ds) ? `
-  <div class="field"><label class="f">Jenis peta kendali</label><select id="c_chart">${variable ? opt('auto', 'Otomatis (berdasarkan ukuran subgrup)', c.chart) + opt('imr', 'I-MR (individual & moving range)', c.chart) + opt('xbarr', 'X̄-R (rata-rata & rentang)', c.chart) + opt('xbars', 'X̄-S (rata-rata & simpangan baku)', c.chart)
+  <div class="field"><label class="f">Jenis peta kendali</label><select id="c_chart">${variable ? opt('auto', 'Otomatis (berdasarkan ukuran subgrup)', c.chart) + opt('imr', 'I-MR (individual & moving range)', c.chart) + opt('xbarr', 'X̄-R (rata-rata & rentang)', c.chart) + opt('xbars', 'X̄-S (rata-rata & simpangan baku)', c.chart) + opt('ewma', 'EWMA — pergeseran kecil (ISO 7870-6)', c.chart) + opt('cusum', 'CUSUM tabular (ISO 7870-4)', c.chart)
         : opt('p', 'P — proporsi unit cacat', c.chart) + opt('np', 'NP — jumlah unit cacat (n tetap)', c.chart) + opt('c', 'C — jumlah cacat per unit inspeksi tetap', c.chart) + opt('u', 'U — cacat per unit (n bervariasi)', c.chart)}</select></div>
+  ${variable && c.chart === 'ewma' ? `<div class="grid g2"><div class="field"><label class="f">λ (bobot)</label><input type="text" inputmode="decimal" id="c_lam" value="${esc(c.lambda)}"><div class="hint">0,05–0,25 untuk pergeseran kecil</div></div><div class="field"><label class="f">L (lebar batas, σ)</label><input type="text" inputmode="decimal" id="c_L" value="${esc(c.Lw)}"><div class="hint">Default Minitab: λ 0,2 · L 3</div></div></div><div class="hint" style="margin:-4px 0 10px">Untuk pemantauan, isi μ historis/target di <i>Opsi estimasi</i> agar pergeseran dari target terdeteksi.</div>` : ''}
+  ${variable && c.chart === 'cusum' ? `<div class="grid g2"><div class="field"><label class="f">k (nilai referensi, σ)</label><input type="text" inputmode="decimal" id="c_k" value="${esc(c.kC)}"><div class="hint">½ × pergeseran yang ingin dideteksi</div></div><div class="field"><label class="f">h (interval keputusan, σ)</label><input type="text" inputmode="decimal" id="c_h" value="${esc(c.hC)}"><div class="hint">Lazim 4–5 (k = 0,5)</div></div></div><div class="hint" style="margin:-4px 0 10px">Untuk pemantauan, isi μ historis/target di <i>Opsi estimasi</i> agar pergeseran dari target terdeteksi.</div>` : ''}
   <div class="grid g2"><div class="field"><label class="f">Nama variabel</label><input type="text" id="c_var" value="${esc(c.varName)}" placeholder="mis. Berat (g)"></div><div class="field"><label class="f">Satuan</label><input type="text" id="c_unit" value="${esc(c.unit)}" placeholder="g / mm"></div></div>
   ${variable ? `<div class="grid g3"><div class="field"><label class="f">LSL</label><input type="text" inputmode="decimal" id="c_lsl" value="${esc(c.lsl)}"></div><div class="field"><label class="f">USL</label><input type="text" inputmode="decimal" id="c_usl" value="${esc(c.usl)}"></div><div class="field"><label class="f">Target</label><input type="text" inputmode="decimal" id="c_tgt" value="${esc(c.target)}"></div></div>
     ${Store.list('spec').length ? `<div class="field"><label class="f">Ambil LSL/USL dari spesifikasi</label><select id="c_fromSpec"><option value="">— pilih —</option>${Store.list('spec').filter(s => s.weight).map(s => opt(s.id, s.input.name + ' (berat)', '')).join('')}</select></div>` : ''}` : ''}
@@ -1742,7 +1795,7 @@ function renderCfg() {
   const bind = (id, k, cast = (v) => v, rer) => { const el = $('#' + id); if (el) el.onchange = () => { c[k] = cast(el.value); if (rer) renderCfg(); }; };
   bind('c_kind', 'dataKind', v => v, true); const kd = $('#c_kind'); if (kd) kd.addEventListener('change', () => { c.chart = c.dataKind === 'variable' ? 'auto' : 'p'; renderCfg(); });
   bind('c_layout', 'layout', v => v, true); bind('c_val', 'valCol', Number); bind('c_sub', 'subSize', v => clamp(parseInt(v) || 1, 1, 50)); bind('c_subcol', 'subCol', Number);
-  bind('c_cnt', 'cntCol', Number); bind('c_ncol', 'nCol', Number); bind('c_nconst', 'nConst'); bind('c_label', 'labelCol', Number); bind('c_chart', 'chart');
+  bind('c_cnt', 'cntCol', Number); bind('c_ncol', 'nCol', Number); bind('c_nconst', 'nConst'); bind('c_label', 'labelCol', Number); bind('c_chart', 'chart', v => v, true); bind('c_lam', 'lambda'); bind('c_L', 'Lw'); bind('c_k', 'kC'); bind('c_h', 'hC');
   bind('c_var', 'varName'); bind('c_unit', 'unit'); bind('c_lsl', 'lsl'); bind('c_usl', 'usl'); bind('c_tgt', 'target'); bind('c_ex', 'exclude'); bind('c_hm', 'histMean'); bind('c_hs', 'histSigma');
   const cols = $('#c_cols'); if (cols) cols.onchange = (e) => { c.valCols = $$('input:checked', cols).map(i => +i.value); e.target.closest('.chip').classList.toggle('on', e.target.checked); };
   $$('.c_test').forEach(i => i.onchange = () => { c.tests = $$('.c_test:checked').map(x => +x.value); });
@@ -1793,8 +1846,9 @@ function runSPC(silent) {
     const opts = { type: c.chart, exclude: parseExclude(c.exclude), tests: c.tests.length ? c.tests : [1], histMean: numOrNull(c.histMean), histSigma: numOrNull(c.histSigma) };
     let res;
     if (G.kind === 'variable') {
-      if (!['auto', 'imr', 'xbarr', 'xbars'].includes(opts.type)) opts.type = 'auto';
-      res = computeVariable(G.groups, opts);
+      if (!['auto', 'imr', 'xbarr', 'xbars', 'ewma', 'cusum'].includes(opts.type)) opts.type = 'auto';
+      if (opts.type === 'ewma' || opts.type === 'cusum') res = computeSmallShift(G.groups, Object.assign(opts, { lambda: numOrNull(c.lambda), L: numOrNull(c.Lw), kC: numOrNull(c.kC), hC: numOrNull(c.hC) }));
+      else res = computeVariable(G.groups, opts);
       const lsl = numOrNull(c.lsl), usl = numOrNull(c.usl);
       if (lsl !== null && usl !== null && lsl >= usl) throw new Error('LSL harus lebih kecil dari USL.');
       res.cap = (lsl !== null || usl !== null) ? capability(res.values, res.sigmaWithin, lsl, usl, numOrNull(c.target)) : null;
@@ -1815,17 +1869,19 @@ function runSPC(silent) {
 function violationList(part, labels) {
   const out = []; part.flags.forEach((f, i) => { if (f.length) out.push({ i: i + 1, label: labels ? labels[i] : String(i + 1), tests: f, val: part.points[i] }); }); return out;
 }
+const TEST_ACTION_SHIFT = 'Sinyal pergeseran rata-rata yang persisten: cek perubahan lot material, keausan tool, setting mesin, atau drift alat ukur sejak titik awal kenaikan statistik.';
 const TEST_ACTION = { 1: 'Investigasi kejadian khusus: setting mesin, lot bahan baku, operator, alat ukur.', 2: 'Indikasi pergeseran rata-rata proses (shift). Cek perubahan setting atau lot material.', 3: 'Indikasi tren: keausan tool/cetakan, perubahan suhu, atau drift alat ukur.', 4: 'Indikasi overadjustment atau dua sumber bergantian (2 mesin/cavity).', 5: 'Indikasi pergeseran rata-rata kecil–sedang.', 6: 'Indikasi pergeseran rata-rata kecil.', 7: 'Variasi terlalu kecil: cek stratifikasi subgrup atau batas kendali yang sudah usang.', 8: 'Indikasi campuran populasi (mixture) dari beberapa sumber.' };
 function capVerdict(k) { return !isNum(k) ? ['—', 'info'] : k >= 1.67 ? ['Sangat baik', 'ok'] : k >= 1.33 ? ['Capable', 'ok'] : k >= 1 ? ['Marginal', 'warn'] : ['Tidak capable', 'bad']; }
 function interpret(res) {
   const v = violationList(res.main, res.labels), vd = res.disp ? violationList(res.disp, res.labels) : [];
   const L = []; const xl = res.xLabel.toLowerCase();
   const list = (idx) => `${res.xLabel} ${idx.slice(0, 14).join(', ')}${idx.length > 14 ? ', …' : ''}`;
+  if (res.type === 'ewma' || res.type === 'cusum') L.push({ c: 'info', title: res.type === 'ewma' ? `EWMA λ = ${fmt(res.params.lambda)}, L = ${fmt(res.params.L)}` : `CUSUM k = ${fmt(res.params.k)}σ, h = ${fmt(res.params.h)}σ`, text: 'Peta ini peka terhadap pergeseran rata-rata kecil (±0,5–1,5σ) yang sering lolos dari peta Shewhart. Gunakan berdampingan dengan peta X̄/I untuk mendeteksi lonjakan besar.' });
   if (!v.length && !vd.length) L.push({ c: 'ok', title: 'Proses terkendali secara statistik', text: 'Tidak ada titik yang melanggar tes yang diaktifkan. Variasi berasal dari penyebab umum (common cause).' });
   else {
     const byTest = {}; v.forEach(x => x.tests.forEach(t => (byTest[t] = byTest[t] || []).push(x.i)));
     L.push({ c: 'bad', title: 'Proses tidak terkendali', text: `${v.length} titik pada peta ${res.mainName}${vd.length ? ` dan ${vd.length} titik pada peta ${res.dispName}` : ''} menunjukkan penyebab khusus (special cause).` });
-    Object.keys(byTest).sort((a, b) => a - b).forEach(t => L.push({ c: 'warn', title: `Tes ${t} — ${TESTS[t]}`, where: list(byTest[t]), text: TEST_ACTION[t] }));
+    Object.keys(byTest).sort((a, b) => a - b).forEach(t => L.push({ c: 'warn', title: (res.type === 'ewma' || res.type === 'cusum') ? 'Sinyal di luar interval keputusan' : `Tes ${t} — ${TESTS[t]}`, where: list(byTest[t]), text: (res.type === 'ewma' || res.type === 'cusum') ? TEST_ACTION_SHIFT : TEST_ACTION[t] }));
     if (vd.length) L.push({ c: 'warn', title: `Peta ${res.dispName} di luar batas kendali`, where: list(vd.map(x => x.i)), text: `Variabilitas dalam subgrup tidak stabil, sehingga batas peta ${res.mainName} kurang dapat diandalkan.` });
   }
   if (res.cap) {
@@ -1877,7 +1933,7 @@ function summaryKPIs(res) {
   const lim = (arr) => varLim(arr) ? 'bervariasi' : fmt(arr.find(isNum), 4);
   const block = (p, name) => `<div class="kpi"><div class="k">Peta ${esc(name)}</div><div class="mono" style="font-size:.86rem;margin-top:6px;line-height:1.8">UCL = <b>${lim(p.ucl)}</b><br>${esc(p.sym)} = <b>${lim(p.cl)}</b><br>LCL = <b>${lim(p.lcl)}</b></div><div class="s">${p.flags.filter(f => f.length).length} titik gagal tes</div></div>`;
   let h = block(m, res.mainName) + (d ? block(d, res.dispName) : '');
-  if (res.kind === 'variable') h += `<div class="kpi"><div class="k">Estimasi σ (dalam subgrup)</div><div class="v" style="font-size:1.15rem">${fmt(res.sigmaWithin, 5)}</div><div class="s">${{ imr: 'MR̄ / d₂ (d₂ = 1,128)', xbarr: 'R̄ / d₂', xbars: 'S̄ / c₄' }[res.type]}${isNum(res.opts.histSigma) ? ' — historis' : ''}</div></div><div class="kpi"><div class="k">Rata-rata proses</div><div class="v" style="font-size:1.15rem">${fmt(res.mean, 5)}</div><div class="s">${res.values.length} observasi</div></div>`;
+  if (res.kind === 'variable') h += `<div class="kpi"><div class="k">Estimasi σ (dalam subgrup)</div><div class="v" style="font-size:1.15rem">${fmt(res.sigmaWithin, 5)}</div><div class="s">${{ imr: 'MR̄ / d₂ (d₂ = 1,128)', xbarr: 'R̄ / d₂', xbars: 'S̄ / c₄' }[res.baseType || res.type]}${isNum(res.opts.histSigma) ? ' — historis' : ''}</div></div><div class="kpi"><div class="k">Rata-rata proses</div><div class="v" style="font-size:1.15rem">${fmt(res.mean, 5)}</div><div class="s">${res.values.length} observasi</div></div>`;
   else h += `<div class="kpi"><div class="k">Rata-rata</div><div class="v" style="font-size:1.15rem">${fmt(res.main.center, 5)}</div><div class="s">${{ p: 'p̄ — proporsi cacat', np: 'p̄ — proporsi cacat', c: 'c̄ — cacat per unit inspeksi', u: 'ū — cacat per unit' }[res.type]}</div></div><div class="kpi"><div class="k">Persen cacat</div><div class="v" style="font-size:1.15rem">${['p', 'np'].includes(res.type) ? fmtFix(res.main.center * 100, 2) + '%' : '—'}</div><div class="s">${['p', 'np'].includes(res.type) ? '≈ ' + fmt(res.main.center * 1e6, 0) + ' PPM' : ''}</div></div>`;
   return h;
 }
@@ -1978,7 +2034,7 @@ function viewLib(root) {
   <div class="lib-toolbar">
     <div class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><input type="text" id="libQ" placeholder="Cari kode, judul, atau kata kunci" aria-label="Cari standar"></div>
     <select id="libCat" aria-label="Kategori"><option value="">Semua kategori</option>${cats.map(c => opt(c, c, '')).join('')}</select>
-    <select id="libBody" aria-label="Badan penerbit"><option value="">Semua penerbit</option>${['ISO', 'SNI', 'ASME', 'ASTM', 'EN'].map(b => opt(b, b, '')).join('')}</select>
+    <select id="libBody" aria-label="Badan penerbit"><option value="">Semua penerbit</option>${[...new Set(Object.values(STD).map(s => s.body))].sort().map(b => opt(b, b, '')).join('')}</select>
     <div class="count" id="libCount"></div>
   </div>
   <div class="tw lib-table"><table class="t"><thead><tr><th style="width:36px"></th><th>Kode</th><th>Judul</th><th class="hide-sm">Kategori</th><th class="hide-sm">Penerbit</th><th>Edisi</th></tr></thead><tbody id="libBodyRows"></tbody></table></div>
@@ -2038,10 +2094,31 @@ Normalitas: Anderson-Darling (p-value D'Agostino & Stephens)</div>
     <p class="hint">σ_within berasal dari peta kendali (R̄/d₂, S̄/c₄, MR̄/1,128). Minitab secara default memakai pooled standard deviation untuk X̄-R; hasil Cpk SQMC bisa sedikit berbeda.</p></details>
   <details class="acc"><summary>5 · Rencana sampling AQL (ISO 2859-1)</summary>
     <p>Kode huruf ditentukan dari ukuran lot dan level inspeksi; ukuran sampel & Ac/Re dari tabel master sampling tunggal inspeksi normal (termasuk aturan panah). Bila ukuran sampel ≥ ukuran lot → inspeksi 100%. Aturan perpindahan normal → ketat → longgar dan skip-lot (edisi 2026) belum diotomasi.</p></details>
-  <details class="acc"><summary>6 · Batasan & tanggung jawab</summary>
+  <details class="acc"><summary>6 · EWMA &amp; CUSUM (pergeseran kecil)</summary>
+    <div class="formula">EWMA (ISO 7870-6): zᵢ = λ·xᵢ + (1−λ)·zᵢ₋₁, z₀ = μ₀
+Batas: μ₀ ± L·σₓ·√[λ/(2−λ)·(1−(1−λ)^(2i))]   (default λ = 0,2 · L = 3)
+CUSUM tabular (ISO 7870-4): C⁺ᵢ = max(0, C⁺ᵢ₋₁ + xᵢ − μ₀ − kσₓ)
+                             C⁻ᵢ = max(0, C⁻ᵢ₋₁ − xᵢ + μ₀ − kσₓ)
+Sinyal bila C⁺ atau C⁻ > hσₓ   (default k = 0,5 · h = 4)
+σₓ = σ/√n; σ dari R̄/d₂, S̄/c₄ atau MR̄/d₂ seperti peta Shewhart</div>
+    <p class="hint">Pakai EWMA/CUSUM untuk karakteristik penting yang pergeseran kecilnya (±0,5–1,5σ) sudah merugikan; tetap dampingi dengan peta Shewhart untuk lonjakan besar.</p></details>
+  <details class="acc"><summary>7 · MSA: Gage R&amp;R ANOVA &amp; Type-1</summary>
+    <div class="formula">Crossed: p part × o operator × r ulangan (seimbang)
+σ²_repeat = MS_E · σ²_P×O = (MS_PO − MS_E)/r · σ²_oper = (MS_O − MS_PO)/(p·r) · σ²_part = (MS_P − MS_PO)/(o·r)
+Bila p-value interaksi &gt; α (0,05): SS_PO digabung ke repeatability
+%Study Var = σ_GRR/σ_TV × 100 · %Toleransi = 6σ_GRR/(USL−LSL) × 100 · ndc = ⌊√2 · σ_part/σ_GRR⌋
+Type-1: Cg = 0,2·T/(6s) · Cgk = (0,1·T − |x̄ − x_ref|)/(3s) · syarat ≥ 1,33</div>
+    <p>Kriteria AIAG MSA edisi 4: GRR &lt; 10% diterima; 10–30% dapat diterima bergantung pada kekritisan, biaya, dan persetujuan pelanggan; &gt; 30% tidak diterima; ndc ≥ 5. Resolusi alat idealnya ≤ 5% toleransi (VDA 5 / ISO 22514-7) dan minimal ≤ 10% (aturan 1/10).</p></details>
+  <details class="acc"><summary>8 · PFMEA (Action Priority) &amp; Control Plan</summary>
+    <p>PFMEA mengikuti AIAG &amp; VDA FMEA Handbook (2019): setiap rantai kegagalan (efek – mode – penyebab) diberi S, O, D 1–10, lalu Action Priority dibaca dari tabel. Berbeda dengan RPN, severity tinggi tidak bisa "tertutupi" O/D rendah. Baris dengan karakteristik khusus (CC/SC) atau AP = H otomatis dibawa ke Control Plan.</p>
+    <p>Control Plan memakai kolom standar AIAG (proses, mesin, karakteristik produk/proses, kelas khusus, spesifikasi, teknik evaluasi, ukuran &amp; frekuensi sampel, metode kendali, rencana reaksi) dengan fase Prototype, Pre-Launch, Safe Launch, Production (AIAG Control Plan 2024).</p></details>
+  <details class="acc"><summary>9 · NCR, 8D &amp; Pareto</summary>
+    <p>NCR mencatat keluaran tidak sesuai beserta disposisinya (use-as-is/konsesi, rework, repair, regrade, scrap, retur). Alur 8D: D0 respons darurat, D1 tim, D2 deskripsi 5W2H, D3 containment, D4 akar masalah (6M, 5-Why, titik lolos), D5 tindakan korektif, D6 implementasi &amp; bukti efektivitas, D7 pencegahan berulang (PFMEA, Control Plan, SOP), D8 penutupan. Pareto mengurutkan kategori cacat berdasarkan frekuensi atau biaya; "vital few" adalah kategori hingga kumulatif ±80%.</p></details>
+  <details class="acc"><summary>10 · Batasan &amp; tanggung jawab</summary>
     <ul><li>SQMC adalah alat pendukung keputusan. Penetapan standar, toleransi, dan disposisi final tetap tanggung jawab QA/QC yang kompeten dan pemilik produk.</li>
     <li>Nilai toleransi berat default (±% per proses) adalah <b>rekomendasi internal</b>, bukan kutipan standar ISO. Toleransi dimensi plastik wajib diambil dari tabel standar produk.</li>
     <li>Standar bertanda "cek edisi" belum diverifikasi tahun edisinya oleh SQMC.</li>
+    <li>Nilai awal Severity dari katalog cacat, rencana reaksi Control Plan, dan target NCR adalah <b>saran awal SQMC</b>; keputusan akhir milik tim lintas fungsi. Tabel AP perlu dicocokkan dengan Handbook AIAG &amp; VDA milik organisasi.</li>
     <li>Dokumen standar resmi harus dibeli dari ISO, BSN, ASME, ASTM, atau CEN/badan nasional.</li></ul></details>`;
 }
 
@@ -2052,13 +2129,14 @@ function pdfReady() { if (!(window.jspdf && window.jspdf.jsPDF)) { toast('Pustak
 function pdfDoc(orient = 'p') {
   const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: orient, unit: 'mm', format: 'a4' });
   if (typeof doc.autoTable !== 'function') { toast('Plugin tabel PDF gagal dimuat.', 'err'); return null; }
+  const _ai = doc.addImage.bind(doc); doc.addImage = (img, f, x, y, w, h, alias, comp, rot) => _ai(img, f, x, y, w, h, alias, comp || 'FAST', rot); // kompresi gambar → PDF jauh lebih kecil
   return doc;
 }
 // jsPDF core fonts hanya mendukung WinAnsi: ganti simbol yang tidak tersedia
 function pdfTxt(s) {
   return String(s ?? '').replace(/X̿/g, 'X-dbar').replace(/X̄/g, 'X-bar').replace(/R̄/g, 'R-bar').replace(/S̄/g, 'S-bar').replace(/MR̄/g, 'MR-bar').replace(/P̄/g, 'P-bar').replace(/NP̄/g, 'NP-bar').replace(/C̄/g, 'C-bar').replace(/Ū/g, 'U-bar')
     .replace(/σ/g, 'sigma').replace(/μ/g, 'mu').replace(/≥/g, '>=').replace(/≤/g, '<=').replace(/±/g, '+/-').replace(/−/g, '-').replace(/–|—/g, '-').replace(/→/g, '->').replace(/↓/g, 'turun').replace(/↑/g, 'naik')
-    .replace(/[⛔⚠ℹ☁●○✕]/g, '').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/…/g, '...').replace(/₂/g, '2').replace(/₃/g, '3').replace(/₄/g, '4').replace(/[^\x00-\xFF]/g, '');
+    .replace(/[⛔⚠ℹ☁●○✕]/g, '').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/…/g, '...').replace(/⁺/g, '+').replace(/⁻/g, '-').replace(/λ/g, 'lambda').replace(/₀/g, '0').replace(/′/g, "'").replace(/∞/g, 'tak hingga').replace(/₂/g, '2').replace(/₃/g, '3').replace(/₄/g, '4').replace(/[^\x00-\xFF]/g, '');
 }
 function pdfHeader(doc, title, sub) {
   const W = doc.internal.pageSize.getWidth();
@@ -2143,7 +2221,7 @@ async function pdfSPC(res) {
   y = secTitle(doc, y, 'Ringkasan batas kendali (nilai titik terakhir bila batas bervariasi)');
   const rows = [[res.mainName, ...lim(res.main), res.main.flags.filter(f => f.length).length]]; if (res.disp) rows.push([res.dispName, ...lim(res.disp), res.disp.flags.filter(f => f.length).length]);
   y = AT(doc, y, ['Peta', 'UCL', 'CL', 'LCL', 'Titik gagal tes'], rows);
-  if (res.kind === 'variable') y = AT(doc, y, ['Rata-rata proses', 'sigma within', 'Metode sigma', 'Observasi'], [[fmt(res.mean, 5), fmt(res.sigmaWithin, 5), { imr: 'MR-bar/1,128', xbarr: 'R-bar/d2', xbars: 'S-bar/c4' }[res.type], res.values.length]]);
+  if (res.kind === 'variable') y = AT(doc, y, ['Rata-rata proses', 'sigma within', 'Metode sigma', 'Observasi'], [[fmt(res.mean, 5), fmt(res.sigmaWithin, 5), { imr: 'MR-bar/1,128', xbarr: 'R-bar/d2', xbars: 'S-bar/c4' }[res.baseType || res.type], res.values.length]]);
   y = secTitle(doc, y, 'Interpretasi');
   y = AT(doc, y, ['Status', 'Temuan', 'Lokasi', 'Keterangan / tindakan'], interpret(res).map(x => [{ ok: 'SESUAI', bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[x.c], x.title, x.where || '-', x.text || '']), { columnStyles: { 0: { cellWidth: 22, fontStyle: 'bold' }, 1: { cellWidth: 62 }, 2: { cellWidth: 55 } } });
   const v = violationList(res.main, res.labels).map(x => [res.mainName, x.i, x.label, fmt(x.val, 5), x.tests.map(t => 'Tes ' + t + ': ' + TESTS[t]).join('; ')]);
@@ -2155,7 +2233,7 @@ async function pdfSPC(res) {
     const f2 = (x) => fmtFix(x, 2);
     y = AT(doc, y, ['LSL', 'Target', 'USL', 'Mean', 'N', 'sigma within', 'sigma overall', 'Cp', 'Cpk', 'Pp', 'Ppk', 'PPM exp. within', 'PPM exp. overall', 'PPM observasi'], [[fmt(c.lsl), fmt(c.target), fmt(c.usl), fmt(c.mean, 5), c.N, fmt(c.sigmaW, 5), fmt(c.sigmaO, 5), f2(c.Cp), f2(c.Cpk), f2(c.Pp), f2(c.Ppk), fmt(c.ppmW.tot, 1), fmt(c.ppmO.tot, 1), fmt(c.ppmObs.tot, 1)]], { styles: { fontSize: 7.2, cellPadding: 1.4 } });
   }
-  pdfFooter(doc, 'Dihasilkan SQMC sesuai metode ISO 7870-2 (peta kendali Shewhart) & ISO 22514-2 (kapabilitas). Batas kendali bukan batas spesifikasi.');
+  pdfFooter(doc, res.type === 'ewma' ? 'Dihasilkan SQMC: peta EWMA sesuai ISO 7870-6 & kapabilitas ISO 22514-2. Batas kendali bukan batas spesifikasi.' : res.type === 'cusum' ? 'Dihasilkan SQMC: CUSUM tabular sesuai ISO 7870-4 & kapabilitas ISO 22514-2. Batas kendali bukan batas spesifikasi.' : 'Dihasilkan SQMC sesuai metode ISO 7870-2 (peta kendali Shewhart) & ISO 22514-2 (kapabilitas). Batas kendali bukan batas spesifikasi.');
   saveFile(`SQMC-${slug(res.title + '-' + res.varName)}.pdf`, doc.output('blob'), 'application/pdf');
 }
 
@@ -2174,6 +2252,881 @@ function buildLogoPNG() {
     m.src = LOGO_MARK; w.src = LOGO_WORD;
   });
 }
+/* =====================================================================
+   MODUL v1.3 — MESIN HITUNG: distribusi, MSA, EWMA/CUSUM, AP, Pareto, kalibrasi
+   ===================================================================== */
+/* ---------- fungsi beta tak lengkap ter-regularisasi → p-value F & t ---------- */
+function betacf(a, b, x) {
+  const MAXIT = 400, EPS = 3e-15, FPMIN = 1e-300;
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1, d = 1 - qab * x / qap; if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let h = d;
+  for (let m = 1; m <= MAXIT; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+    const del = d * c; h *= del; if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+function ibeta(x, a, b) {
+  if (!(x > 0)) return 0; if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+/** P(F > f) untuk distribusi F(d1, d2) */
+const fSurv = (f, d1, d2) => f === Infinity ? 0 : !(f > 0) ? 1 : ibeta(d2 / (d2 + d1 * f), d2 / 2, d1 / 2);
+/** p-value dua sisi uji t */
+const tP2 = (t, df) => !isNum(t) ? NaN : ibeta(df / (df + t * t), df / 2, 0.5);
+
+/* ---------- MSA: Gage R&R crossed, metode ANOVA (AIAG MSA 4th ed.) ---------- */
+function gageRR(rows, o = {}) {
+  const alpha = isNum(o.alpha) ? o.alpha : 0.05, K = isNum(o.k) && o.k > 0 ? o.k : 6;
+  const R = rows.filter(r => r && String(r.part ?? '').trim() !== '' && String(r.op ?? '').trim() !== '' && isNum(r.val));
+  const key = (v) => String(v).trim();
+  const parts = [...new Set(R.map(r => key(r.part)))], ops = [...new Set(R.map(r => key(r.op)))];
+  const p = parts.length, q = ops.length;
+  if (p < 2) throw new Error('Minimal 2 part (sampel) untuk studi Gage R&R.');
+  if (q < 2) throw new Error('Minimal 2 operator/penilai untuk studi Gage R&R crossed.');
+  const cell = parts.map(() => ops.map(() => []));
+  R.forEach(r => cell[parts.indexOf(key(r.part))][ops.indexOf(key(r.op))].push(r.val));
+  const reps = new Set(cell.flat().map(c => c.length));
+  if (reps.has(0)) throw new Error('Ada kombinasi part × operator tanpa data. Desain crossed mengharuskan setiap operator mengukur setiap part.');
+  if (reps.size !== 1) throw new Error('Desain tidak seimbang: jumlah ulangan setiap kombinasi part × operator harus sama.');
+  const r = [...reps][0];
+  if (r < 2) throw new Error('Minimal 2 ulangan per part per operator.');
+  const all = R.map(x => x.val), N = all.length, G = avg(all);
+  const pm = cell.map(row => avg(row.flat())), om = ops.map((_, j) => avg(cell.map(row => row[j]).flat()));
+  const cm = cell.map(row => row.map(avg));
+  const SSP = q * r * sum(pm.map(v => (v - G) ** 2)), SSO = p * r * sum(om.map(v => (v - G) ** 2));
+  let SSPO = 0, SSE = 0;
+  cell.forEach((row, i) => row.forEach((c, j) => { SSPO += r * (cm[i][j] - pm[i] - om[j] + G) ** 2; c.forEach(v => { SSE += (v - cm[i][j]) ** 2; }); }));
+  const SST = sum(all.map(v => (v - G) ** 2));
+  const dfP = p - 1, dfO = q - 1, dfPO = dfP * dfO, dfE = p * q * (r - 1), dfT = N - 1;
+  const MSP = SSP / dfP, MSO = SSO / dfO, MSPO = SSPO / dfPO, MSE = SSE / dfE;
+  const Fpo = MSE > 0 ? MSPO / MSE : (MSPO > 0 ? Infinity : NaN), pPO = fSurv(Fpo, dfPO, dfE);
+  const Fx = (a, b) => b > 0 ? a / b : (a > 0 ? Infinity : NaN);
+  const anova1 = [
+    { src: 'Part', df: dfP, ss: SSP, ms: MSP, F: Fx(MSP, MSPO), p: fSurv(Fx(MSP, MSPO), dfP, dfPO) },
+    { src: 'Operator', df: dfO, ss: SSO, ms: MSO, F: Fx(MSO, MSPO), p: fSurv(Fx(MSO, MSPO), dfO, dfPO) },
+    { src: 'Part × Operator', df: dfPO, ss: SSPO, ms: MSPO, F: Fpo, p: pPO },
+    { src: 'Repeatability', df: dfE, ss: SSE, ms: MSE },
+    { src: 'Total', df: dfT, ss: SST }
+  ];
+  const pooled = !(pPO <= alpha);
+  let anova2 = null, vRep, vPO, vOp, vPart;
+  if (pooled) {
+    const dfR = dfPO + dfE, MSR = (SSPO + SSE) / dfR;
+    anova2 = [
+      { src: 'Part', df: dfP, ss: SSP, ms: MSP, F: Fx(MSP, MSR), p: fSurv(Fx(MSP, MSR), dfP, dfR) },
+      { src: 'Operator', df: dfO, ss: SSO, ms: MSO, F: Fx(MSO, MSR), p: fSurv(Fx(MSO, MSR), dfO, dfR) },
+      { src: 'Repeatability', df: dfR, ss: SSPO + SSE, ms: MSR },
+      { src: 'Total', df: dfT, ss: SST }
+    ];
+    vRep = MSR; vPO = 0; vOp = Math.max(0, (MSO - MSR) / (p * r)); vPart = Math.max(0, (MSP - MSR) / (q * r));
+  } else {
+    vRep = MSE; vPO = Math.max(0, (MSPO - MSE) / r); vOp = Math.max(0, (MSO - MSPO) / (p * r)); vPart = Math.max(0, (MSP - MSPO) / (q * r));
+  }
+  const vRepro = vOp + vPO, vGRR = vRep + vRepro, vTV = vGRR + vPart;
+  if (!(vTV > 0)) throw new Error('Variasi total nol — data tidak dapat dianalisis.');
+  const tol = isNum(o.tol) && o.tol > 0 ? o.tol : (isNum(o.lsl) && isNum(o.usl) && o.usl > o.lsl ? o.usl - o.lsl : null);
+  const histSig = isNum(o.histSigma) && o.histSigma > 0 ? o.histSigma : null;
+  const comp = (name, v, lvl) => { const s = Math.sqrt(v); return { name, lvl, v, pc: v / vTV * 100, sd: s, sv: K * s, psv: s / Math.sqrt(vTV) * 100, ptol: tol ? K * s / tol * 100 : null, pproc: histSig ? s / histSig * 100 : null }; };
+  const comps = [comp('Total Gage R&R', vGRR, 0), comp('Repeatability', vRep, 1), comp('Reproducibility', vRepro, 1), comp('Operator', vOp, 2)];
+  if (!pooled) comps.push(comp('Operator × Part', vPO, 2));
+  comps.push(comp('Part-to-Part', vPart, 0), comp('Total Variation', vTV, 0));
+  const sdG = Math.sqrt(vGRR), sdP = Math.sqrt(vPart);
+  const ndc = sdG > 0 ? Math.max(0, Math.floor(Math.SQRT2 * sdP / sdG)) : Infinity;
+  // data grafik: R & X̄ per operator (urut operator → part)
+  const Rk = cell.map(row => row.map(c => Math.max(...c) - Math.min(...c)));
+  const Rbar = avg(Rk.flat());
+  const lim = r <= 25 ? { rU: (D2[r] + 3 * D3[r]) / D2[r] * Rbar, rL: Math.max(0, (D2[r] - 3 * D3[r]) / D2[r] * Rbar), xU: G + 3 / (D2[r] * Math.sqrt(r)) * Rbar, xL: G - 3 / (D2[r] * Math.sqrt(r)) * Rbar } : null;
+  const grr = comps[0];
+  const lvl = (x) => !isNum(x) ? null : x < 10 ? 'ok' : x <= 30 ? 'warn' : 'bad';
+  return { kind: 'grr', parts, ops, p, q, r, N, grand: G, anova1, anova2, pooled, alpha, pPO, comps, ndc, tol, K, histSig, cm, pm, om, Rk, Rbar, lim,
+    sd: { rep: Math.sqrt(vRep), repro: Math.sqrt(vRepro), grr: sdG, part: sdP, tv: Math.sqrt(vTV) },
+    verdict: { sv: lvl(grr.psv), tol: lvl(grr.ptol), ndc: ndc >= 5 ? 'ok' : 'bad' } };
+}
+
+/* ---------- MSA: studi Type-1 (Cg/Cgk) — metode umum VDA 5 / Bosch, default Minitab ---------- */
+function gageType1(valsIn, o = {}) {
+  const x = valsIn.filter(isNum), n = x.length;
+  if (n < 10) throw new Error('Minimal 10 pengukuran berulang pada satu part referensi (lazimnya 25–50).');
+  const ref = o.ref, K = isNum(o.K) && o.K > 0 ? o.K : 20, L = isNum(o.L) && o.L > 0 ? o.L : 6;
+  const tol = isNum(o.tol) && o.tol > 0 ? o.tol : (isNum(o.lsl) && isNum(o.usl) && o.usl > o.lsl ? o.usl - o.lsl : null);
+  if (!isNum(ref)) throw new Error('Isi nilai referensi (nilai sebenarnya part master/standar).');
+  if (!tol) throw new Error('Isi toleransi (USL − LSL) karakteristik yang diukur.');
+  const m = avg(x), s = sd(x);
+  if (!(s > 0)) throw new Error('Simpangan baku nol — resolusi alat terlalu kasar untuk studi ini.');
+  const bias = m - ref, Cg = (K / 100 * tol) / (L * s), Cgk = (K / 200 * tol - Math.abs(bias)) / (L / 2 * s);
+  const t = bias / (s / Math.sqrt(n)), p = tP2(Math.abs(t), n - 1);
+  const resPct = isNum(o.res) && o.res > 0 ? o.res / tol * 100 : null;
+  return { kind: 'type1', n, mean: m, sd: s, ref, tol, K, L, bias, Cg, Cgk, t, p, pctRep: 100 / Cg, resPct, vals: x, min: Math.min(...x), max: Math.max(...x) };
+}
+
+/* ---------- Action Priority — AIAG & VDA FMEA Handbook (2019) ---------- */
+const AP_TABLE = {
+  // baris O: [8-10, 6-7, 4-5, 2-3, 1] × kolom D: [7-10, 5-6, 2-4, 1]
+  s9: ['HHHH', 'HHHH', 'HHHM', 'HMLL', 'LLLL'],
+  s7: ['HHHH', 'HHHM', 'HMMM', 'MMLL', 'LLLL'],
+  s4: ['HHMM', 'MMML', 'MLLL', 'LLLL', 'LLLL'],
+  s2: ['MMLL', 'LLLL', 'LLLL', 'LLLL', 'LLLL']
+};
+function apAIAGVDA(S, O, D) {
+  S = +S; O = +O; D = +D;
+  if (![S, O, D].every(v => Number.isInteger(v) && v >= 1 && v <= 10)) return '';
+  if (S === 1) return 'L';
+  const t = S >= 9 ? AP_TABLE.s9 : S >= 7 ? AP_TABLE.s7 : S >= 4 ? AP_TABLE.s4 : AP_TABLE.s2;
+  const oi = O >= 8 ? 0 : O >= 6 ? 1 : O >= 4 ? 2 : O >= 2 ? 3 : 4, di = D >= 7 ? 0 : D >= 5 ? 1 : D >= 2 ? 2 : 3;
+  return t[oi][di];
+}
+
+/* ---------- Pareto ---------- */
+function paretoCalc(items, by = 'n') {
+  const map = new Map();
+  items.forEach(it => {
+    const c = String(it.cat ?? '').trim() || '(tanpa kategori)';
+    const e = map.get(c) || { cat: c, n: 0, cost: 0, hasCost: false };
+    if (isNum(it.n)) e.n += it.n; if (isNum(it.cost)) { e.cost += it.cost; e.hasCost = true; }
+    map.set(c, e);
+  });
+  const key = by === 'cost' ? 'cost' : 'n';
+  const arr = [...map.values()].filter(e => e[key] > 0).sort((a, b) => b[key] - a[key] || a.cat.localeCompare(b.cat));
+  const tot = sum(arr.map(e => e[key]));
+  if (!(tot > 0)) throw new Error(key === 'cost' ? 'Total biaya nol — isi kolom biaya.' : 'Total jumlah cacat nol.');
+  let cum = 0;
+  arr.forEach(e => { e.pct = e[key] / tot * 100; e.vital = cum < 80 - 1e-9; cum += e.pct; e.cum = cum; });
+  return { items: arr, total: tot, by: key, totN: sum(arr.map(e => e.n)), totCost: sum(arr.map(e => e.cost)), hasCost: arr.some(e => e.hasCost) };
+}
+
+/* ---------- EWMA (ISO 7870-6) & CUSUM tabular (ISO 7870-4) ---------- */
+function computeSmallShift(groups, opts) {
+  const base = computeVariable(groups, Object.assign({}, opts, { type: 'auto', tests: [1] }));
+  const x = base.main.points, nArr = base.type === 'imr' ? x.map(() => 1) : base.sizes;
+  const mu = base.mean, sig = base.sigmaWithin;
+  const s = x.map((_, i) => sig / Math.sqrt(Math.max(1, nArr[i] || 1)));
+  const statName = base.type === 'imr' ? 'nilai individual' : 'rata-rata subgrup';
+  const notes = [`Statistik yang dipantau: ${statName}. μ₀ = ${fmt(mu, 5)}, σ = ${fmt(sig, 5)} (${{ imr: 'MR̄/d₂', xbarr: 'R̄/d₂', xbars: 'S̄/c₄' }[base.type]}${isNum(opts.histSigma) ? ', historis' : ''}).`];
+  if (new Set(nArr.filter(n => n > 0)).size > 1) notes.push('Ukuran subgrup bervariasi: batas dihitung per titik memakai σ/√nᵢ.');
+  const common = { kind: 'variable', sigmaWithin: sig, mean: mu, values: base.values, k: x.length, sizes: base.sizes, opts, xLabel: base.xLabel, constN: base.constN, baseType: base.type, raw: x };
+  if (opts.type === 'ewma') {
+    const lam = opts.lambda, L = opts.L;
+    if (!(lam > 0 && lam <= 1)) throw new Error('λ (lambda) EWMA harus di antara 0 dan 1.');
+    if (!(L > 0)) throw new Error('Lebar batas L EWMA harus > 0.');
+    let z = mu; const pts = [], ucl = [], lcl = [], sg = [];
+    x.forEach((v, i) => {
+      if (isNum(v)) z = lam * v + (1 - lam) * z;
+      pts.push(isNum(v) ? z : NaN);
+      const se = s[i] * Math.sqrt(lam / (2 - lam) * (1 - Math.pow(1 - lam, 2 * (i + 1))));
+      sg.push(se); ucl.push(mu + L * se); lcl.push(mu - L * se);
+    });
+    const main = { label: 'EWMA', sym: 'μ₀', points: pts, cl: x.map(() => mu), ucl, lcl, sig: sg };
+    main.flags = pts.map((v, i) => isNum(v) && (v > ucl[i] || v < lcl[i]) ? [1] : []);
+    notes.push(`λ = ${fmt(lam)}, L = ${fmt(L)}. Batas melebar bertahap lalu konstan (varians eksak EWMA).`);
+    return Object.assign(common, { type: 'ewma', title: 'Peta Kendali EWMA', mainName: 'EWMA', main, disp: null, notes, params: { lambda: lam, L } });
+  }
+  const k = opts.kC, h = opts.hC;
+  if (!(k >= 0)) throw new Error('Nilai referensi k CUSUM harus ≥ 0.');
+  if (!(h > 0)) throw new Error('Interval keputusan h CUSUM harus > 0.');
+  let cp = 0, cm = 0; const P = [], M = [], H = [];
+  x.forEach((v, i) => { if (isNum(v)) { cp = Math.max(0, cp + (v - mu) - k * s[i]); cm = Math.max(0, cm - (v - mu) - k * s[i]); } P.push(isNum(v) ? cp : NaN); M.push(isNum(v) ? cm : NaN); H.push(h * s[i]); });
+  const zero = x.map(() => 0), none = x.map(() => NaN);
+  const main = { label: 'CUSUM atas C⁺', sym: 'CL', points: P, cl: zero, ucl: H, lcl: none, sig: s };
+  const disp = { label: 'CUSUM bawah C⁻', sym: 'CL', points: M, cl: zero, ucl: H, lcl: none, sig: s };
+  main.flags = P.map((v, i) => isNum(v) && v > H[i] ? [1] : []); disp.flags = M.map((v, i) => isNum(v) && v > H[i] ? [1] : []);
+  notes.push(`k = ${fmt(k)}σ (nilai referensi), h = ${fmt(h)}σ (interval keputusan). C⁺ mendeteksi kenaikan rata-rata, C⁻ penurunan. Setelah sinyal & perbaikan, mulai ulang CUSUM dari nol.`);
+  return Object.assign(common, { type: 'cusum', title: 'Peta Kendali CUSUM', mainName: 'C⁺', dispName: 'C⁻', main, disp, notes, params: { k, h } });
+}
+
+/* ---------- Kalibrasi: jatuh tempo ---------- */
+function addMonthsISO(iso, months) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || '')); if (!m) return null;
+  const y = +m[1], mo = +m[2] - 1 + Math.round(months), d = +m[3];
+  const last = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, mo, Math.min(d, last))).toISOString().slice(0, 10);
+}
+function daysBetween(a, b) { const p = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s); return Date.UTC(+m[1], +m[2] - 1, +m[3]); }; return Math.round((p(b) - p(a)) / 864e5); }
+function calStatus(g, today) {
+  today = today || localISO();
+  if (g.status === 'nonaktif') return { due: null, days: null, st: 'off' };
+  const due = g.lastCal && +g.intervalM > 0 ? addMonthsISO(g.lastCal, +g.intervalM) : null;
+  if (!due) return { due: null, days: null, st: 'na' };
+  const days = daysBetween(today, due);
+  return { due, days, st: days < 0 ? 'over' : days <= 30 ? 'soon' : 'ok' };
+}
+function localISO(d = new Date()) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+
+/* =====================================================================
+   MODUL v1.3 — UTIL UI BERSAMA
+   ===================================================================== */
+const APC = { H: 'b-bad', M: 'b-warn', L: 'b-ok' };
+const apBadge = (a) => a ? `<span class="badge ${APC[a]} apb" title="Action Priority ${a === 'H' ? 'High' : a === 'M' ? 'Medium' : 'Low'}">${a}</span>` : '<span class="muted">—</span>';
+const plotOK = () => typeof Plotly !== 'undefined';
+function parseGrid(text) {
+  if (typeof Papa === 'undefined') throw new Error('Pustaka CSV gagal dimuat.');
+  return Papa.parse(String(text || '').trim(), { skipEmptyLines: true }).data.filter(r => r.some(c => String(c).trim() !== ''));
+}
+async function readGridFile(file) {
+  if (/\.(xlsx|xls)$/i.test(file.name || '')) {
+    if (typeof XLSX === 'undefined') throw new Error('Pustaka Excel gagal dimuat. Simpan file sebagai CSV.');
+    const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: '' }).filter(r => r.some(c => String(c).trim() !== ''));
+  }
+  return parseGrid(await file.text());
+}
+/** baris pertama dianggap judul kolom bila tidak berisi angka sama sekali */
+function gridTable(arr) {
+  if (!arr || !arr.length) throw new Error('Data kosong.');
+  const width = Math.max(...arr.map(r => r.length));
+  const head = !arr[0].some(c => isNum(parseNum(c)));
+  const headers = Array.from({ length: width }, (_, i) => head ? (String(arr[0][i] ?? '').trim() || 'Kolom ' + (i + 1)) : 'Kolom ' + (i + 1));
+  const rows = (head ? arr.slice(1) : arr).map(r => Array.from({ length: width }, (_, i) => r[i] ?? ''));
+  return { headers, rows };
+}
+function getPath(o, p) { return p.split('.').reduce((a, k) => a == null ? undefined : a[k], o); }
+function setPath(o, p, v) { const ks = p.split('.'); let a = o; ks.slice(0, -1).forEach(k => { if (!a[k] || typeof a[k] !== 'object') a[k] = {}; a = a[k]; }); a[ks[ks.length - 1]] = v; }
+/** isi & ikat semua elemen [data-k] ke objek */
+function bindFields(root, obj, onChange) {
+  $$('[data-k]', root).forEach(el => {
+    const k = el.dataset.k, v = getPath(obj, k);
+    if (el.type === 'checkbox') el.checked = !!v; else el.value = v ?? '';
+    const ev = el.type === 'checkbox' || el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input';
+    el.addEventListener(ev, () => { setPath(obj, k, el.type === 'checkbox' ? el.checked : el.value); if (onChange) onChange(k, el); });
+  });
+}
+function fileBtn(id, label = 'Unggah CSV/XLSX') { return `<button type="button" class="btn sm sec" data-file="${id}">${ICON.up} ${label}</button><input type="file" id="${id}" accept=".csv,.txt,.xlsx,.xls" hidden>`; }
+function wireFileBtns(root) { $$('[data-file]', root).forEach(b => b.onclick = () => $('#' + b.dataset.file, root).click()); }
+function csvOf(head, rows) { const q = (v) => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }; return [head, ...rows].map(r => r.map(q).join(',')).join('\n') + '\n'; }
+function kpiStrip(cells) { return `<div class="stat-strip">${cells.map(([k, val, c, sub]) => `<div><div class="k">${esc(k)}</div><div class="v"><i class="sev ${c}"></i>${esc(val)}</div><div class="s">${esc(sub || '')}</div></div>`).join('')}</div>`; }
+const pctTxt = (x, d = 1) => isNum(x) ? fmtFix(x, d) + '%' : '—';
+const backBtn = (id) => `<button class="btn sm ghost" id="${id}">← Kembali ke daftar</button>`;
+async function pickSpec(title, extraHTML = '') {
+  const specs = Store.list('spec');
+  if (!specs.length) { toast('Belum ada spesifikasi. Buat dulu di menu Spesifikasi Standar.', 'err'); return null; }
+  return dialog(title, `<div class="field"><label class="f">Spesifikasi produk</label><select id="dlgSpec">${specs.map(s => opt(s.id, `${s.input.name || 'Tanpa nama'}${s.input.code ? ' · ' + s.input.code : ''} (${s.materialName})`, '')).join('')}</select></div>${extraHTML}`,
+    [{ label: 'Batal', value: null, cls: 'sec' }, { label: 'Lanjutkan', value: (bg) => ({ spec: Store.get('spec', $('#dlgSpec', bg).value), bg, vals: Object.fromEntries($$('[data-dlg]', bg).map(e => [e.dataset.dlg, e.value])) }), cls: 'acc' }]);
+}
+async function plotPNG(el, name, w = 1400, h = 600) { try { const url = await Plotly.toImage(el, { format: 'png', width: w, height: h, scale: 1 }); const blob = await (await fetch(url)).blob(); saveFile(name, blob, 'image/png'); } catch (e) { toast('Gagal membuat PNG', 'err'); } }
+async function plotImg(el, w, h) { try { return await Plotly.toImage(el, { format: 'png', width: w, height: h, scale: 1 }); } catch (e) { return null; } }
+
+/* =====================================================================
+   VIEW: PFMEA (AIAG & VDA FMEA Handbook 2019 — Action Priority)
+   ===================================================================== */
+const FMEA_COLS = [
+  ['step', 'Langkah proses', 't', 150], ['func', 'Fungsi / persyaratan', 't', 160], ['fm', 'Mode kegagalan (FM)', 't', 170], ['fe', 'Efek kegagalan (FE)', 't', 170],
+  ['s', 'S', 'n'], ['fc', 'Penyebab kegagalan (FC)', 't', 170], ['pc', 'Kontrol pencegahan (PC)', 't', 160], ['o', 'O', 'n'], ['dc', 'Kontrol deteksi (DC)', 't', 160], ['d', 'D', 'n'],
+  ['ap', 'AP', 'ap'], ['sc', 'Kar. khusus', 'sc'], ['act', 'Tindakan (pencegahan/deteksi)', 't', 170], ['pic', 'PIC', 's', 90], ['due', 'Target', 'date'], ['st', 'Status', 'st'],
+  ['s2', 'S′', 'n'], ['o2', 'O′', 'n'], ['d2', 'D′', 'n'], ['ap2', 'AP′', 'ap2']
+];
+const newFmeaRow = (o = {}) => Object.assign({ id: uid(), step: '', func: '', fm: '', fe: '', s: '', fc: '', pc: '', o: '', dc: '', d: '', sc: '', act: '', pic: '', due: '', st: '', s2: '', o2: '', d2: '' }, o);
+const rowAP = (r) => apAIAGVDA(r.s, r.o, r.d), rowAP2 = (r) => apAIAGVDA(r.s2 || r.s, r.o2, r.d2);
+function fmeaStats(f) {
+  const ap = f.rows.map(rowAP);
+  return { H: ap.filter(a => a === 'H').length, M: ap.filter(a => a === 'M').length, L: ap.filter(a => a === 'L').length, blank: ap.filter(a => !a).length,
+    hNoAct: f.rows.filter(r => rowAP(r) === 'H' && !String(r.act || '').trim()).length, n: f.rows.length };
+}
+function apMatrixHTML() {
+  const sv = [['9–10', 's9'], ['7–8', 's7'], ['4–6', 's4'], ['2–3', 's2']], ov = ['8–10', '6–7', '4–5', '2–3', '1'], dv = ['7–10', '5–6', '2–4', '1'];
+  return `<div class="tw"><table class="t apm"><thead><tr><th>S</th><th>O</th>${dv.map(d => `<th class="num">D ${d}</th>`).join('')}</tr></thead><tbody>
+    ${sv.map(([sl, k]) => AP_TABLE[k].map((row, i) => `<tr>${i === 0 ? `<td rowspan="5"><b>${sl}</b></td>` : ''}<td>${ov[i]}</td>${row.split('').map(a => `<td class="num">${apBadge(a)}</td>`).join('')}</tr>`).join('')).join('')}
+    <tr><td><b>1</b></td><td>1–10</td><td class="num" colspan="4">${apBadge('L')}</td></tr></tbody></table></div>`;
+}
+const SOD_GUIDE = `<div class="grid g3 sod">
+  <div><b>Severity (S) — efek</b><ul><li><b>9–10</b> keselamatan / ketidakpatuhan regulasi</li><li><b>7–8</b> fungsi utama hilang/menurun; gangguan lini besar</li><li><b>4–6</b> fungsi sekunder/kenyamanan; rework di lini</li><li><b>2–3</b> penampilan/gangguan kecil</li><li><b>1</b> tidak ada efek yang terlihat</li></ul></div>
+  <div><b>Occurrence (O) — penyebab</b><ul><li><b>8–10</b> tinggi: kontrol pencegahan lemah/tidak ada</li><li><b>6–7</b> cukup tinggi</li><li><b>4–5</b> sedang: kontrol pencegahan terbukti sebagian</li><li><b>2–3</b> rendah: kontrol pencegahan efektif</li><li><b>1</b> sangat rendah: penyebab dicegah secara desain</li></ul></div>
+  <div><b>Detection (D) — kemampuan deteksi</b><ul><li><b>7–10</b> rendah: tanpa metode / metode belum terbukti</li><li><b>5–6</b> sedang: inspeksi manual / sampling</li><li><b>2–4</b> tinggi: deteksi otomatis/gauge terbukti</li><li><b>1</b> sangat tinggi: tidak mungkin lolos (error-proofing)</li></ul></div>
+</div><p class="hint">Ringkasan buatan SQMC. Kriteria rating lengkap per tingkat ada di AIAG &amp; VDA FMEA Handbook (2019, errata Jun 2020).</p>`;
+
+function viewFMEA(root) {
+  const id = App.state.fmeaEdit, doc = id ? Store.get('fmea', id) : null;
+  if (doc) return renderFmeaEditor(root, JSON.parse(JSON.stringify(doc)));
+  App.state.fmeaEdit = null;
+  const list = Store.list('fmea');
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Process FMEA</h2><p>Analisis risiko proses dengan metode 7 langkah AIAG &amp; VDA (2019). Prioritas tindakan memakai <b>Action Priority (AP)</b> High/Medium/Low, bukan RPN.</p></div>
+    <div class="row"><button class="btn sm acc" id="fmNew">${ICON.plus} PFMEA baru</button><button class="btn sm sec" id="fmSpec">${ICON.spec} Dari spesifikasi</button></div></div>
+  <div class="card"><div class="card-head"><h3>Dokumen PFMEA</h3><span class="muted" style="font-size:.78rem">${list.length} dokumen</span></div>
+    ${list.length ? `<div class="tw"><table class="t"><thead><tr><th>Dokumen</th><th class="hide-sm">Produk / proses</th><th class="num">Baris</th><th class="num">AP H</th><th class="num">H tanpa tindakan</th><th class="hide-sm">Diperbarui</th><th></th></tr></thead><tbody>
+      ${list.map(f => { const s = fmeaStats(f); return `<tr><td><b>${esc(f.name || 'PFMEA')}</b><div class="muted" style="font-size:.75rem">Rev. ${esc(f.rev || '0')}</div></td><td class="hide-sm">${esc(f.product || '—')}</td><td class="num">${s.n}</td><td class="num">${s.H ? `<span class="badge b-bad">${s.H}</span>` : 0}</td><td class="num">${s.hNoAct ? `<span class="badge b-bad">${s.hNoAct}</span>` : '0'}</td><td class="hide-sm" style="white-space:nowrap">${dateID(f.updatedAt)}</td><td style="text-align:right"><button class="btn sm sec" data-open="${f.id}">Buka</button></td></tr>`; }).join('')}
+    </tbody></table></div>` : `<div class="empty">Belum ada PFMEA. Mulai dari spesifikasi produk agar mode kegagalan terisi dari katalog cacat.</div>`}
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="card-head"><h3>Tabel Action Priority</h3><span class="muted" style="font-size:.75rem">AIAG &amp; VDA FMEA 2019</span></div>
+      <p class="hint" style="margin:4px 0 10px"><b>H</b>: tindakan wajib untuk menurunkan O/D, atau justifikasi tertulis mengapa kontrol saat ini memadai. <b>M</b>: tindakan sebaiknya diambil atau keputusan didokumentasikan. <b>L</b>: tindakan opsional.</p>${apMatrixHTML()}</div>
+    <div class="card"><h3>Panduan rating singkat</h3>${SOD_GUIDE}</div>
+  </div>`;
+  $$('[data-open]', root).forEach(b => b.onclick = () => { App.state.fmeaEdit = b.dataset.open; viewFMEA(root); });
+  $('#fmNew').onclick = async () => { const f = { id: uid(), name: 'PFMEA baru', product: '', process: '', team: '', rev: '0', date: localISO(), specId: '', rows: [newFmeaRow()] }; await Store.put('fmea', f); App.state.fmeaEdit = f.id; viewFMEA(root); };
+  $('#fmSpec').onclick = async () => {
+    const r = await pickSpec('PFMEA dari spesifikasi'); if (!r || !r.spec) return;
+    const s = r.spec, f = { id: uid(), name: `PFMEA ${s.input.name || ''}`.trim(), product: [s.input.name, s.input.code].filter(Boolean).join(' · '), process: s.processName, team: '', rev: '0', date: localISO(), specId: s.id, rows: fmeaRowsFromSpec(s) };
+    await Store.put('fmea', f); App.state.fmeaEdit = f.id; toast(`${f.rows.length} baris mode kegagalan dibuat dari katalog cacat`, 'ok'); viewFMEA(root);
+  };
+}
+function fmeaRowsFromSpec(s) {
+  const fl = (s.input.fluids || []), safety = fl.includes('gas') || fl.includes('chem');
+  const findTest = (re) => { const t = (s.tests || []).find(t => re.test(t.name)); return t ? `${t.name} — ${t.freq}` : ''; };
+  const stepOf = (d) => /leak|bocor/i.test(d.id + d.name) ? 'Uji tekanan / kebocoran' : /mark|penandaan/i.test(d.id + d.name) ? 'Penandaan & pengemasan' : /zinc|galv|tea|rust|tarnish/i.test(d.id) ? 'Finishing / pelapisan' : `Proses ${s.processName.split('(')[0].trim()}`;
+  const fe = { Kritis: 'Bocor / gagal fungsi di instalasi pelanggan; potensi klaim', Mayor: 'Tidak dapat dirakit atau fungsi menurun; scrap/rework di pelanggan', Minor: 'Penampilan kurang; keluhan pelanggan' };
+  const sev = { Kritis: safety ? 9 : 8, Mayor: 7, Minor: 4 };
+  const dc = (d) => /leak|bocor/i.test(d.id + d.name) ? findTest(/tekanan|kebocoran/i) : /dim|thread|bevel|w(low|high)|ulir/i.test(d.id) ? findTest(/dimensi|ulir|berat/i) : findTest(/visual/i);
+  return (s.defects || []).map(d => newFmeaRow({ step: stepOf(d), func: d.limit ? `Persyaratan: ${d.limit}` : '', fm: d.name, fe: fe[d.cls] || '', s: String(sev[d.cls] || ''), dc: dc(d) }));
+}
+function renderFmeaEditor(root, f) {
+  let dirty = false;
+  const sc = (r) => `<select data-r="${r.id}" data-c="sc">${opt('', '—', r.sc)}${opt('CC', 'CC (kritis)', r.sc)}${opt('SC', 'SC (signifikan)', r.sc)}</select>`;
+  const stSel = (r) => `<select data-r="${r.id}" data-c="st">${opt('', '—', r.st)}${opt('open', 'Terbuka', r.st)}${opt('done', 'Selesai', r.st)}${opt('na', 'Tidak perlu', r.st)}</select>`;
+  const cellHTML = (r, [k, , t]) => t === 'n' ? `<input type="text" inputmode="numeric" maxlength="2" class="sod" data-r="${r.id}" data-c="${k}" value="${esc(r[k])}">`
+    : t === 'ap' ? `<span data-ap="${r.id}">${apBadge(rowAP(r))}</span>` : t === 'ap2' ? `<span data-ap2="${r.id}">${apBadge(rowAP2(r))}</span>`
+      : t === 'sc' ? sc(r) : t === 'st' ? stSel(r) : t === 'date' ? `<input type="date" data-r="${r.id}" data-c="${k}" value="${esc(r[k])}">`
+        : t === 's' ? `<input type="text" data-r="${r.id}" data-c="${k}" value="${esc(r[k])}">` : `<textarea rows="2" data-r="${r.id}" data-c="${k}">${esc(r[k])}</textarea>`;
+  const specs = Store.list('spec');
+  root.innerHTML = `
+  <div class="page-head"><div><h2>${esc(f.name || 'PFMEA')}</h2><p>Isi S, O, D (1–10) per baris; AP dihitung otomatis dari tabel AIAG &amp; VDA. Kolom S′/O′/D′ untuk penilaian ulang setelah tindakan.</p></div>
+    <div class="row">${backBtn('fmBack')}<button class="btn sm acc" id="fmSave">Simpan</button><button class="btn sm sec" id="fmCP">${ICON.plan} Buat Control Plan</button><button class="btn sm sec" id="fmCsv">${ICON.dl} CSV</button><button class="btn sm sec" id="fmPdf">${ICON.dl} PDF</button><button class="btn sm danger" id="fmDel">Hapus</button></div></div>
+  <div class="card"><div class="grid g4">
+    <div class="field"><label class="f">Nama dokumen</label><input type="text" data-k="name"></div>
+    <div class="field"><label class="f">Produk / part</label><input type="text" data-k="product"></div>
+    <div class="field"><label class="f">Proses / area</label><input type="text" data-k="process"></div>
+    <div class="field"><label class="f">Tim FMEA</label><input type="text" data-k="team" placeholder="QA, Produksi, Engineering…"></div>
+    <div class="field"><label class="f">Revisi</label><input type="text" data-k="rev"></div>
+    <div class="field"><label class="f">Tanggal</label><input type="date" data-k="date"></div>
+    <div class="field"><label class="f">Spesifikasi terkait</label><select data-k="specId"><option value="">— tidak ada —</option>${specs.map(s => opt(s.id, s.input.name || 'Tanpa nama', f.specId)).join('')}</select></div>
+  </div><div id="fmStat"></div></div>
+  <div class="card"><div class="card-head"><h3>Lembar analisis</h3><div class="row"><button class="btn sm sec" id="fmAdd">${ICON.plus} Tambah baris</button>${f.specId ? `<button class="btn sm sec" id="fmFill">Tambah dari katalog cacat</button>` : ''}</div></div>
+    <div class="tw fm-wrap"><table class="t grid-edit fm"><thead><tr><th>#</th>${FMEA_COLS.map(([k, l, t, w]) => `<th class="${['n', 'ap', 'ap2'].includes(t) ? 'num' : ''}" ${w ? `style="min-width:${w}px"` : ''}>${l}</th>`).join('')}<th></th></tr></thead>
+    <tbody id="fmBody">${f.rows.map((r, i) => `<tr data-row="${r.id}"><td class="muted">${i + 1}</td>${FMEA_COLS.map(c => `<td>${cellHTML(r, c)}</td>`).join('')}<td><button class="icon-btn" data-delrow="${r.id}" title="Hapus baris" aria-label="Hapus baris">✕</button></td></tr>`).join('')}</tbody></table></div>
+  </div>
+  <details class="acc"><summary>Tabel Action Priority &amp; panduan rating</summary>${apMatrixHTML()}${SOD_GUIDE}</details>`;
+  const stat = () => { const s = fmeaStats(f); $('#fmStat').innerHTML = kpiStrip([['AP High', String(s.H), s.H ? 'bad' : 'ok', 'tindakan wajib / justifikasi'], ['AP Medium', String(s.M), s.M ? 'warn' : 'ok', 'tindakan disarankan'], ['AP Low', String(s.L), 'ok', 'opsional'], ['Belum dinilai', String(s.blank), s.blank ? 'warn' : 'ok', 'baris tanpa S/O/D lengkap'], ['H tanpa tindakan', String(s.hNoAct), s.hNoAct ? 'bad' : 'ok', 'isi kolom Tindakan']]); };
+  bindFields(root, f, () => { dirty = true; }); stat();
+  const body = $('#fmBody');
+  body.addEventListener('input', (e) => {
+    const el = e.target, id = el.dataset.r, c = el.dataset.c; if (!id || !c) return;
+    const r = f.rows.find(x => x.id === id); if (!r) return;
+    if (el.classList.contains('sod')) { el.value = el.value.replace(/[^0-9]/g, ''); if (+el.value > 10) el.value = '10'; if (el.value === '0') el.value = ''; }
+    r[c] = el.value; dirty = true;
+    if (['s', 'o', 'd', 's2', 'o2', 'd2'].includes(c)) { $(`[data-ap="${id}"]`).innerHTML = apBadge(rowAP(r)); $(`[data-ap2="${id}"]`).innerHTML = apBadge(rowAP2(r)); stat(); }
+    if (c === 'act') stat();
+  });
+  body.addEventListener('change', (e) => { const el = e.target, r = f.rows.find(x => x.id === el.dataset.r); if (r && el.tagName === 'SELECT') { r[el.dataset.c] = el.value; dirty = true; } });
+  body.addEventListener('click', (e) => { const b = e.target.closest('[data-delrow]'); if (!b) return; f.rows = f.rows.filter(x => x.id !== b.dataset.delrow); renderFmeaEditor(root, f); });
+  const save = async (quiet) => { f.rows = f.rows.filter(r => FMEA_COLS.some(([k]) => String(r[k] || '').trim()) || f.rows.length === 1); await Store.put('fmea', f); dirty = false; if (!quiet) toast('PFMEA tersimpan', 'ok'); };
+  $('#fmSave').onclick = () => save();
+  $('#fmAdd').onclick = () => { f.rows.push(newFmeaRow()); renderFmeaEditor(root, f); };
+  const fill = $('#fmFill'); if (fill) fill.onclick = () => { const s = Store.get('spec', f.specId); if (!s) return toast('Spesifikasi tidak ditemukan', 'err'); f.rows = f.rows.filter(r => r.fm || r.step).concat(fmeaRowsFromSpec(s)); renderFmeaEditor(root, f); };
+  $('#fmBack').onclick = async () => { if (dirty && !(await confirmDlg('Perubahan belum disimpan', 'Kembali ke daftar tanpa menyimpan?', 'Ya, buang perubahan'))) return; App.state.fmeaEdit = null; viewFMEA(root); };
+  $('#fmDel').onclick = async () => { if (!(await confirmDlg('Hapus PFMEA', `Hapus "${f.name}"?`))) return; await Store.del('fmea', f.id); App.state.fmeaEdit = null; viewFMEA(root); };
+  $('#fmCsv').onclick = () => saveFile(`${slug(f.name)}.csv`, csvOf(['No', ...FMEA_COLS.map(c => c[1])], f.rows.map((r, i) => [i + 1, ...FMEA_COLS.map(([k, , t]) => t === 'ap' ? rowAP(r) : t === 'ap2' ? rowAP2(r) : r[k])])), 'text/csv');
+  $('#fmPdf').onclick = () => pdfFMEA(f);
+  $('#fmCP').onclick = async () => { await save(true); const cp = buildControlPlan(f.specId ? Store.get('spec', f.specId) : null, f, 'Production'); await Store.put('cplan', cp); App.state.cpEdit = cp.id; toast('Control Plan dibuat dari PFMEA', 'ok'); App.go('control-plan'); };
+}
+function pdfFMEA(f) {
+  if (!pdfReady()) return; const doc = pdfDoc('l'); if (!doc) return;
+  let y = pdfHeader(doc, `Process FMEA - ${f.name || ''}`, `Produk: ${f.product || '-'} | Proses: ${f.process || '-'} | Tim: ${f.team || '-'} | Rev. ${f.rev || '0'} | ${f.date || ''} | Metode: AIAG & VDA FMEA Handbook (2019), Action Priority`);
+  const s = fmeaStats(f);
+  y = AT(doc, y, ['AP High', 'AP Medium', 'AP Low', 'Belum dinilai', 'H tanpa tindakan'], [[s.H, s.M, s.L, s.blank, s.hNoAct]]);
+  const cols = FMEA_COLS.filter(([k]) => !['pic', 'due'].includes(k));
+  AT(doc, y, ['#', ...cols.map(c => c[1])], f.rows.map((r, i) => [i + 1, ...cols.map(([k, , t]) => t === 'ap' ? rowAP(r) : t === 'ap2' ? rowAP2(r) : t === 'st' ? ({ open: 'Terbuka', done: 'Selesai', na: 'Tidak perlu' }[r.st] || '') : r[k])]),
+    { styles: { fontSize: 6.4, cellPadding: 1.1, lineColor: [221, 227, 234], lineWidth: 0.2, textColor: [19, 34, 49], overflow: 'linebreak' }, headStyles: { fillColor: [233, 237, 242], textColor: [10, 31, 68], fontStyle: 'bold', fontSize: 6.4 },
+      didParseCell: (d) => { if (d.section === 'body' && ['AP', 'AP′'].includes(cols[d.column.index - 1] && cols[d.column.index - 1][1])) { const v = d.cell.raw; if (v === 'H') { d.cell.styles.fillColor = [255, 225, 225]; d.cell.styles.fontStyle = 'bold'; } else if (v === 'M') d.cell.styles.fillColor = [252, 244, 214]; else if (v === 'L') d.cell.styles.fillColor = [222, 251, 230]; } } });
+  pdfFooter(doc, 'PFMEA dihasilkan SQMC. AP mengikuti tabel Action Priority AIAG & VDA FMEA Handbook (2019). Rating S/O/D adalah keputusan tim FMEA.');
+  saveFile(`SQMC-${slug(f.name || 'pfmea')}.pdf`, doc.output('blob'), 'application/pdf');
+}
+
+/* =====================================================================
+   VIEW: CONTROL PLAN (struktur kolom AIAG Control Plan, 1st ed. 2024)
+   ===================================================================== */
+const CP_COLS = [['procNo', 'No. proses', 60], ['proc', 'Nama proses / operasi', 150], ['machine', 'Mesin / alat / jig', 120], ['charNo', 'No. kar.', 50], ['prodChar', 'Karakteristik produk', 150], ['procChar', 'Karakteristik proses', 130], ['sc', 'Kelas kar. khusus', 70],
+  ['spec', 'Spesifikasi / toleransi', 150], ['eval', 'Teknik evaluasi / pengukuran', 150], ['size', 'Ukuran sampel', 90], ['freq', 'Frekuensi', 110], ['method', 'Metode kendali', 150], ['reaction', 'Rencana reaksi', 190]];
+const CP_PHASES = ['Prototype', 'Pre-Launch', 'Safe Launch', 'Production'];
+const REACT = {
+  spc: 'Hentikan & karantina produk sejak titik terakhir OK; investigasi penyebab khusus; koreksi setting; buka NCR bila produk di luar spesifikasi.',
+  lot: 'Lot ditolak bila jumlah cacat ≥ Re: karantina, sortir 100%, disposisi via NCR; terapkan aturan perpindahan inspeksi ketat.',
+  inc: 'Tolak/karantina lot bahan baku; terbitkan permintaan tindakan korektif ke pemasok (SCAR).',
+  type: 'Hentikan rilis produk baru; investigasi desain/formulasi; validasi ulang sebelum produksi berlanjut.',
+  ok100: 'Pisahkan produk gagal; NCR; investigasi penyebab sebelum melanjutkan.'
+};
+const newCpRow = (o = {}) => Object.assign({ id: uid(), procNo: '', proc: '', machine: '', charNo: '', prodChar: '', procChar: '', sc: '', spec: '', eval: '', size: '', freq: '', method: '', reaction: '' }, o);
+function buildControlPlan(s, fmea, phase = 'Production') {
+  const rows = []; let ch = 0; const nx = () => String(++ch);
+  const P = s ? s.processName.split('(')[0].trim() : 'Proses produksi';
+  const safe = phase === 'Safe Launch';
+  if (s) {
+    (s.tests || []).filter(t => /Incoming/.test(t.cls)).forEach(t => rows.push(newCpRow({ procNo: '10', proc: 'Penerimaan bahan baku', machine: 'Lab / gudang', charNo: nx(), prodChar: t.name, spec: t.std, eval: t.std, size: 'Per lot', freq: t.freq, method: 'Verifikasi sertifikat + uji', reaction: REACT.inc })));
+    rows.push(newCpRow({ procNo: '20', proc: P, machine: 'Mesin produksi', charNo: nx(), procChar: 'Parameter proses kritis (suhu, tekanan, waktu siklus)', spec: 'Sesuai lembar setting proses', eval: 'Pembacaan panel / data logger', size: '1', freq: 'Setiap setup & per shift', method: 'Checklist setup; persetujuan first-piece', reaction: 'Koreksi setting; tahan produk sejak pengecekan terakhir; NCR bila perlu.' }));
+    if (s.weight) rows.push(newCpRow({ procNo: '20', proc: P, machine: 'Timbangan', charNo: nx(), prodChar: 'Berat bersih per unit', spec: `${fmt(s.weight.target)} g ± ${fmt(s.weight.tolAbs, 3)} g (${fmt(s.weight.lsl, 4)}–${fmt(s.weight.usl, 4)})`, eval: 'Timbangan terkalibrasi (cek MSA)', size: safe ? '5 → tingkatkan' : '5', freq: safe ? 'Tiap 30 menit (Safe Launch)' : 'Tiap jam', method: 'Peta kendali X̄-R; target Cpk ≥ 1,33', reaction: REACT.spc }));
+    (s.dims || []).forEach(d => rows.push(newCpRow({ procNo: '20', proc: P, machine: 'Alat ukur dimensi', charNo: nx(), prodChar: d.name, spec: `${fmt(d.nominal)} ${d.unit}${d.plus !== null ? ` (+${fmt(Math.abs(d.plus))}/−${fmt(Math.abs(d.minus ?? d.plus))})` : ''}`, eval: 'Jangka sorong / mikrometer / gauge (cek MSA)', size: safe ? '5 → tingkatkan' : '5', freq: safe ? 'Tiap 30 menit (Safe Launch)' : 'Tiap shift / setup', method: 'Peta kendali X̄-R', reaction: REACT.spc })));
+    (s.tests || []).filter(t => /Final|Proses/.test(t.cls) && !/Berat bersih|Dimensi kritis/.test(t.name)).forEach(t => rows.push(newCpRow({ procNo: /Final/.test(t.cls) ? '30' : '20', proc: /Final/.test(t.cls) ? 'Inspeksi akhir' : P, machine: 'Lab QC', charNo: nx(), prodChar: t.name, spec: t.std, eval: t.std, size: /100%/.test(t.freq) ? '100%' : 'Sesuai rencana sampling', freq: t.freq, method: /sampling ISO 2859/.test(t.freq) ? 'Sampling AQL (ISO 2859-1)' : 'Uji & catat hasil', reaction: /100%/.test(t.freq) ? REACT.ok100 : REACT.lot })));
+    const mj = (s.sampling || []).find(x => x.cls === 'Mayor');
+    if (mj && mj.n) rows.push(newCpRow({ procNo: '30', proc: 'Inspeksi akhir', machine: 'Meja inspeksi + limit sample', charNo: nx(), prodChar: 'Cacat visual mayor/minor (katalog cacat)', spec: `AQL mayor ${mj.aql} · Ac/Re ${mj.ac}/${mj.re}`, eval: 'Visual + limit sample', size: `n = ${mj.n}${safe ? ' (Safe Launch: pertimbangkan 100%)' : ''}`, freq: 'Per lot', method: `Sampling ISO 2859-1, kode ${mj.letter}${mj.planLetter && mj.planLetter !== mj.letter ? '→' + mj.planLetter : ''}`, reaction: REACT.lot }));
+    (s.tests || []).filter(t => /Tipe/.test(t.cls) && !/Final/.test(t.cls)).forEach(t => rows.push(newCpRow({ procNo: '40', proc: 'Validasi / uji tipe', machine: 'Laboratorium terakreditasi', charNo: nx(), prodChar: t.name, spec: t.std, eval: t.std, size: 'Sesuai standar', freq: t.freq, method: 'Laporan uji pihak ketiga', reaction: REACT.type })));
+  }
+  if (fmea) fmea.rows.filter(r => r.fm && (r.sc || rowAP(r) === 'H')).forEach(r => rows.push(newCpRow({ procNo: '', proc: r.step || 'Dari PFMEA', charNo: nx(), prodChar: r.fm, sc: r.sc, spec: r.func || '', eval: r.dc || '', size: '', freq: '', method: [r.pc, r.act].filter(Boolean).join(' / ') || 'Lihat PFMEA', reaction: 'Lihat rencana reaksi standar; NCR bila produk tidak sesuai.' })));
+  if (!rows.length) rows.push(newCpRow());
+  return { id: uid(), no: 'CP-' + localISO().replace(/-/g, '') + '-' + Math.floor(Math.random() * 900 + 100), phase, part: s ? (s.input.name || '') : (fmea ? fmea.product : ''), partNo: s ? (s.input.code || '') : '', rev: '0', org: '', contact: '', team: fmea ? fmea.team : '', date: localISO(), specId: s ? s.id : '', fmeaId: fmea ? fmea.id : '', rows };
+}
+function viewCP(root) {
+  const id = App.state.cpEdit, doc = id ? Store.get('cplan', id) : null;
+  if (doc) return renderCpEditor(root, JSON.parse(JSON.stringify(doc)));
+  App.state.cpEdit = null;
+  const list = Store.list('cplan');
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Control Plan</h2><p>Rencana kendali karakteristik produk &amp; proses, disusun otomatis dari spesifikasi dan PFMEA. Struktur kolom mengikuti AIAG Control Plan Reference Manual (edisi 1, 2024), termasuk fase <b>Safe Launch</b>.</p></div>
+    <div class="row"><button class="btn sm acc" id="cpSpec">${ICON.plus} Dari spesifikasi</button><button class="btn sm sec" id="cpNew">Control Plan kosong</button></div></div>
+  <div class="card"><div class="card-head"><h3>Dokumen Control Plan</h3><span class="muted" style="font-size:.78rem">${list.length} dokumen</span></div>
+    ${list.length ? `<div class="tw"><table class="t"><thead><tr><th>No.</th><th>Part</th><th>Fase</th><th class="num">Karakteristik</th><th class="hide-sm">Diperbarui</th><th></th></tr></thead><tbody>
+      ${list.map(c => `<tr><td class="mono" style="white-space:nowrap">${esc(c.no)}</td><td><b>${esc(c.part || '—')}</b>${c.partNo ? `<div class="muted" style="font-size:.75rem">${esc(c.partNo)}</div>` : ''}</td><td><span class="badge ${c.phase === 'Safe Launch' ? 'b-warn' : c.phase === 'Production' ? 'b-ok' : 'b-info'}">${esc(c.phase)}</span></td><td class="num">${c.rows.length}</td><td class="hide-sm" style="white-space:nowrap">${dateID(c.updatedAt)}</td><td style="text-align:right"><button class="btn sm sec" data-open="${c.id}">Buka</button></td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty">Belum ada Control Plan.</div>`}
+  </div>
+  <div class="card"><h3>Isi otomatis dari spesifikasi</h3><ul class="hint" style="margin:6px 0 0 18px;line-height:1.7">
+    <li><b>10 · Penerimaan bahan baku</b> — uji incoming dari rencana uji (COA/MTC, densitas, MFR, komposisi).</li>
+    <li><b>20 · Proses</b> — parameter proses, berat bersih &amp; dimensi kritis dengan peta kendali dan reaksi OOC.</li>
+    <li><b>30 · Inspeksi akhir</b> — uji tekanan/kebocoran, visual dengan sampling ISO 2859-1 (n, Ac/Re).</li>
+    <li><b>40 · Uji tipe</b> — UV, salt spray, kontak air minum di laboratorium terakreditasi.</li>
+    <li>Baris PFMEA dengan karakteristik khusus (CC/SC) atau AP = H ikut ditambahkan bila PFMEA dipilih.</li></ul></div>`;
+  $$('[data-open]', root).forEach(b => b.onclick = () => { App.state.cpEdit = b.dataset.open; viewCP(root); });
+  $('#cpNew').onclick = async () => { const c = buildControlPlan(null, null, 'Production'); await Store.put('cplan', c); App.state.cpEdit = c.id; viewCP(root); };
+  $('#cpSpec').onclick = async () => {
+    const fm = Store.list('fmea');
+    const r = await pickSpec('Control Plan dari spesifikasi', `<div class="field"><label class="f">Fase</label><select data-dlg="phase">${CP_PHASES.map(p => opt(p, p, 'Production')).join('')}</select><div class="hint">Safe Launch: kendali tambahan sementara saat peluncuran (AIAG CP 2024).</div></div>
+      <div class="field"><label class="f">PFMEA (opsional)</label><select data-dlg="fmea"><option value="">— tanpa PFMEA —</option>${fm.map(f => opt(f.id, f.name, '')).join('')}</select></div>`);
+    if (!r || !r.spec) return;
+    const c = buildControlPlan(r.spec, r.vals.fmea ? Store.get('fmea', r.vals.fmea) : null, r.vals.phase || 'Production');
+    await Store.put('cplan', c); App.state.cpEdit = c.id; toast(`${c.rows.length} karakteristik dibuat`, 'ok'); viewCP(root);
+  };
+}
+function renderCpEditor(root, c) {
+  let dirty = false;
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Control Plan ${esc(c.no)}</h2><p>Edit langsung pada tabel. Rencana reaksi wajib jelas: siapa melakukan apa terhadap produk &amp; proses ketika kendali gagal.</p></div>
+    <div class="row">${backBtn('cpBack')}<button class="btn sm acc" id="cpSave">Simpan</button><button class="btn sm sec" id="cpCsv">${ICON.dl} CSV</button><button class="btn sm sec" id="cpPdf">${ICON.dl} PDF</button><button class="btn sm danger" id="cpDel">Hapus</button></div></div>
+  <div class="card"><div class="grid g4">
+    <div class="field"><label class="f">No. Control Plan</label><input type="text" data-k="no"></div>
+    <div class="field"><label class="f">Fase</label><select data-k="phase">${CP_PHASES.map(p => opt(p, p, c.phase)).join('')}</select></div>
+    <div class="field"><label class="f">Nama part</label><input type="text" data-k="part"></div>
+    <div class="field"><label class="f">No. part / revisi gambar</label><input type="text" data-k="partNo"></div>
+    <div class="field"><label class="f">Organisasi / pabrik</label><input type="text" data-k="org"></div>
+    <div class="field"><label class="f">Kontak kunci</label><input type="text" data-k="contact"></div>
+    <div class="field"><label class="f">Tim inti</label><input type="text" data-k="team"></div>
+    <div class="field"><label class="f">Tanggal · Rev.</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input type="date" data-k="date"><input type="text" data-k="rev" style="max-width:70px"></div></div>
+  </div>${c.phase === 'Safe Launch' ? '<div class="alert warn" style="margin-top:10px"><b>Safe Launch.</b> Tetapkan kendali tambahan (frekuensi/ukuran sampel lebih tinggi, inspeksi 100% sementara) beserta kriteria keluar yang terukur sebelum kembali ke fase Production.</div>' : ''}</div>
+  <div class="card"><div class="card-head"><h3>Karakteristik &amp; metode kendali</h3><button class="btn sm sec" id="cpAdd">${ICON.plus} Tambah baris</button></div>
+    <div class="tw fm-wrap"><table class="t grid-edit fm"><thead><tr>${CP_COLS.map(([k, l, w]) => `<th style="min-width:${w}px">${l}</th>`).join('')}<th></th></tr></thead>
+    <tbody id="cpBody">${c.rows.map(r => `<tr>${CP_COLS.map(([k, , w]) => `<td>${k === 'sc' ? `<select data-r="${r.id}" data-c="sc">${opt('', '—', r.sc)}${opt('CC', 'CC', r.sc)}${opt('SC', 'SC', r.sc)}</select>` : w <= 70 ? `<input type="text" data-r="${r.id}" data-c="${k}" value="${esc(r[k])}">` : `<textarea rows="2" data-r="${r.id}" data-c="${k}">${esc(r[k])}</textarea>`}</td>`).join('')}<td><button class="icon-btn" data-delrow="${r.id}" aria-label="Hapus baris">✕</button></td></tr>`).join('')}</tbody></table></div>
+  </div>`;
+  bindFields(root, c, (k) => { dirty = true; if (k === 'phase') renderCpEditor(root, c); });
+  const body = $('#cpBody');
+  const upd = (e) => { const el = e.target, r = c.rows.find(x => x.id === el.dataset.r); if (r && el.dataset.c) { r[el.dataset.c] = el.value; dirty = true; } };
+  body.addEventListener('input', upd); body.addEventListener('change', upd);
+  body.addEventListener('click', (e) => { const b = e.target.closest('[data-delrow]'); if (!b) return; c.rows = c.rows.filter(x => x.id !== b.dataset.delrow); renderCpEditor(root, c); });
+  $('#cpAdd').onclick = () => { c.rows.push(newCpRow()); renderCpEditor(root, c); };
+  $('#cpSave').onclick = async () => { await Store.put('cplan', c); dirty = false; toast('Control Plan tersimpan', 'ok'); };
+  $('#cpBack').onclick = async () => { if (dirty && !(await confirmDlg('Perubahan belum disimpan', 'Kembali ke daftar tanpa menyimpan?', 'Ya, buang perubahan'))) return; App.state.cpEdit = null; viewCP(root); };
+  $('#cpDel').onclick = async () => { if (!(await confirmDlg('Hapus Control Plan', `Hapus ${c.no}?`))) return; await Store.del('cplan', c.id); App.state.cpEdit = null; viewCP(root); };
+  $('#cpCsv').onclick = () => saveFile(`${slug(c.no)}.csv`, csvOf(CP_COLS.map(x => x[1]), c.rows.map(r => CP_COLS.map(([k]) => r[k]))), 'text/csv');
+  $('#cpPdf').onclick = () => pdfCP(c);
+}
+function pdfCP(c) {
+  if (!pdfReady()) return; const doc = pdfDoc('l'); if (!doc) return;
+  let y = pdfHeader(doc, `Control Plan ${c.no} - ${c.phase}`, `Part: ${c.part || '-'} ${c.partNo ? '(' + c.partNo + ')' : ''} | Organisasi: ${c.org || '-'} | Kontak: ${c.contact || '-'} | Tim: ${c.team || '-'} | Tanggal ${c.date || ''} | Rev. ${c.rev || '0'}`);
+  AT(doc, y, CP_COLS.map(x => x[1]), c.rows.map(r => CP_COLS.map(([k]) => r[k])), { styles: { fontSize: 6.3, cellPadding: 1.1, lineColor: [221, 227, 234], lineWidth: 0.2, textColor: [19, 34, 49], overflow: 'linebreak' }, headStyles: { fillColor: [233, 237, 242], textColor: [10, 31, 68], fontStyle: 'bold', fontSize: 6.3 } });
+  pdfFooter(doc, 'Control Plan dihasilkan SQMC; struktur kolom mengikuti AIAG Control Plan Reference Manual (2024). Wajib ditinjau tim lintas fungsi sebelum dipakai.');
+  saveFile(`SQMC-${slug(c.no)}.pdf`, doc.output('blob'), 'application/pdf');
+}
+
+/* =====================================================================
+   VIEW: NCR & 8D (AIAG CQI-20 / pola 8D) + pengendalian keluaran tidak sesuai (ISO 9001)
+   ===================================================================== */
+const NCR_STATUS = { open: ['Terbuka', 'b-bad'], contain: ['Containment', 'b-warn'], analysis: ['Analisis akar masalah', 'b-warn'], verify: ['Verifikasi efektivitas', 'b-info'], closed: ['Ditutup', 'b-ok'] };
+const NCR_SRC = { incoming: 'Penerimaan bahan baku', process: 'In-process', final: 'Inspeksi akhir', customer: 'Keluhan pelanggan', audit: 'Audit internal' };
+const DISP = [['useAsIs', 'Use-as-is (konsesi)'], ['rework', 'Rework'], ['repair', 'Repair'], ['regrade', 'Regrade'], ['scrap', 'Scrap'], ['rts', 'Retur ke pemasok']];
+const SIX_M = [['man', 'Man — manusia'], ['machine', 'Machine — mesin/alat'], ['method', 'Method — metode'], ['material', 'Material — bahan'], ['measure', 'Measurement — pengukuran'], ['env', 'Environment — lingkungan']];
+function ncrNo() { const y = new Date().getFullYear(); const n = Store.list('ncr').filter(x => String(x.no || '').startsWith(`NCR-${y}-`)).map(x => +String(x.no).split('-')[2] || 0); return `NCR-${y}-${String((n.length ? Math.max(...n) : 0) + 1).padStart(3, '0')}`; }
+function newNCR() { return { id: uid(), no: ncrNo(), date: localISO(), status: 'open', source: 'process', product: '', specId: '', lot: '', qtyCheck: '', qtyNC: '', defect: '', cls: 'Mayor', owner: '', due: addMonthsISO(localISO(), 1), cost: '', d2: {}, d0: '', d1: '', d3: '', d3qty: '', d4: { why: ['', '', '', '', ''] }, d4esc: '', d4root: '', d5: '', d6: '', d6verify: '', d7: {}, d7note: '', d8: '', disp: {}, closedAt: '' }; }
+const ncrAge = (n) => daysBetween(n.date || localISO(), n.status === 'closed' && n.closedAt ? n.closedAt : localISO());
+const ncrLate = (n) => n.status !== 'closed' && n.due && daysBetween(localISO(), n.due) < 0;
+function viewNCR(root) {
+  const id = App.state.ncrEdit, doc = id ? Store.get('ncr', id) : null;
+  if (doc) return renderNcrEditor(root, JSON.parse(JSON.stringify(doc)));
+  App.state.ncrEdit = null;
+  const all = Store.list('ncr'), f = App.state.ncrFilter || 'aktif';
+  const list = all.filter(n => f === 'semua' ? true : f === 'aktif' ? n.status !== 'closed' : n.status === 'closed');
+  const open = all.filter(n => n.status !== 'closed'), late = all.filter(ncrLate);
+  const qty = sum(all.map(n => numOrNull(n.qtyNC) || 0)), cost = sum(all.map(n => numOrNull(n.cost) || 0));
+  root.innerHTML = `
+  <div class="page-head"><div><h2>NCR &amp; 8D</h2><p>Catat produk tidak sesuai, tetapkan disposisi, lalu selesaikan masalah dengan 8 disiplin (D0–D8): containment, akar masalah (6M + 5-Why), tindakan korektif, verifikasi, dan pencegahan berulang.</p></div>
+    <div class="row"><button class="btn sm acc" id="ncNew">${ICON.plus} NCR baru</button><a class="btn sm sec" href="#pareto">${ICON.bars} Pareto cacat</a></div></div>
+  ${kpiStrip([['NCR terbuka', String(open.length), open.length ? 'warn' : 'ok', `${all.length} total tercatat`], ['Lewat target', String(late.length), late.length ? 'bad' : 'ok', 'belum ditutup & melewati tanggal target'], ['Unit tidak sesuai', fmt(qty, 0), 'info', 'akumulasi semua NCR'], ['Biaya mutu buruk (COPQ)', cost ? 'Rp ' + fmt(cost, 0) : '—', 'info', 'estimasi yang diinput']])}
+  <div class="card"><div class="card-head"><h3>Register NCR</h3><div class="tabs" id="ncTabs" style="margin:0">${[['aktif', 'Aktif'], ['ditutup', 'Ditutup'], ['semua', 'Semua']].map(([k, l]) => `<button data-f="${k}" class="${f === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    ${list.length ? `<div class="tw"><table class="t"><thead><tr><th>No.</th><th>Cacat</th><th class="hide-sm">Produk / lot</th><th class="num">Qty NC</th><th>Status</th><th class="hide-sm num">Umur</th><th class="hide-sm">Target</th><th></th></tr></thead><tbody>
+      ${list.map(n => `<tr><td class="mono" style="white-space:nowrap">${esc(n.no)}<div class="muted" style="font-size:.72rem">${esc(NCR_SRC[n.source] || '')}</div></td><td><b>${esc(n.defect || '—')}</b><div class="muted" style="font-size:.75rem">${esc(n.cls || '')}</div></td><td class="hide-sm">${esc(n.product || '—')}${n.lot ? `<div class="muted" style="font-size:.75rem">Lot ${esc(n.lot)}</div>` : ''}</td><td class="num">${fmt(numOrNull(n.qtyNC), 0)}</td><td><span class="badge ${NCR_STATUS[n.status][1]}">${NCR_STATUS[n.status][0]}</span></td><td class="hide-sm num">${ncrAge(n)} hr</td><td class="hide-sm" style="white-space:nowrap">${n.due ? dateID(n.due) : '—'}${ncrLate(n) ? ' <span class="badge b-bad">lewat</span>' : ''}</td><td style="text-align:right"><button class="btn sm sec" data-open="${n.id}">Buka</button></td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty">Tidak ada NCR pada filter ini.</div>`}
+  </div>
+  <div class="card"><h3>Alur 8D di SQMC</h3><div class="progress" style="margin-top:10px">${[['D0–D1', 'Respons darurat & bentuk tim'], ['D2', 'Deskripsi masalah 5W2H'], ['D3', 'Containment & disposisi'], ['D4', 'Akar masalah: 6M, 5-Why, titik lolos'], ['D5–D6', 'Tindakan korektif permanen & verifikasi'], ['D7', 'Cegah berulang: PFMEA, Control Plan, SOP'], ['D8', 'Penutupan & apresiasi tim']].map(([t, d], i) => `<div class="st"><b><i>${i + 1}</i>${t}</b><span>${d}</span></div>`).join('')}</div></div>`;
+  $$('#ncTabs button').forEach(b => b.onclick = () => { App.state.ncrFilter = b.dataset.f; viewNCR(root); });
+  $$('[data-open]', root).forEach(b => b.onclick = () => { App.state.ncrEdit = b.dataset.open; viewNCR(root); });
+  $('#ncNew').onclick = async () => { const n = newNCR(); await Store.put('ncr', n); App.state.ncrEdit = n.id; viewNCR(root); };
+}
+function renderNcrEditor(root, n) {
+  let dirty = false;
+  n.d4 = n.d4 || {}; n.d4.why = n.d4.why || ['', '', '', '', '']; n.d2 = n.d2 || {}; n.d7 = n.d7 || {}; n.disp = n.disp || {};
+  const specs = Store.list('spec'), spec = n.specId ? Store.get('spec', n.specId) : null;
+  const sec = (id, t, body) => `<div class="card" id="${id}"><h3>${t}</h3>${body}</div>`;
+  const ta = (k, ph = '', rows = 3) => `<textarea rows="${rows}" data-k="${k}" placeholder="${esc(ph)}" class="txt"></textarea>`;
+  root.innerHTML = `
+  <div class="page-head"><div><h2>${esc(n.no)}</h2><p>${esc(n.defect || 'Produk tidak sesuai')} · ${esc(n.product || 'produk belum dipilih')}</p></div>
+    <div class="row">${backBtn('ncBack')}<button class="btn sm acc" id="ncSave">Simpan</button><button class="btn sm sec" id="ncPdf">${ICON.dl} Laporan 8D (PDF)</button><button class="btn sm danger" id="ncDel">Hapus</button></div></div>
+  <nav class="anchor-bar">${[['n-id', 'Identitas'], ['n-d0', 'D0–D2'], ['n-d3', 'D3 & disposisi'], ['n-d4', 'D4'], ['n-d5', 'D5–D6'], ['n-d7', 'D7–D8']].map(([a, l]) => `<a href="#" data-a="${a}">${l}</a>`).join('')}</nav>
+  ${sec('n-id', 'Identitas ketidaksesuaian', `<div class="grid g4">
+    <div class="field"><label class="f">No. NCR</label><input type="text" data-k="no"></div>
+    <div class="field"><label class="f">Tanggal temuan</label><input type="date" data-k="date"></div>
+    <div class="field"><label class="f">Sumber temuan</label><select data-k="source">${Object.entries(NCR_SRC).map(([k, v]) => opt(k, v, n.source)).join('')}</select></div>
+    <div class="field"><label class="f">Status</label><select data-k="status">${Object.entries(NCR_STATUS).map(([k, v]) => opt(k, v[0], n.status)).join('')}</select></div>
+    <div class="field"><label class="f">Spesifikasi produk</label><select data-k="specId"><option value="">— pilih (opsional) —</option>${specs.map(s => opt(s.id, s.input.name || 'Tanpa nama', n.specId)).join('')}</select></div>
+    <div class="field"><label class="f">Produk</label><input type="text" data-k="product"></div>
+    <div class="field"><label class="f">No. lot / batch</label><input type="text" data-k="lot"></div>
+    <div class="field"><label class="f">Penanggung jawab</label><input type="text" data-k="owner"></div>
+    <div class="field" style="grid-column:span 2"><label class="f">Jenis cacat</label>${spec ? `<select id="ncDefSel"><option value="">— dari katalog cacat —</option>${spec.defects.map(d => opt(d.name, `${d.name} (${d.cls})`, n.defect)).join('')}</select>` : ''}<input type="text" data-k="defect" placeholder="mis. Bocor pada uji tekanan" ${spec ? 'style="margin-top:6px"' : ''}></div>
+    <div class="field"><label class="f">Kelas</label><select data-k="cls">${['Kritis', 'Mayor', 'Minor'].map(c => opt(c, c, n.cls)).join('')}</select></div>
+    <div class="field"><label class="f">Target selesai</label><input type="date" data-k="due"></div>
+    <div class="field"><label class="f">Qty diperiksa</label><input type="text" inputmode="numeric" data-k="qtyCheck"></div>
+    <div class="field"><label class="f">Qty tidak sesuai</label><input type="text" inputmode="numeric" data-k="qtyNC"></div>
+    <div class="field"><label class="f">Estimasi biaya (Rp)</label><input type="text" inputmode="numeric" data-k="cost" placeholder="scrap + rework + sortir"></div>
+  </div>`)}
+  ${sec('n-d0', 'D0 – D2 · Respons awal, tim & deskripsi masalah', `<div class="grid g2">
+    <div class="field"><label class="f">D0 · Tindakan darurat (ERA)</label>${ta('d0', 'mis. hentikan mesin, tahan pengiriman lot terkait')}</div>
+    <div class="field"><label class="f">D1 · Tim (nama & peran)</label>${ta('d1', 'Ketua: … / QA: … / Produksi: … / Engineering: …')}</div></div>
+    <div class="grid g4">${[['what', 'What — apa masalahnya'], ['where', 'Where — di mana ditemukan'], ['when', 'When — kapan pertama terjadi'], ['who', 'Who — siapa yang menemukan'], ['why', 'Why — mengapa ini masalah (dampak)'], ['how', 'How — bagaimana terdeteksi'], ['howmany', 'How many — seberapa banyak/sering']].map(([k, l]) => `<div class="field"><label class="f">${l}</label><input type="text" data-k="d2.${k}"></div>`).join('')}</div>`)}
+  ${sec('n-d3', 'D3 · Containment & disposisi produk', `<div class="grid g2">
+    <div class="field"><label class="f">Tindakan containment</label>${ta('d3', 'Sortir stok di gudang/WIP/pelanggan, tandai & pisahkan, inspeksi 100% sementara…')}</div>
+    <div class="field"><label class="f">Jumlah yang dikarantina / disortir</label><input type="text" data-k="d3qty"><div class="hint" style="margin-top:8px">Pengendalian keluaran tidak sesuai (ISO 9001): koreksi, pemisahan/penahanan, pemberitahuan ke pelanggan, atau penerimaan dengan konsesi yang disahkan.</div></div></div>
+    <div class="grid g3" style="margin-top:4px">${DISP.map(([k, l]) => `<div class="field"><label class="f">${l} (qty)</label><input type="text" inputmode="numeric" data-k="disp.${k}"></div>`).join('')}</div>
+    <div class="hint" id="ncDispHint"></div>`)}
+  ${sec('n-d4', 'D4 · Akar masalah', `<p class="hint" style="margin:2px 0 10px">Diagram tulang ikan (6M): tuliskan kemungkinan penyebab per kategori, lalu uji dengan data. Telusuri akar terjadinya (occurrence) dengan 5-Why, dan titik lolos (escape) — mengapa kontrol yang ada tidak mendeteksi.</p>
+    <div class="grid g3">${SIX_M.map(([k, l]) => `<div class="field"><label class="f">${l}</label><textarea rows="2" data-k="d4.${k}" class="txt"></textarea></div>`).join('')}</div>
+    <div class="grid g2"><div><label class="f">5-Why (akar terjadinya)</label>${[0, 1, 2, 3, 4].map(i => `<div class="why"><span>Why ${i + 1}</span><input type="text" data-k="d4.why.${i}"></div>`).join('')}</div>
+    <div><div class="field"><label class="f">Akar masalah terverifikasi</label>${ta('d4root', 'Pernyataan akar masalah yang sudah dibuktikan dengan data/eksperimen', 3)}</div>
+    <div class="field"><label class="f">Titik lolos (escape point)</label>${ta('d4esc', 'Kontrol mana yang seharusnya mendeteksi & mengapa gagal', 3)}</div></div></div>`)}
+  ${sec('n-d5', 'D5 – D6 · Tindakan korektif permanen & verifikasi', `<div class="grid g2">
+    <div class="field"><label class="f">D5 · Tindakan korektif terpilih (untuk akar terjadinya & titik lolos)</label>${ta('d5')}</div>
+    <div class="field"><label class="f">D6 · Implementasi (apa, siapa, kapan)</label>${ta('d6')}</div></div>
+    <div class="field"><label class="f">Bukti efektivitas</label>${ta('d6verify', 'mis. 3 lot berikutnya 0 cacat; Cpk naik 0,9 → 1,5; peta kendali stabil 25 subgrup', 2)}</div>`)}
+  ${sec('n-d7', 'D7 – D8 · Pencegahan berulang & penutupan', `<div class="chips" style="margin:6px 0 10px">${[['pfmea', 'PFMEA diperbarui (O/D dinilai ulang)'], ['cp', 'Control Plan diperbarui'], ['sop', 'SOP / instruksi kerja diperbarui'], ['train', 'Pelatihan operator'], ['similar', 'Diterapkan ke produk/proses serupa'], ['lesson', 'Lessons learned dicatat']].map(([k, l]) => `<label class="chip"><input type="checkbox" data-k="d7.${k}">${l}</label>`).join('')}</div>
+    <div class="grid g2"><div class="field"><label class="f">Catatan D7</label>${ta('d7note', '', 2)}</div><div class="field"><label class="f">D8 · Penutupan & apresiasi tim</label>${ta('d8', 'Tanggal penutupan, persetujuan, pengakuan tim', 2)}</div></div>
+    <div class="row"><button class="btn sm sec" id="ncFm">${ICON.risk} Buka PFMEA</button><button class="btn sm sec" id="ncCp">${ICON.plan} Buka Control Plan</button></div>`)}`;
+  bindFields(root, n, (k, el) => {
+    dirty = true;
+    if (k === 'status' && el.value === 'closed' && !n.closedAt) n.closedAt = localISO();
+    if (k === 'status' && el.value !== 'closed') n.closedAt = '';
+    if (k === 'specId') { const s = Store.get('spec', el.value); if (s && !n.product) n.product = [s.input.name, s.input.code].filter(Boolean).join(' · '); renderNcrEditor(root, n); }
+    if (k.startsWith('disp.') || k === 'qtyNC') dispHint();
+    if (k.startsWith('d7.')) el.closest('.chip').classList.toggle('on', el.checked);
+  });
+  $$('.chips input[type=checkbox]', root).forEach(c => c.closest('.chip').classList.toggle('on', c.checked));
+  const dispHint = () => { const t = sum(DISP.map(([k]) => numOrNull(n.disp[k]) || 0)), q = numOrNull(n.qtyNC); $('#ncDispHint').innerHTML = q ? `Total terdisposisi <b>${fmt(t, 0)}</b> dari ${fmt(q, 0)} unit tidak sesuai${t !== q ? ' — <span style="color:var(--bad)">belum seimbang</span>' : ' ✓'}.` : ''; };
+  dispHint();
+  const ds = $('#ncDefSel'); if (ds) ds.onchange = () => { const d = spec.defects.find(x => x.name === ds.value); if (d) { n.defect = d.name; n.cls = d.cls; dirty = true; renderNcrEditor(root, n); } };
+  $$('.anchor-bar a', root).forEach(a => a.onclick = (e) => { e.preventDefault(); $('#' + a.dataset.a).scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  $('#ncSave').onclick = async () => { await Store.put('ncr', n); dirty = false; toast('NCR tersimpan', 'ok'); };
+  $('#ncBack').onclick = async () => { if (dirty && !(await confirmDlg('Perubahan belum disimpan', 'Kembali ke register tanpa menyimpan?', 'Ya, buang perubahan'))) return; App.state.ncrEdit = null; viewNCR(root); };
+  $('#ncDel').onclick = async () => { if (!(await confirmDlg('Hapus NCR', `Hapus ${n.no}?`))) return; await Store.del('ncr', n.id); App.state.ncrEdit = null; viewNCR(root); };
+  $('#ncPdf').onclick = () => pdfNCR(n);
+  $('#ncFm').onclick = () => { App.state.fmeaEdit = (Store.list('fmea').find(f => f.specId && f.specId === n.specId) || {}).id || null; App.go('fmea'); };
+  $('#ncCp').onclick = () => { App.state.cpEdit = (Store.list('cplan').find(c => c.specId && c.specId === n.specId) || {}).id || null; App.go('control-plan'); };
+}
+function pdfNCR(n) {
+  if (!pdfReady()) return; const doc = pdfDoc('p'); if (!doc) return;
+  let y = pdfHeader(doc, `Laporan 8D - ${n.no}`, `${n.defect || '-'} | ${n.product || '-'}${n.lot ? ' | Lot ' + n.lot : ''} | Status: ${NCR_STATUS[n.status][0]} | Sumber: ${NCR_SRC[n.source] || '-'}`);
+  y = AT(doc, y, ['Tanggal', 'Kelas', 'Qty diperiksa', 'Qty NC', 'PIC', 'Target', 'Biaya (Rp)'], [[n.date, n.cls, n.qtyCheck || '-', n.qtyNC || '-', n.owner || '-', n.due || '-', n.cost ? fmt(numOrNull(n.cost), 0) : '-']]);
+  const kv = (rows) => rows.filter(r => String(r[1] || '').trim());
+  const blk = (title, rows) => { const r = kv(rows); if (!r.length) return; y = secTitle(doc, y, title); y = AT(doc, y, ['Butir', 'Isi'], r, { columnStyles: { 0: { cellWidth: 46, fontStyle: 'bold' } } }); };
+  blk('D0-D2 · Respons awal, tim & deskripsi masalah', [['D0 Tindakan darurat', n.d0], ['D1 Tim', n.d1], ['What', n.d2.what], ['Where', n.d2.where], ['When', n.d2.when], ['Who', n.d2.who], ['Why (dampak)', n.d2.why], ['How (terdeteksi)', n.d2.how], ['How many', n.d2.howmany]]);
+  blk('D3 · Containment & disposisi', [['Containment', n.d3], ['Qty dikarantina/disortir', n.d3qty], ...DISP.map(([k, l]) => [l, n.disp[k]])]);
+  blk('D4 · Akar masalah', [...SIX_M.map(([k, l]) => [l, n.d4[k]]), ...n.d4.why.map((w, i) => ['Why ' + (i + 1), w]), ['Akar masalah terverifikasi', n.d4root], ['Titik lolos', n.d4esc]]);
+  blk('D5-D6 · Tindakan korektif & verifikasi', [['D5 Tindakan terpilih', n.d5], ['D6 Implementasi', n.d6], ['Bukti efektivitas', n.d6verify]]);
+  const d7 = [['pfmea', 'PFMEA diperbarui'], ['cp', 'Control Plan diperbarui'], ['sop', 'SOP/IK diperbarui'], ['train', 'Pelatihan'], ['similar', 'Produk/proses serupa'], ['lesson', 'Lessons learned']].map(([k, l]) => [l, n.d7[k] ? 'Ya' : 'Belum']);
+  blk('D7-D8 · Pencegahan berulang & penutupan', [...d7, ['Catatan D7', n.d7note], ['D8 Penutupan', n.d8], ['Tanggal ditutup', n.closedAt]]);
+  pdfFooter(doc, 'Laporan 8D dihasilkan SQMC (alur pemecahan masalah 8D; rujukan AIAG CQI-20 Effective Problem Solving).');
+  saveFile(`SQMC-${slug(n.no)}-8D.pdf`, doc.output('blob'), 'application/pdf');
+}
+
+/* =====================================================================
+   VIEW: ANALISIS PARETO (cacat & biaya mutu buruk)
+   ===================================================================== */
+function viewPareto(root) {
+  const P = App.state.pareto = Object.assign({ src: 'ncr', by: 'n', text: '', res: null }, App.state.pareto || {});
+  root.innerHTML = `
+  <div class="page-head"><div><h2>Analisis Pareto</h2><p>Urutkan jenis cacat dari yang paling sering atau paling mahal untuk menemukan "vital few" — kategori yang menyumbang ±80% masalah — sebagai prioritas 8D.</p></div>
+    <div class="row"><button class="btn sm sec" id="prTpl">${ICON.dl} Template CSV</button></div></div>
+  <div class="split alp"><div>
+    <div class="card"><h3>1 · Sumber data</h3>
+      <div class="tabs" id="prTabs" style="margin-top:8px">${[['ncr', 'Register NCR'], ['paste', 'Tempel / unggah']].map(([k, l]) => `<button data-s="${k}" class="${P.src === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <div id="prSrc"></div></div>
+    <div class="card"><h3>2 · Urutkan berdasarkan</h3><div class="field" style="margin-top:8px"><select id="prBy">${opt('n', 'Jumlah cacat (frekuensi)', P.by)}${opt('cost', 'Biaya (COPQ)', P.by)}</select></div>
+      <button class="btn acc" id="prRun" style="width:100%">${ICON.bars} Buat diagram Pareto</button></div>
+  </div><div id="prOut">${P.res ? '' : '<div class="card"><div class="empty">Pilih sumber data lalu tekan <b>Buat diagram Pareto</b>.</div></div>'}</div></div>`;
+  const drawSrc = () => {
+    const b = $('#prSrc'), ncr = Store.list('ncr');
+    if (P.src === 'ncr') b.innerHTML = ncr.length ? `<div class="hint" style="margin-top:8px">${ncr.length} NCR · dikelompokkan per jenis cacat; jumlah = qty tidak sesuai, biaya = estimasi biaya NCR.</div>` : `<div class="empty" style="margin-top:8px">Register NCR masih kosong. <a href="#ncr">Buat NCR</a> atau gunakan tab Tempel / unggah.</div>`;
+    else { b.innerHTML = `<textarea id="prText" placeholder="kategori, jumlah, biaya per unit (opsional)&#10;Flash, 42, 1500&#10;Short shot, 18, 9000">${esc(P.text)}</textarea><div class="row" style="margin-top:6px">${fileBtn('prFile')}<button class="btn sm sec" id="prDemo">Contoh data</button></div><div class="hint">Kolom: kategori, jumlah, biaya per unit (opsional). Baris judul boleh ada.</div>`;
+      wireFileBtns(b); $('#prText').oninput = (e) => { P.text = e.target.value; };
+      $('#prFile').onchange = async (e) => { try { const arr = await readGridFile(e.target.files[0]); P.text = arr.map(r => r.join(',')).join('\n'); drawSrc(); } catch (er) { toast('Gagal membaca file: ' + er.message, 'err'); } };
+      $('#prDemo').onclick = () => { P.text = 'kategori,jumlah,biaya_per_unit\nFlash / sirip parting line,46,1200\nShort shot,21,8500\nSink mark,17,0\nDimensi socket di luar toleransi,12,8500\nBurr sisa gate,9,1200\nRetak,4,8500\nBelang warna,3,0\nMarking tidak terbaca,2,600'; drawSrc(); }; }
+  };
+  $$('#prTabs button').forEach(bt => bt.onclick = () => { P.src = bt.dataset.s; $$('#prTabs button').forEach(x => x.classList.toggle('on', x === bt)); drawSrc(); });
+  drawSrc();
+  $('#prBy').onchange = (e) => { P.by = e.target.value; };
+  $('#prTpl').onclick = () => saveFile('sqmc-template-pareto.csv', 'kategori,jumlah,biaya_per_unit\nFlash,42,1500\nShort shot,18,9000\n', 'text/csv');
+  $('#prRun').onclick = () => {
+    try {
+      let items;
+      if (P.src === 'ncr') items = Store.list('ncr').map(n => ({ cat: n.defect, n: numOrNull(n.qtyNC) ?? 1, cost: numOrNull(n.cost) }));
+      else { const T = gridTable(parseGrid(P.text)); items = T.rows.map(r => { const q = parseNum(r[1]), u = parseNum(r[2]); return { cat: r[0], n: isNum(q) ? q : NaN, cost: isNum(u) && isNum(q) ? u * q : null }; }); }
+      P.res = paretoCalc(items, P.by); P.res.source = P.src === 'ncr' ? 'Register NCR' : 'Data tempel/unggah'; drawPareto(P.res);
+    } catch (e) { toast(e.message, 'err'); }
+  };
+  if (P.res) drawPareto(P.res);
+}
+function drawPareto(res) {
+  const out = $('#prOut'); const cost = res.by === 'cost';
+  const vital = res.items.filter(e => e.vital);
+  out.innerHTML = `<div class="card"><div class="card-head"><div><h3>Diagram Pareto — ${cost ? 'biaya mutu buruk' : 'frekuensi cacat'}</h3><div class="muted">${esc(res.source)} · ${res.items.length} kategori · total ${cost ? 'Rp ' + fmt(res.total, 0) : fmt(res.total, 0) + ' cacat'}</div></div>
+    <div class="row"><button class="btn sm sec" id="prPng">${ICON.dl} PNG</button><button class="btn sm acc" id="prPdf">${ICON.dl} PDF</button><button class="btn sm sec" id="prCsv">${ICON.dl} CSV</button></div></div>
+    <div id="prChart" class="chart-box" style="min-height:420px"></div></div>
+  <div class="card"><h3>Vital few</h3>${renderIssues([{ c: 'warn', title: `${vital.length} dari ${res.items.length} kategori menyumbang ${fmtFix(vital.length ? vital[vital.length - 1].cum : 0, 1)}% ${cost ? 'biaya' : 'cacat'}`, where: vital.map(v => v.cat).join(' · '), text: 'Fokuskan 8D/perbaikan proses pada kategori ini terlebih dahulu; sisanya (useful many) ditangani setelahnya.' },
+    ...(res.hasCost && !cost ? [{ c: 'info', title: 'Bandingkan dengan Pareto biaya', text: 'Urutan berdasarkan biaya bisa berbeda: cacat jarang tetapi mahal (mis. retak/bocor) bisa lebih prioritas daripada cacat sering yang murah.' }] : [])], 'Prioritas tindakan')}
+    <div class="tw" style="margin-top:12px"><table class="t"><thead><tr><th>#</th><th>Kategori</th><th class="num">Jumlah</th>${res.hasCost ? '<th class="num">Biaya (Rp)</th>' : ''}<th class="num">%</th><th class="num">% kumulatif</th></tr></thead><tbody>
+    ${res.items.map((e, i) => `<tr${e.vital ? ' class="vital"' : ''}><td>${i + 1}</td><td>${e.vital ? '<b>' + esc(e.cat) + '</b>' : esc(e.cat)}</td><td class="num">${fmt(e.n, 0)}</td>${res.hasCost ? `<td class="num">${fmt(e.cost, 0)}</td>` : ''}<td class="num">${fmtFix(e.pct, 1)}</td><td class="num">${fmtFix(e.cum, 1)}</td></tr>`).join('')}</tbody></table></div></div>`;
+  if (plotOK()) {
+    const x = res.items.map(e => e.cat), y = res.items.map(e => cost ? e.cost : e.n);
+    Plotly.newPlot($('#prChart'), [
+      { x, y, type: 'bar', marker: { color: res.items.map(e => e.vital ? '#1767cf' : '#a9c4ea') }, name: cost ? 'Biaya' : 'Jumlah', hovertemplate: '%{x}<br>%{y}<extra></extra>' },
+      { x, y: res.items.map(e => e.cum), yaxis: 'y2', type: 'scatter', mode: 'lines+markers', line: { color: '#0a1f44', width: 2 }, marker: { size: 6 }, name: '% kumulatif', hovertemplate: '%{y:.1f}%<extra></extra>' }
+    ], { font: PLOT_FONT, separators: ',.', height: 420, margin: { l: 60, r: 56, t: 30, b: 120 }, showlegend: false, bargap: 0.15,
+      xaxis: { tickangle: -30, automargin: true }, yaxis: { title: { text: cost ? 'Biaya (Rp)' : 'Jumlah cacat' }, rangemode: 'tozero', gridcolor: '#eef1f5' },
+      yaxis2: { overlaying: 'y', side: 'right', range: [0, 105], ticksuffix: '%', showgrid: false },
+      shapes: [{ type: 'line', xref: 'paper', x0: 0, x1: 1, yref: 'y2', y0: 80, y1: 80, line: { color: '#da1e28', width: 1.2, dash: 'dash' } }] }, { responsive: true, displaylogo: false });
+  }
+  $('#prPng').onclick = () => plotPNG($('#prChart'), 'sqmc-pareto.png', 1400, 640);
+  $('#prCsv').onclick = () => saveFile('sqmc-pareto.csv', csvOf(['kategori', 'jumlah', 'biaya', 'persen', 'persen_kumulatif', 'vital_few'], res.items.map(e => [e.cat, e.n, e.cost, +e.pct.toFixed(3), +e.cum.toFixed(3), e.vital ? 'ya' : ''])), 'text/csv');
+  $('#prPdf').onclick = async () => {
+    if (!pdfReady()) return; const doc = pdfDoc('l'); if (!doc) return; const W = doc.internal.pageSize.getWidth();
+    let y = pdfHeader(doc, `Analisis Pareto - ${cost ? 'biaya mutu buruk' : 'frekuensi cacat'}`, `${res.source} | ${res.items.length} kategori | total ${cost ? 'Rp ' + fmt(res.total, 0) : fmt(res.total, 0)}`);
+    const img = plotOK() ? await plotImg($('#prChart'), 1500, 640) : null; if (img) { const h = (W - 24) * 640 / 1500; doc.addImage(img, 'PNG', 12, y, W - 24, h); y += h + 4; }
+    doc.addPage(); y = 16; y = secTitle(doc, y, 'Tabel Pareto');
+    AT(doc, y, ['#', 'Kategori', 'Jumlah', ...(res.hasCost ? ['Biaya (Rp)'] : []), '%', '% kumulatif', 'Vital few'], res.items.map((e, i) => [i + 1, e.cat, fmt(e.n, 0), ...(res.hasCost ? [fmt(e.cost, 0)] : []), fmtFix(e.pct, 1), fmtFix(e.cum, 1), e.vital ? 'Ya' : '']));
+    pdfFooter(doc, 'Analisis Pareto dihasilkan SQMC. Vital few = kategori dengan kumulatif sebelum kategori tersebut < 80%.');
+    saveFile('SQMC-pareto.pdf', doc.output('blob'), 'application/pdf');
+  };
+}
+
+/* =====================================================================
+   VIEW: MSA (Gage R&R ANOVA, Type-1) & REGISTER ALAT UKUR / KALIBRASI
+   ===================================================================== */
+function sampleGRR() {
+  const r = rng(11), parts = [9.62, 10.21, 10.05, 9.81, 10.42, 9.93, 10.12, 9.71, 10.31, 10.0], bias = { A: 0, B: 0.025, C: -0.015 };
+  const L = ['part,operator,ulangan_1,ulangan_2,ulangan_3'];
+  ['A', 'B', 'C'].forEach(o => parts.forEach((t, i) => L.push([i + 1, o, ...[0, 1, 2].map(() => (t + bias[o] + gauss(r) * 0.028).toFixed(3))].join(','))));
+  return L.join('\n');
+}
+function sampleT1() { const r = rng(5); return Array.from({ length: 50 }, () => (25.0003 + gauss(r) * 0.002).toFixed(4)).join('\n'); }
+function viewMSA(root) {
+  const M = App.state.msa = Object.assign({ tab: 'grr', grrText: '', grrT: null, grrCfg: { part: 0, op: 1, vals: [] }, lsl: '', usl: '', tol: '', hs: '', alpha: '0.05', name: '', gage: '', grr: null, t1Text: '', ref: '', t1lsl: '', t1usl: '', res: '', K: '20', t1: null }, App.state.msa || {});
+  const gages = Store.list('gage'), studies = Store.list('msa');
+  const over = gages.filter(g => calStatus(g).st === 'over').length, soon = gages.filter(g => calStatus(g).st === 'soon').length;
+  root.innerHTML = `
+  <div class="page-head"><div><h2>MSA &amp; Kalibrasi</h2><p>Buktikan alat ukur layak sebelum mempercayai peta kendali: Gage R&amp;R metode ANOVA (AIAG MSA edisi 4), studi Type-1 Cg/Cgk, dan jadwal kalibrasi alat ukur (ISO 10012).</p></div></div>
+  <div class="tabs" id="msaTabs">${[['grr', 'Gage R&R (ANOVA)'], ['t1', 'Type-1 (Cg/Cgk)'], ['gage', `Register alat ukur${over ? ` · ${over} terlambat` : ''}`], ['hist', `Riwayat studi (${studies.length})`]].map(([k, l]) => `<button data-t="${k}" class="${M.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+  <div id="msaBody"></div>`;
+  $$('#msaTabs button').forEach(b => b.onclick = () => { M.tab = b.dataset.t; viewMSA(root); });
+  ({ grr: msaGRR, t1: msaT1, gage: msaGages, hist: msaHist })[M.tab]($('#msaBody'), M, { over, soon });
+}
+function gageOpts(cur) { return `<option value="">— pilih dari register (opsional) —</option>${Store.list('gage').map(g => opt(g.id, `${g.code || ''} ${g.name || ''}`.trim(), cur)).join('')}`; }
+function msaGRR(box, M) {
+  const T = M.grrT, c = M.grrCfg;
+  box.innerHTML = `<div class="split alp"><div>
+    <div class="card"><h3>1 · Data studi</h3><p class="hint" style="margin:6px 0">Desain crossed: setiap operator mengukur setiap part, urutan acak, ulangan sama. Lazimnya 10 part × 3 operator × 2–3 ulangan; part mewakili rentang variasi proses.</p>
+      <textarea id="gText" placeholder="part,operator,ulangan_1,ulangan_2,ulangan_3&#10;1,A,10.02,10.05,10.01&#10;…">${esc(M.grrText)}</textarea>
+      <div class="row" style="margin-top:6px"><button class="btn sm sec" id="gRead">Baca data</button>${fileBtn('gFile')}<button class="btn sm sec" id="gDemo">Contoh data</button><button class="btn sm ghost" id="gTpl">${ICON.dl} Template</button></div>
+      ${T ? `<div class="hint" style="margin-top:8px">${T.rows.length} baris · ${T.headers.length} kolom</div>` : ''}</div>
+    ${T ? `<div class="card"><h3>2 · Konfigurasi</h3>
+      <div class="grid g2" style="margin-top:8px"><div class="field"><label class="f">Kolom part</label><select id="gPart">${T.headers.map((h, i) => opt(i, h, c.part)).join('')}</select></div><div class="field"><label class="f">Kolom operator</label><select id="gOp">${T.headers.map((h, i) => opt(i, h, c.op)).join('')}</select></div></div>
+      <div class="field"><label class="f">Kolom hasil ukur (format panjang: 1 kolom; format lebar: kolom ulangan)</label><div class="chips" id="gVals">${T.headers.map((h, i) => `<label class="chip ${c.vals.includes(i) ? 'on' : ''}"><input type="checkbox" value="${i}" ${c.vals.includes(i) ? 'checked' : ''}>${esc(h)}</label>`).join('')}</div></div>
+      <div class="grid g3"><div class="field"><label class="f">LSL</label><input type="text" inputmode="decimal" id="gLsl" value="${esc(M.lsl)}"></div><div class="field"><label class="f">USL</label><input type="text" inputmode="decimal" id="gUsl" value="${esc(M.usl)}"></div><div class="field"><label class="f">…atau toleransi</label><input type="text" inputmode="decimal" id="gTol" value="${esc(M.tol)}"></div></div>
+      <div class="grid g2"><div class="field"><label class="f">σ proses historis (opsional)</label><input type="text" inputmode="decimal" id="gHs" value="${esc(M.hs)}"><div class="hint">Untuk %Process; dari peta kendali.</div></div><div class="field"><label class="f">α untuk membuang interaksi</label><input type="text" inputmode="decimal" id="gAl" value="${esc(M.alpha)}"><div class="hint">Interaksi digabung ke repeatability bila p &gt; α (default Minitab 0,05).</div></div></div>
+      <div class="grid g2"><div class="field"><label class="f">Nama studi / karakteristik</label><input type="text" id="gName" value="${esc(M.name)}" placeholder="mis. Diameter socket Ø20"></div><div class="field"><label class="f">Alat ukur</label><select id="gGage">${gageOpts(M.gage)}</select></div></div>
+      <button class="btn acc" id="gRun" style="width:100%;margin-top:6px">${ICON.gauge} Hitung Gage R&amp;R</button></div>` : ''}
+  </div><div id="gOut">${M.grr ? '' : '<div class="card"><div class="empty">Muat data studi, atur kolom, lalu tekan <b>Hitung Gage R&amp;R</b>.</div></div>'}</div></div>`;
+  wireFileBtns(box);
+  const load = (text) => {
+    M.grrText = text; const t = gridTable(parseGrid(text)); M.grrT = t; M.grr = null;
+    const low = t.headers.map(h => h.toLowerCase()), num = t.headers.map((_, i) => t.rows.filter(r => isNum(parseNum(r[i]))).length >= t.rows.length * 0.8);
+    const pi = low.findIndex(h => /part|sampel|sample|komponen|benda/.test(h)), oi = low.findIndex(h => /op|penilai|apprais|pengukur|inspektor/.test(h));
+    c.part = pi >= 0 ? pi : 0; c.op = oi >= 0 ? oi : 1; c.vals = t.headers.map((_, i) => i).filter(i => i !== c.part && i !== c.op && num[i]);
+    msaGRR(box, M);
+  };
+  $('#gRead').onclick = () => { try { load($('#gText').value); } catch (e) { toast(e.message, 'err'); } };
+  $('#gDemo').onclick = () => { load(sampleGRR()); M.lsl = '9.5'; M.usl = '10.5'; M.name = M.name || 'Contoh: diameter (mm)'; msaGRR(box, M); };
+  $('#gTpl').onclick = () => saveFile('sqmc-template-gage-rr.csv', 'part,operator,ulangan_1,ulangan_2,ulangan_3\n1,A,,,\n1,B,,,\n1,C,,,\n2,A,,,\n', 'text/csv');
+  $('#gFile').onchange = async (e) => { try { const a = await readGridFile(e.target.files[0]); load(a.map(r => r.join(',')).join('\n')); } catch (er) { toast('Gagal membaca file: ' + er.message, 'err'); } };
+  if (T) {
+    $('#gPart').onchange = (e) => { c.part = +e.target.value; }; $('#gOp').onchange = (e) => { c.op = +e.target.value; };
+    $('#gVals').onchange = (e) => { c.vals = $$('#gVals input:checked').map(i => +i.value); e.target.closest('.chip').classList.toggle('on', e.target.checked); };
+    [['gLsl', 'lsl'], ['gUsl', 'usl'], ['gTol', 'tol'], ['gHs', 'hs'], ['gAl', 'alpha'], ['gName', 'name']].forEach(([id, k]) => { $('#' + id).oninput = (e) => { M[k] = e.target.value; }; });
+    $('#gGage').onchange = (e) => { M.gage = e.target.value; };
+    $('#gRun').onclick = () => {
+      try {
+        if (!c.vals.length) throw new Error('Pilih minimal satu kolom hasil ukur.');
+        const rows = []; T.rows.forEach(r => c.vals.forEach(v => rows.push({ part: r[c.part], op: r[c.op], val: parseNum(r[v]) })));
+        const res = gageRR(rows, { lsl: numOrNull(M.lsl), usl: numOrNull(M.usl), tol: numOrNull(M.tol), histSigma: numOrNull(M.hs), alpha: numOrNull(M.alpha) ?? 0.05 });
+        res.name = M.name || 'Studi Gage R&R'; res.gage = M.gage; res.createdAt = Date.now(); M.grr = res; drawGRR(res);
+        if (window.innerWidth < 1000) $('#gOut').scrollIntoView({ behavior: 'smooth' });
+      } catch (e) { toast(e.message, 'err'); }
+    };
+  }
+  if (M.grr) drawGRR(M.grr);
+}
+function grrIssues(g) {
+  const I = [], m = g.comps[0], rep = g.comps[1], repro = g.comps[2];
+  const main = isNum(m.ptol) ? ['%Toleransi', m.ptol] : ['%Study Var', m.psv];
+  const lv = main[1] < 10 ? 'ok' : main[1] <= 30 ? 'warn' : 'bad';
+  I.push({ c: lv, title: lv === 'ok' ? 'Sistem pengukuran dapat diterima' : lv === 'warn' ? 'Sistem pengukuran dapat diterima bersyarat' : 'Sistem pengukuran tidak dapat diterima', where: `GRR ${main[0]} = ${fmtFix(main[1], 1)}%`, text: lv === 'ok' ? 'GRR < 10%: layak untuk kendali produk & proses.' : lv === 'warn' ? 'GRR 10–30%: boleh dipakai tergantung kekritisan karakteristik, biaya alat & persetujuan pelanggan; rencanakan perbaikan.' : 'GRR > 30%: perbaiki sistem pengukuran sebelum datanya dipakai untuk peta kendali atau keputusan terima/tolak.' });
+  I.push({ c: g.ndc >= 5 ? 'ok' : 'bad', title: `Jumlah kategori berbeda (ndc) = ${g.ndc === Infinity ? '∞' : g.ndc}`, text: g.ndc >= 5 ? 'ndc ≥ 5: alat dapat membedakan variasi antar-part dengan memadai.' : 'ndc < 5: resolusi efektif kurang untuk membedakan part. Pilih alat lebih teliti atau part yang mewakili rentang proses.' });
+  if (m.v > 0) I.push(rep.v >= repro.v ? { c: 'info', title: 'Repeatability dominan (variasi alat)', text: 'Periksa kondisi & kalibrasi alat, fixture/penjepit, resolusi, kebersihan, dan titik ukur pada part.' } : { c: 'info', title: 'Reproducibility dominan (variasi operator)', text: 'Standarkan metode ukur (titik, gaya, posisi), buat instruksi kerja bergambar, latih & kalibrasi operator.' });
+  if (!g.pooled) I.push({ c: 'warn', title: 'Interaksi part × operator signifikan', where: `p = ${fmtFix(g.pPO, 3)}`, text: 'Operator mengukur part tertentu secara berbeda: cek teknik ukur pada bentuk/ukuran part yang ekstrem.' });
+  if (!isNum(m.ptol)) I.push({ c: 'info', title: 'Isi LSL/USL untuk %Toleransi', text: 'Untuk karakteristik yang dipakai menerima/menolak produk, nilai %Toleransi lebih relevan daripada %Study Var.' });
+  return I;
+}
+function drawGRR(g) {
+  const out = $('#gOut'), f = (x) => fmt(x, 6), m = g.comps[0];
+  const ano = (rows, title) => `<div class="tw" style="margin-top:8px"><table class="t"><thead><tr><th>${title}</th><th class="num">DF</th><th class="num">SS</th><th class="num">MS</th><th class="num">F</th><th class="num">P</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r.src}</td><td class="num">${r.df}</td><td class="num">${f(r.ss)}</td><td class="num">${r.ms !== undefined ? f(r.ms) : ''}</td><td class="num">${isNum(r.F) ? fmtFix(r.F, 3) : ''}</td><td class="num">${isNum(r.p) ? fmtFix(r.p, 3) : ''}</td></tr>`).join('')}</tbody></table></div>`;
+  out.innerHTML = `<div class="card"><div class="card-head"><div><h3>Gage R&amp;R (ANOVA) — ${esc(g.name)}</h3><div class="muted">${g.p} part × ${g.q} operator × ${g.r} ulangan = ${g.N} pengukuran${g.tol ? ` · toleransi ${fmt(g.tol)}` : ''}</div></div>
+    <div class="row"><button class="btn sm sec" id="gSave">Simpan studi</button><button class="btn sm acc" id="gPdf">${ICON.dl} Laporan PDF</button></div></div>
+    ${kpiStrip([['GRR %Study Var', pctTxt(m.psv), g.verdict.sv, '< 10% baik · 10–30% bersyarat'], ['GRR %Toleransi', pctTxt(m.ptol), g.verdict.tol || 'info', g.tol ? `6σ_GRR / toleransi` : 'isi LSL/USL'], ['ndc', g.ndc === Infinity ? '∞' : String(g.ndc), g.verdict.ndc, 'target ≥ 5'], ['Interaksi P×O', g.pooled ? 'Digabung' : 'Signifikan', g.pooled ? 'ok' : 'warn', `p = ${fmtFix(g.pPO, 3)} · α = ${fmt(g.alpha)}`]])}
+    ${renderIssues(grrIssues(g), 'Interpretasi (AIAG MSA edisi 4)')}</div>
+  <div class="card"><h3>Grafik</h3><div class="grid g2"><div id="gc1" class="chart-box" style="min-height:300px"></div><div id="gc2" class="chart-box" style="min-height:300px"></div><div id="gc3" class="chart-box" style="min-height:300px"></div><div id="gc4" class="chart-box" style="min-height:300px"></div></div></div>
+  <div class="card"><h3>Evaluasi gage</h3><div class="tw" style="margin-top:8px"><table class="t"><thead><tr><th>Sumber</th><th class="num">VarComp</th><th class="num">%Kontribusi</th><th class="num">SD</th><th class="num">Study Var (${g.K}×SD)</th><th class="num">%Study Var</th>${g.tol ? '<th class="num">%Toleransi</th>' : ''}${g.histSig ? '<th class="num">%Proses</th>' : ''}</tr></thead><tbody>
+    ${g.comps.map(c => `<tr${c.lvl === 0 ? ' style="font-weight:600"' : ''}><td style="padding-left:${10 + c.lvl * 16}px">${c.name}</td><td class="num">${f(c.v)}</td><td class="num">${fmtFix(c.pc, 2)}</td><td class="num">${f(c.sd)}</td><td class="num">${f(c.sv)}</td><td class="num">${fmtFix(c.psv, 2)}</td>${g.tol ? `<td class="num">${fmtFix(c.ptol, 2)}</td>` : ''}${g.histSig ? `<td class="num">${fmtFix(c.pproc, 2)}</td>` : ''}</tr>`).join('')}</tbody></table></div>
+    <h3 style="margin-top:16px">ANOVA dua arah dengan interaksi</h3>${ano(g.anova1, 'Sumber')}
+    ${g.anova2 ? `<h3 style="margin-top:16px">ANOVA tanpa interaksi</h3><p class="hint">Interaksi tidak signifikan (p = ${fmtFix(g.pPO, 3)} &gt; α) sehingga digabung ke repeatability.</p>${ano(g.anova2, 'Sumber')}` : ''}</div>`;
+  if (plotOK()) {
+    const cfg = { responsive: true, displaylogo: false }, base = { font: PLOT_FONT, separators: ',.', height: 300, margin: { l: 52, r: 14, t: 40, b: 46 } };
+    const cl = g.comps.filter(c => ['Total Gage R&R', 'Repeatability', 'Reproducibility', 'Part-to-Part'].includes(c.name));
+    const bars = [{ name: '% Kontribusi', y: cl.map(c => c.pc), color: '#0a1f44' }, { name: '% Study Var', y: cl.map(c => c.psv), color: '#1e7ae5' }];
+    if (g.tol) bars.push({ name: '% Toleransi', y: cl.map(c => c.ptol), color: '#9cc3f2' });
+    Plotly.newPlot($('#gc1'), bars.map(b => ({ x: ['Gage R&R', 'Repeat', 'Reprod', 'Part-to-Part'], y: b.y, type: 'bar', name: b.name, marker: { color: b.color } })), Object.assign({}, base, { title: { text: 'Komponen variasi', font: { size: 13 }, x: 0.02 }, barmode: 'group', legend: { orientation: 'h', y: -0.2 }, yaxis: { ticksuffix: '%', rangemode: 'tozero' }, margin: { l: 52, r: 14, t: 40, b: 70 } }), cfg);
+    const seq = [], xr = [], xx = [], xtick = []; g.ops.forEach((o, j) => g.parts.forEach((p, i) => { seq.push(seq.length + 1); xr.push(g.Rk[i][j]); xx.push(g.cm[i][j]); xtick.push(`${o}·${p}`); }));
+    const gap = (arr) => arr.map((v, k) => k > 0 && k % g.p === 0 ? v : v);
+    const ctl = (el, y, cl0, u, l, title) => Plotly.newPlot(el, [
+      ...g.ops.map((o, j) => ({ x: seq.slice(j * g.p, (j + 1) * g.p), y: y.slice(j * g.p, (j + 1) * g.p), type: 'scatter', mode: 'lines+markers', name: o, marker: { size: 6 }, line: { width: 1.2 } })),
+    ], Object.assign({}, base, { title: { text: title, font: { size: 13 }, x: 0.02 }, showlegend: true, legend: { orientation: 'h', y: -0.2 }, xaxis: { tickvals: seq.filter((_, k) => k % g.p === 0), ticktext: g.ops.map(o => 'Op ' + o) },
+      shapes: [[cl0, '#2e7d32', 'solid'], [u, '#d32f2f', 'dash'], [l, '#d32f2f', 'dash']].filter(([v]) => isNum(v)).map(([v, col, d]) => ({ type: 'line', xref: 'paper', x0: 0, x1: 1, y0: v, y1: v, line: { color: col, width: 1.2, dash: d } })), margin: { l: 52, r: 14, t: 40, b: 70 } }), cfg);
+    ctl($('#gc2'), gap(xr), g.Rbar, g.lim && g.lim.rU, g.lim && g.lim.rL, 'Peta R per operator');
+    ctl($('#gc3'), gap(xx), g.grand, g.lim && g.lim.xU, g.lim && g.lim.xL, 'Peta X̄ per operator (diharapkan banyak di luar batas)');
+    Plotly.newPlot($('#gc4'), g.ops.map((o, j) => ({ x: g.parts, y: g.parts.map((_, i) => g.cm[i][j]), type: 'scatter', mode: 'lines+markers', name: o })), Object.assign({}, base, { title: { text: 'Interaksi part × operator', font: { size: 13 }, x: 0.02 }, legend: { orientation: 'h', y: -0.2 }, xaxis: { type: 'category' }, margin: { l: 52, r: 14, t: 40, b: 70 } }), cfg);
+  }
+  $('#gSave').onclick = async () => { await Store.put('msa', { id: uid(), kind: 'grr', name: g.name, gage: g.gage, date: localISO(), summary: { psv: m.psv, ptol: m.ptol, ndc: g.ndc === Infinity ? null : g.ndc, p: g.p, q: g.q, r: g.r }, verdict: g.verdict }); toast('Ringkasan studi tersimpan di riwayat', 'ok'); };
+  $('#gPdf').onclick = () => pdfMSA(g);
+}
+function msaT1(box, M) {
+  box.innerHTML = `<div class="split alp"><div>
+    <div class="card"><h3>Studi Type-1 (kemampuan alat ukur)</h3><p class="hint" style="margin:6px 0">Satu operator mengukur satu part referensi (nilai sebenarnya diketahui) berulang kali, lazimnya 25–50 kali, di tempat alat dipakai.</p>
+      <textarea id="tText" placeholder="Satu nilai per baris">${esc(M.t1Text)}</textarea>
+      <div class="row" style="margin-top:6px">${fileBtn('tFile')}<button class="btn sm sec" id="tDemo">Contoh data</button></div>
+      <div class="grid g3" style="margin-top:8px"><div class="field"><label class="f">Nilai referensi</label><input type="text" inputmode="decimal" id="tRef" value="${esc(M.ref)}"></div><div class="field"><label class="f">LSL</label><input type="text" inputmode="decimal" id="tL" value="${esc(M.t1lsl)}"></div><div class="field"><label class="f">USL</label><input type="text" inputmode="decimal" id="tU" value="${esc(M.t1usl)}"></div></div>
+      <div class="grid g2"><div class="field"><label class="f">Resolusi alat (opsional)</label><input type="text" inputmode="decimal" id="tRes" value="${esc(M.res)}"></div><div class="field"><label class="f">Persentase toleransi K</label><input type="text" inputmode="decimal" id="tK" value="${esc(M.K)}"><div class="hint">Default 20% (Cg = 0,2·T / 6s).</div></div></div>
+      <button class="btn acc" id="tRun" style="width:100%">${ICON.gauge} Hitung Cg / Cgk</button></div>
+  </div><div id="tOut">${M.t1 ? '' : '<div class="card"><div class="empty">Masukkan pengukuran berulang, nilai referensi, dan batas spesifikasi.</div></div>'}</div></div>`;
+  wireFileBtns(box);
+  [['tText', 't1Text'], ['tRef', 'ref'], ['tL', 't1lsl'], ['tU', 't1usl'], ['tRes', 'res'], ['tK', 'K']].forEach(([id, k]) => { $('#' + id).oninput = (e) => { M[k] = e.target.value; }; });
+  $('#tFile').onchange = async (e) => { try { const a = await readGridFile(e.target.files[0]); const t = gridTable(a); const ci = t.headers.findIndex((_, i) => t.rows.filter(r => isNum(parseNum(r[i]))).length >= t.rows.length * 0.8); M.t1Text = t.rows.map(r => r[ci >= 0 ? ci : 0]).join('\n'); msaT1(box, M); } catch (er) { toast('Gagal membaca file: ' + er.message, 'err'); } };
+  $('#tDemo').onclick = () => { Object.assign(M, { t1Text: sampleT1(), ref: '25.000', t1lsl: '24.95', t1usl: '25.05', res: '0.001', K: '20' }); msaT1(box, M); };
+  $('#tRun').onclick = () => {
+    try {
+      const vals = String(M.t1Text).split(/[\s;]+/).map(parseNum).filter(isNum);
+      const r = gageType1(vals, { ref: numOrNull(M.ref), lsl: numOrNull(M.t1lsl), usl: numOrNull(M.t1usl), res: numOrNull(M.res), K: numOrNull(M.K) ?? 20 });
+      r.createdAt = Date.now(); M.t1 = r; drawT1(r);
+    } catch (e) { toast(e.message, 'err'); }
+  };
+  if (M.t1) drawT1(M.t1);
+}
+function drawT1(r) {
+  const ok = (v) => v >= 1.33 ? 'ok' : 'bad';
+  const I = [{ c: r.Cg >= 1.33 && r.Cgk >= 1.33 ? 'ok' : 'bad', title: r.Cg >= 1.33 && r.Cgk >= 1.33 ? 'Alat ukur layak (Cg & Cgk ≥ 1,33)' : 'Alat ukur belum layak', text: r.Cg < 1.33 ? 'Cg rendah: sebaran pengukuran berulang terlalu besar dibanding toleransi — cek resolusi, kondisi alat, fixture.' : r.Cgk < 1.33 ? 'Cg cukup tetapi Cgk rendah: ada bias sistematis — kalibrasi/setting nol alat terhadap master.' : 'Lanjutkan ke studi Gage R&R untuk menguji pengaruh operator.' }];
+  I.push({ c: r.p < 0.05 ? 'warn' : 'ok', title: r.p < 0.05 ? 'Bias signifikan secara statistik' : 'Bias tidak signifikan', where: `bias = ${fmt(r.bias, 5)} · t = ${fmtFix(r.t, 3)} · p = ${fmtFix(r.p, 3)}`, text: r.p < 0.05 ? 'Rata-rata pengukuran berbeda nyata dari nilai referensi; evaluasi koreksi kalibrasi.' : 'Rata-rata pengukuran tidak berbeda nyata dari nilai referensi (α = 0,05).' });
+  if (isNum(r.resPct)) I.push({ c: r.resPct <= 5 ? 'ok' : r.resPct <= 10 ? 'warn' : 'bad', title: `Resolusi = ${fmtFix(r.resPct, 1)}% toleransi`, text: r.resPct <= 5 ? 'Memenuhi ≤ 5% toleransi (VDA 5 / ISO 22514-7).' : r.resPct <= 10 ? 'Memenuhi aturan 1/10 (AIAG) tetapi belum ≤ 5% (VDA 5).' : 'Resolusi terlalu kasar (> 10% toleransi): ganti alat.' });
+  $('#tOut').innerHTML = `<div class="card"><div class="card-head"><div><h3>Studi Type-1</h3><div class="muted">n = ${r.n} · referensi ${fmt(r.ref)} · toleransi ${fmt(r.tol)} · K = ${fmt(r.K)}%</div></div><div class="row"><button class="btn sm sec" id="tSave">Simpan studi</button><button class="btn sm acc" id="tPdf">${ICON.dl} PDF</button></div></div>
+    ${kpiStrip([['Cg', fmtFix(r.Cg, 2), ok(r.Cg), 'target ≥ 1,33'], ['Cgk', fmtFix(r.Cgk, 2), ok(r.Cgk), 'target ≥ 1,33'], ['Bias', fmt(r.bias, 5), r.p < 0.05 ? 'warn' : 'ok', `p = ${fmtFix(r.p, 3)}`], ['%Var repeatability', pctTxt(r.pctRep), r.pctRep <= 15 ? 'ok' : 'warn', '= 100 / Cg']])}
+    <div id="tChart" class="chart-box" style="min-height:340px"></div>${renderIssues(I, 'Interpretasi')}
+    <div class="tw" style="margin-top:10px"><table class="t"><tbody><tr><td>Rata-rata</td><td class="num">${fmt(r.mean, 6)}</td><td>Simpangan baku s</td><td class="num">${fmt(r.sd, 6)}</td></tr><tr><td>Min / maks</td><td class="num">${fmt(r.min, 5)} / ${fmt(r.max, 5)}</td><td>6s</td><td class="num">${fmt(6 * r.sd, 6)}</td></tr></tbody></table></div></div>`;
+  if (plotOK()) {
+    const x = r.vals.map((_, i) => i + 1), lines = [[r.ref, 'Ref', '#2e7d32', 'solid'], [r.ref + r.K / 200 * r.tol, `Ref+${fmt(r.K / 2)}%T`, '#d32f2f', 'dash'], [r.ref - r.K / 200 * r.tol, `Ref−${fmt(r.K / 2)}%T`, '#d32f2f', 'dash'], [r.mean + 3 * r.sd, 'X̄+3s', '#1e7ae5', 'dot'], [r.mean - 3 * r.sd, 'X̄−3s', '#1e7ae5', 'dot']];
+    Plotly.newPlot($('#tChart'), [{ x, y: r.vals, type: 'scatter', mode: 'lines+markers', line: { color: '#0a1f44', width: 1.2 }, marker: { size: 5 }, name: 'Ukur' }],
+      { font: PLOT_FONT, separators: ',.', height: 340, margin: { l: 60, r: 96, t: 30, b: 44 }, showlegend: false, xaxis: { title: { text: 'Pengukuran ke-' } },
+        shapes: lines.map(([v, , c, d]) => ({ type: 'line', xref: 'paper', x0: 0, x1: 1, y0: v, y1: v, line: { color: c, width: 1.2, dash: d } })), annotations: lines.map(([v, l, c]) => ({ xref: 'paper', x: 1.01, y: v, text: l, showarrow: false, xanchor: 'left', font: { size: 10, color: c } })) }, { responsive: true, displaylogo: false });
+  }
+  $('#tSave').onclick = async () => { await Store.put('msa', { id: uid(), kind: 'type1', name: 'Type-1 ref ' + fmt(r.ref), gage: (App.state.msa || {}).gage || '', date: localISO(), summary: { Cg: r.Cg, Cgk: r.Cgk, bias: r.bias, p: r.p, n: r.n }, verdict: { cg: ok(r.Cg), cgk: ok(r.Cgk) } }); toast('Ringkasan studi tersimpan di riwayat', 'ok'); };
+  $('#tPdf').onclick = () => pdfMSA(r);
+}
+async function pdfMSA(g) {
+  if (!pdfReady()) return; const doc = pdfDoc('p'); if (!doc) return; const W = doc.internal.pageSize.getWidth(); let y;
+  if (g.kind === 'grr') {
+    const m = g.comps[0];
+    y = pdfHeader(doc, `Laporan Gage R&R (ANOVA) - ${g.name}`, `${g.p} part x ${g.q} operator x ${g.r} ulangan | ${g.tol ? 'toleransi ' + fmt(g.tol) + ' | ' : ''}metode AIAG MSA edisi 4 (2010), study variation = ${g.K} x SD`);
+    y = AT(doc, y, ['GRR %Study Var', 'GRR %Toleransi', 'ndc', 'Interaksi P x O'], [[pctTxt(m.psv), pctTxt(m.ptol), g.ndc === Infinity ? 'tak hingga' : g.ndc, g.pooled ? `digabung (p = ${fmtFix(g.pPO, 3)})` : `signifikan (p = ${fmtFix(g.pPO, 3)})`]]);
+    y = secTitle(doc, y, 'Evaluasi gage');
+    y = AT(doc, y, ['Sumber', 'VarComp', '%Kontribusi', 'SD', 'Study Var', '%Study Var', ...(g.tol ? ['%Toleransi'] : []), ...(g.histSig ? ['%Proses'] : [])], g.comps.map(c => ['  '.repeat(c.lvl) + c.name, fmt(c.v, 6), fmtFix(c.pc, 2), fmt(c.sd, 6), fmt(c.sv, 6), fmtFix(c.psv, 2), ...(g.tol ? [fmtFix(c.ptol, 2)] : []), ...(g.histSig ? [fmtFix(c.pproc, 2)] : [])]));
+    const an = (rows) => rows.map(r => [r.src, r.df, fmt(r.ss, 6), r.ms !== undefined ? fmt(r.ms, 6) : '', isNum(r.F) ? fmtFix(r.F, 3) : '', isNum(r.p) ? fmtFix(r.p, 3) : '']);
+    y = secTitle(doc, y, 'ANOVA dengan interaksi'); y = AT(doc, y, ['Sumber', 'DF', 'SS', 'MS', 'F', 'P'], an(g.anova1));
+    if (g.anova2) { y = secTitle(doc, y, 'ANOVA tanpa interaksi'); y = AT(doc, y, ['Sumber', 'DF', 'SS', 'MS', 'F', 'P'], an(g.anova2)); }
+    y = secTitle(doc, y, 'Interpretasi'); y = AT(doc, y, ['Status', 'Temuan', 'Keterangan'], grrIssues(g).map(x => [{ ok: 'SESUAI', bad: 'KRITIS', warn: 'PERHATIAN', info: 'INFO' }[x.c], x.title + (x.where ? ' (' + x.where + ')' : ''), x.text]), { columnStyles: { 0: { cellWidth: 22, fontStyle: 'bold' }, 1: { cellWidth: 60 } } });
+    if (plotOK()) { doc.addPage(); y = 16; y = secTitle(doc, y, 'Grafik'); const w = (W - 28) / 2, h = w * 300 / 520; for (let i = 0; i < 4; i++) { const img = await plotImg($('#gc' + (i + 1)), 520, 300); if (img) doc.addImage(img, 'PNG', 12 + (i % 2) * (w + 4), y + Math.floor(i / 2) * (h + 4), w, h); } }
+  } else {
+    y = pdfHeader(doc, 'Laporan Studi Type-1 (Cg/Cgk)', `n = ${g.n} | referensi ${fmt(g.ref)} | toleransi ${fmt(g.tol)} | K = ${fmt(g.K)}% | L = ${g.L}s`);
+    y = AT(doc, y, ['Cg', 'Cgk', 'Bias', 't', 'p', '%Var repeat.', 'Mean', 's', ...(isNum(g.resPct) ? ['Resolusi %T'] : [])], [[fmtFix(g.Cg, 2), fmtFix(g.Cgk, 2), fmt(g.bias, 5), fmtFix(g.t, 3), fmtFix(g.p, 3), fmtFix(g.pctRep, 1), fmt(g.mean, 6), fmt(g.sd, 6), ...(isNum(g.resPct) ? [fmtFix(g.resPct, 1)] : [])]]);
+    const img = plotOK() ? await plotImg($('#tChart'), 1300, 420) : null; if (img) { const h = (W - 24) * 420 / 1300; doc.addImage(img, 'PNG', 12, y, W - 24, h); y += h + 4; }
+  }
+  pdfFooter(doc, 'Laporan MSA dihasilkan SQMC. Kriteria: GRR < 10% diterima, 10-30% bersyarat, > 30% ditolak; ndc >= 5 (AIAG MSA edisi 4). Cg/Cgk >= 1,33 (praktik umum VDA 5 / Minitab).');
+  saveFile(`SQMC-MSA-${slug(g.name || g.kind)}.pdf`, doc.output('blob'), 'application/pdf');
+}
+function msaHist(box) {
+  const L = Store.list('msa'), gname = (id) => { const g = id && Store.get('gage', id); return g ? `${g.code || ''} ${g.name || ''}`.trim() : '—'; };
+  box.innerHTML = `<div class="card"><div class="card-head"><h3>Riwayat studi MSA</h3><span class="muted" style="font-size:.78rem">ringkasan hasil yang disimpan</span></div>
+    ${L.length ? `<div class="tw"><table class="t"><thead><tr><th>Tanggal</th><th>Studi</th><th>Jenis</th><th class="hide-sm">Alat ukur</th><th>Hasil</th><th></th></tr></thead><tbody>${L.map(s => `<tr><td style="white-space:nowrap">${dateID(s.date)}</td><td><b>${esc(s.name)}</b></td><td>${s.kind === 'grr' ? 'Gage R&amp;R' : 'Type-1'}</td><td class="hide-sm">${esc(gname(s.gage))}</td><td>${s.kind === 'grr' ? `<span class="badge ${s.verdict.tol === 'bad' || s.verdict.sv === 'bad' ? 'b-bad' : s.verdict.tol === 'warn' || s.verdict.sv === 'warn' ? 'b-warn' : 'b-ok'}">%SV ${fmtFix(s.summary.psv, 1)}${isNum(s.summary.ptol) ? ` · %Tol ${fmtFix(s.summary.ptol, 1)}` : ''}</span> <span class="badge ${s.verdict.ndc === 'ok' ? 'b-ok' : 'b-bad'}">ndc ${s.summary.ndc ?? '∞'}</span>` : `<span class="badge ${s.verdict.cg === 'ok' && s.verdict.cgk === 'ok' ? 'b-ok' : 'b-bad'}">Cg ${fmtFix(s.summary.Cg, 2)} · Cgk ${fmtFix(s.summary.Cgk, 2)}</span>`}</td><td style="text-align:right"><button class="icon-btn" data-del="${s.id}" aria-label="Hapus">✕</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Belum ada studi tersimpan. Jalankan Gage R&amp;R atau Type-1 lalu tekan <b>Simpan studi</b>.</div>'}</div>`;
+  $$('[data-del]', box).forEach(b => b.onclick = async () => { await Store.del('msa', b.dataset.del); msaHist(box); });
+}
+/* ---------- register alat ukur & kalibrasi (ISO 10012 / ISO/IEC 17025) ---------- */
+const CAL_ST = { over: ['Terlambat', 'b-bad'], soon: ['≤ 30 hari', 'b-warn'], ok: ['Valid', 'b-ok'], na: ['Belum dijadwalkan', 'b-gray'], off: ['Nonaktif', 'b-gray'] };
+function msaGages(box, M, cnt) {
+  const L = Store.list('gage').map(g => Object.assign({ cs: calStatus(g) }, g)).sort((a, b) => (a.cs.days ?? 1e9) - (b.cs.days ?? 1e9));
+  box.innerHTML = `${kpiStrip([['Alat terdaftar', String(L.length), 'info', ''], ['Kalibrasi terlambat', String(cnt.over), cnt.over ? 'bad' : 'ok', 'jangan dipakai sampai dikalibrasi'], ['Jatuh tempo ≤ 30 hari', String(cnt.soon), cnt.soon ? 'warn' : 'ok', 'jadwalkan ke laboratorium'], ['Studi MSA tersimpan', String(Store.list('msa').length), 'info', '']])}
+  <div class="card"><div class="card-head"><h3>Register alat ukur</h3><div class="row"><button class="btn sm acc" id="gAdd">${ICON.plus} Tambah alat</button><button class="btn sm sec" id="gCsv">${ICON.dl} CSV</button><button class="btn sm sec" id="gPdfL">${ICON.dl} PDF</button></div></div>
+    ${L.length ? `<div class="tw"><table class="t"><thead><tr><th>Kode</th><th>Alat</th><th class="hide-sm">Rentang · resolusi</th><th class="hide-sm">Kalibrasi terakhir</th><th>Jatuh tempo</th><th>Status</th><th></th></tr></thead><tbody>
+      ${L.map(g => `<tr><td class="mono">${esc(g.code || '—')}</td><td><b>${esc(g.name || '—')}</b><div class="muted" style="font-size:.75rem">${esc(g.location || '')}</div></td><td class="hide-sm">${esc(g.range || '—')}${g.resolution ? ' · ' + esc(g.resolution) : ''}</td><td class="hide-sm" style="white-space:nowrap">${g.lastCal ? dateID(g.lastCal) : '—'}${g.cert ? `<div class="muted" style="font-size:.72rem">${esc(g.cert)}</div>` : ''}</td><td style="white-space:nowrap">${g.cs.due ? dateID(g.cs.due) : '—'}${isNum(g.cs.days) ? `<div class="muted" style="font-size:.72rem">${g.cs.days < 0 ? `lewat ${-g.cs.days} hari` : `${g.cs.days} hari lagi`}</div>` : ''}</td><td><span class="badge ${CAL_ST[g.cs.st][1]}">${CAL_ST[g.cs.st][0]}</span></td><td style="text-align:right;white-space:nowrap"><button class="btn sm sec" data-ed="${g.id}">Edit</button></td></tr>`).join('')}
+    </tbody></table></div>` : '<div class="empty">Belum ada alat ukur terdaftar.</div>'}
+    <p class="hint" style="margin-top:10px">Kalibrasi dilakukan laboratorium yang kompeten (ISO/IEC 17025; di Indonesia lazimnya terakreditasi KAN) dengan ketertelusuran ke standar nasional/SI. Interval kalibrasi ditetapkan organisasi berdasarkan riwayat stabilitas, frekuensi pakai, dan risiko (ISO 10012).</p></div>`;
+  $('#gAdd').onclick = () => gageDialog(null, box, M, cnt);
+  $$('[data-ed]', box).forEach(b => b.onclick = () => gageDialog(Store.get('gage', b.dataset.ed), box, M, cnt));
+  const cols = [['code', 'Kode'], ['name', 'Nama alat'], ['type', 'Jenis'], ['range', 'Rentang'], ['resolution', 'Resolusi'], ['location', 'Lokasi'], ['lastCal', 'Kalibrasi terakhir'], ['intervalM', 'Interval (bulan)'], ['lab', 'Laboratorium'], ['cert', 'No. sertifikat'], ['status', 'Status alat']];
+  $('#gCsv').onclick = () => saveFile('sqmc-register-alat-ukur.csv', csvOf([...cols.map(c => c[1]), 'Jatuh tempo', 'Status kalibrasi'], L.map(g => [...cols.map(([k]) => g[k]), g.cs.due || '', CAL_ST[g.cs.st][0]])), 'text/csv');
+  $('#gPdfL').onclick = () => { if (!pdfReady()) return; const doc = pdfDoc('l'); if (!doc) return; const y = pdfHeader(doc, 'Register Alat Ukur & Jadwal Kalibrasi', `${L.length} alat | dicetak ${localISO()} | acuan ISO 10012 & ISO/IEC 17025`); AT(doc, y, ['Kode', 'Alat', 'Rentang', 'Resolusi', 'Lokasi', 'Kalibrasi terakhir', 'Interval', 'Jatuh tempo', 'Status', 'Lab / sertifikat'], L.map(g => [g.code, g.name, g.range, g.resolution, g.location, g.lastCal, g.intervalM ? g.intervalM + ' bln' : '', g.cs.due || '', CAL_ST[g.cs.st][0], [g.lab, g.cert].filter(Boolean).join(' / ')])); pdfFooter(doc, 'Register alat ukur SQMC.'); saveFile('SQMC-register-alat-ukur.pdf', doc.output('blob'), 'application/pdf'); };
+}
+async function gageDialog(g, box, M, cnt) {
+  const o = Object.assign({ id: uid(), code: '', name: '', type: '', range: '', resolution: '', location: '', lastCal: localISO(), intervalM: '12', lab: '', cert: '', status: 'aktif' }, g || {});
+  const f = (k, l, t = 'text', ph = '') => `<div class="field"><label class="f">${l}</label><input type="${t}" data-g="${k}" value="${esc(o[k])}" placeholder="${esc(ph)}"></div>`;
+  const btns = [{ label: 'Batal', value: null, cls: 'sec' }];
+  if (g) btns.push({ label: 'Hapus', value: 'del', cls: 'danger' });
+  btns.push({ label: 'Simpan', value: (bg) => { $$('[data-g]', bg).forEach(e => { o[e.dataset.g] = e.value; }); return 'save'; }, cls: 'acc' });
+  const r = await dialog(g ? 'Edit alat ukur' : 'Tambah alat ukur', `<div class="grid g2">${f('code', 'Kode / ID', 'text', 'mis. JS-01')}${f('name', 'Nama alat', 'text', 'Jangka sorong digital')}${f('type', 'Jenis', 'text', 'Dimensi / massa / tekanan')}${f('range', 'Rentang ukur', 'text', '0–150 mm')}${f('resolution', 'Resolusi', 'text', '0,01 mm')}${f('location', 'Lokasi / pemakai', 'text', 'QC lini 2')}${f('lastCal', 'Tanggal kalibrasi terakhir', 'date')}${f('intervalM', 'Interval kalibrasi (bulan)', 'number')}${f('lab', 'Laboratorium kalibrasi')}${f('cert', 'No. sertifikat')}
+    <div class="field"><label class="f">Status alat</label><select data-g="status">${opt('aktif', 'Aktif', o.status)}${opt('nonaktif', 'Nonaktif / afkir', o.status)}</select></div></div>`, btns);
+  if (r === 'save') { if (!String(o.name).trim() && !String(o.code).trim()) return toast('Isi kode atau nama alat', 'err'); await Store.put('gage', o); toast('Alat ukur tersimpan', 'ok'); }
+  else if (r === 'del' && await confirmDlg('Hapus alat ukur', `Hapus ${o.code || o.name}?`)) await Store.del('gage', o.id);
+  else return;
+  viewMSA($('#app'));
+}
+
 (async function boot() {
   $('#brandMark').src = LOGO_MARK; $('#brandWord').src = LOGO_WORD;
   $('#hamb').onclick = () => setNav(!document.body.classList.contains('nav-open'));
@@ -2186,7 +3139,7 @@ function buildLogoPNG() {
   App.refresh();
 })();
 // ekspor untuk pengujian otomatis
-window.SQMC = { computeVariable, computeAttribute, capability, andersonDarling, aqlPlan, iso2768Tol, buildSpec, consts, runTests, parseNum, Phi };
+window.SQMC = { computeVariable, computeAttribute, capability, andersonDarling, aqlPlan, iso2768Tol, buildSpec, consts, runTests, parseNum, Phi, gageRR, gageType1, apAIAGVDA, paretoCalc, computeSmallShift, fSurv, tP2, calStatus, addMonthsISO, buildControlPlan, fmeaRowsFromSpec };
 </script>
 </body>
 </html>
