@@ -441,6 +441,35 @@ tr.vital td{background:var(--brand-50)}
 :root[data-ui=dark] .js-plotly-plot .modebar-btn path{fill:#a9b4c2!important}
 :root[data-ui=dark] .js-plotly-plot .modebar{background:transparent!important}
 html,body{transition:background-color .2s ease}
+
+/* ---------------- Explain & Deep Analyst ---------------- */
+.da-btn.on{border-color:var(--brand-600);color:var(--brand-600)}
+.da-btn.on::after{content:'';width:7px;height:7px;border-radius:50%;background:var(--brand-600);display:inline-block;margin-left:6px}
+.welcome .da-tools{margin-top:8px}
+.drawer-bg{position:fixed;inset:0;background:rgba(10,20,35,.42);z-index:90;display:flex;justify-content:flex-end}
+.drawer{background:var(--g-0);width:min(520px,100%);height:100%;display:flex;flex-direction:column;box-shadow:var(--shadow-3);animation:drIn .18s ease-out}
+.drawer.wide{width:min(860px,100%)}
+@keyframes drIn{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px;border-bottom:1px solid var(--g-30)}
+.drawer-body{padding:16px;overflow:auto;flex:1}
+.drawer-body .field{margin-bottom:12px}
+.drawer-body textarea,.drawer-body input[type=text]{width:100%}
+.drawer-actions{margin-top:14px;gap:8px;flex-wrap:wrap}
+body.drawer-open{overflow:hidden}
+.da-meta{font-size:.75rem;margin-bottom:10px}
+.da-sec{margin:0 0 18px}
+.da-sec h4{margin:0 0 8px}
+.da-sec p{margin:0 0 8px;line-height:1.55}
+.da-list{margin:0;padding-left:18px}
+.da-list li{margin:0 0 8px;line-height:1.5}
+.da-ev{font-size:.75rem;color:var(--g-60);margin-top:2px}
+.da-fix{font-size:.78rem;color:var(--g-70);margin-top:2px}
+.da-hyp{border:1px solid var(--g-30);border-left:3px solid var(--warn-bd);border-radius:var(--radius);padding:10px 12px;margin:0 0 8px;background:var(--g-0)}
+.da-basis{margin:6px 0 0;padding-left:18px;font-size:.8rem;color:var(--g-70)}
+.da-steps{margin:0;padding-left:20px}.da-steps li{margin:0 0 6px}
+.da-fish{overflow-x:auto;border:1px solid var(--g-30);border-radius:var(--radius);background:var(--g-0);padding:6px}
+.da-fish svg{display:block;min-width:720px;width:100%;height:auto}
+@media (max-width:640px){.drawer,.drawer.wide{width:100%}}
 </style>
 </head>
 <body>
@@ -479,7 +508,7 @@ const LOGO_MARK_DARK = 'data:image/svg+xml;base64,' + btoa(atob(LOGO_MARK.split(
   </div>
 </header>
 <aside class="sidenav" id="sidenav" aria-label="Navigasi utama"><nav id="nav"></nav>
-  <div class="sidenav-foot">SQMC v1.4.1<br>ISO 7870 · ISO 22514 · ISO 2859-1 · AIAG &amp; VDA core tools<br>© 2026 gammaproject</div>
+  <div class="sidenav-foot">SQMC v1.5<br>ISO 7870 · ISO 22514 · ISO 2859-1 · AIAG &amp; VDA core tools<br>© 2026 gammaproject</div>
 </aside>
 <div class="scrim" id="scrim"></div>
 <div class="content">
@@ -598,7 +627,7 @@ function lgamma(z) {
 /* =====================================================================
    KNOWLEDGE BASE
    Catatan: judul & ruang lingkup ditulis ulang (parafrase) oleh SQMC.
-   "year": null berarti edisi belum diverifikasi SQMC → cek katalog resmi.
+   "year": null berarti edisi belum diverifikasi SQMC , cek katalog resmi.
    ===================================================================== */
 const ISO_SEARCH = (q) => 'https://www.iso.org/search.html?q=' + encodeURIComponent(q);
 const WEB_SEARCH = (q) => 'https://www.google.com/search?q=' + encodeURIComponent(q);
@@ -990,18 +1019,18 @@ function buildSpec(inp) {
 }
 
 /* =====================================================================
-   STORAGE (claude db → localStorage → memori)
+   STORAGE (claude db, localStorage, memori)
    ===================================================================== */
 const LS_KEY = 'sqmc.v1';
-const STORE_KINDS = ['spec', 'dataset', 'ncr', 'fmea', 'cplan', 'msa', 'gage'];
+const STORE_KINDS = ['spec', 'dataset', 'ncr', 'fmea', 'cplan', 'msa', 'gage', 'explain'];
 function lsGet() { try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
 function lsSet(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); return true; } catch (e) { return false; } }
 const Store = {
   mode: 'memory', db: null, uid: null,
-  data: { spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], draft: null },
+  data: { spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], explain: [], draft: null },
   async init() {
     const l = lsGet();
-    if (l) { this.data = Object.assign({ spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], draft: null }, l); this.mode = 'local'; }
+    if (l) { this.data = Object.assign({ spec: [], dataset: [], ncr: [], fmea: [], cplan: [], msa: [], gage: [], explain: [], draft: null }, l); this.mode = 'local'; }
     else if (lsSet(this.data)) this.mode = 'local';
     this.badge();
     if (!(window.claude && typeof window.claude.use === 'function')) return;
@@ -1015,7 +1044,7 @@ const Store = {
       this.db = db; this.uid = id; this.mode = 'cloud';
       for (const kind of STORE_KINDS) {
         const map = new Map(remote[kind].map(o => [o.id, o]));
-        for (const o of this.data[kind]) { const r = map.get(o.id); if (!r || (o.updatedAt || 0) > (r.updatedAt || 0)) { map.set(o.id, o); await this._remote(kind, o).catch(() => { }); } }
+        for (const o of (this.data[kind] || [])) { const r = map.get(o.id); if (!r || (o.updatedAt || 0) > (r.updatedAt || 0)) { map.set(o.id, o); await this._remote(kind, o).catch(() => { }); } }
         this.data[kind] = Array.from(map.values());
       }
       lsSet(this.data); this.badge(); App.refresh();
@@ -1036,7 +1065,7 @@ const Store = {
   get(kind, id) { return (this.data[kind] || []).find(o => o.id === id) || null; },
   async put(kind, obj) {
     obj.updatedAt = Date.now();
-    const arr = this.data[kind]; const i = arr.findIndex(o => o.id === obj.id);
+    const arr = this.data[kind] = this.data[kind] || []; const i = arr.findIndex(o => o.id === obj.id);
     if (i >= 0) arr[i] = obj; else arr.push(obj);
     if (this.mode !== 'memory') lsSet(this.data);
     if (this.mode === 'cloud') {
@@ -1052,7 +1081,7 @@ const Store = {
   saveDraft(d) { this.data.draft = d; if (this.mode !== 'memory') lsSet(this.data); }
 };
 
-/* ---------- downloads (claude capability → fallback blob link) ---------- */
+/* ---------- downloads (claude capability dengan fallback blob link) ---------- */
 let DL = null, DLready = false;
 async function initDownloads() {
   if (window.claude && typeof window.claude.use === 'function') { try { DL = await withTimeout(window.claude.use('downloads'), 10000); } catch (e) { DL = null; } }
@@ -1370,6 +1399,7 @@ function viewHome(root) {
     <h1 style="margin-top:6px">Selamat datang di <b>SQMC</b></h1>
     <p>SQMC membantu menetapkan standar mutu produk, menganalisis risiko proses (PFMEA) dan rencana kendali, menilai kelayakan alat ukur (MSA), memantau proses dengan peta kendali, dan menindaklanjuti produk tidak sesuai dengan 8D dalam satu alur PDCA.</p>
     <div class="row"><a class="btn acc" href="#spesifikasi">${ICON.plus} Spesifikasi baru</a><a class="btn sec" href="#peta-kendali">${ICON.chart} Analisis peta kendali</a><button class="btn sec" data-sample="alur">Muat semua data contoh</button>${sampleCount() ? `<button class="btn ghost" id="clrSamples">Hapus data contoh (${sampleCount()})</button>` : ''}<a class="btn ghost" href="#panduan-alur">${ICON.guide} Panduan</a></div>
+    <div class="row da-tools"><button class="btn sm sec da-btn" data-explain="beranda">Explain</button><button class="btn sm sec da-btn" data-deep="beranda">Deep Analyst</button></div>
   </section>
   <div class="section-label"><h3>Status mutu</h3><span class="muted" style="font-size:.78rem">ringkasan dari seluruh modul</span></div>
   <div class="status-row">${kpiStrip([['NCR terbuka', String(ncrOpen), ncrLateN ? 'bad' : ncrOpen ? 'warn' : 'ok', ncrLateN ? `${ncrLateN} lewat target` : `${ncr.length} tercatat`], ['Kalibrasi alat ukur', calOver ? `${calOver} terlambat` : calSoon ? `${calSoon} jatuh tempo` : gg.length ? 'Semua valid' : 'Belum ada alat', calOver ? 'bad' : calSoon ? 'warn' : gg.length ? 'ok' : 'info', `${gg.length} alat terdaftar`], ['PFMEA AP High tanpa tindakan', String(hNo), hNo ? 'bad' : 'ok', `${fm.length} dokumen PFMEA`], ['MSA terakhir (GRR)', lastMsa ? pctTxt(isNum(lastMsa.summary.ptol) ? lastMsa.summary.ptol : lastMsa.summary.psv) : '-', lastMsa ? (lastMsa.verdict.tol || lastMsa.verdict.sv) : 'info', lastMsa ? esc(lastMsa.name) : 'belum ada studi']])}</div>
@@ -2392,7 +2422,7 @@ function buildLogoPNG() {
 /* =====================================================================
    MODUL v1.3, MESIN HITUNG: distribusi, MSA, EWMA/CUSUM, AP, Pareto, kalibrasi
    ===================================================================== */
-/* ---------- fungsi beta tak lengkap ter-regularisasi → p-value F & t ---------- */
+/* ---------- fungsi beta tak lengkap ter-regularisasi untuk p-value F & t ---------- */
 function betacf(a, b, x) {
   const MAXIT = 400, EPS = 3e-15, FPMIN = 1e-300;
   const qab = a + b, qap = a + 1, qam = a - 1;
@@ -2475,7 +2505,7 @@ function gageRR(rows, o = {}) {
   comps.push(comp('Part-to-Part', vPart, 0), comp('Total Variation', vTV, 0));
   const sdG = Math.sqrt(vGRR), sdP = Math.sqrt(vPart);
   const ndc = sdG > 0 ? Math.max(0, Math.floor(Math.SQRT2 * sdP / sdG)) : Infinity;
-  // data grafik: R & X̄ per operator (urut operator → part)
+  // data grafik: R & X̄ per operator (urut operator lalu part)
   const Rk = cell.map(row => row.map(c => Math.max(...c) - Math.min(...c)));
   const Rbar = avg(Rk.flat());
   const lim = r <= 25 ? { rU: (D2[r] + 3 * D3[r]) / D2[r] * Rbar, rL: Math.max(0, (D2[r] - 3 * D3[r]) / D2[r] * Rbar), xU: G + 3 / (D2[r] * Math.sqrt(r)) * Rbar, xL: G - 3 / (D2[r] * Math.sqrt(r)) * Rbar } : null;
@@ -3484,6 +3514,32 @@ const GUIDES = {
     ],
     sample: 'Data contoh berupa empat NCR, terdiri atas satu 8D lengkap yang sudah ditutup (kebocoran akibat resin basah) dan tiga NCR aktif pada tahap berbeda.'
   },
+  deep: {
+    route: 'peta-kendali', noRoute: true, icon: 'chart', title: 'Explain dan Deep Analyst',
+    summary: 'Explain dan Deep Analyst tersedia di setiap modul. Explain menampung cerita masalah dari pengguna, sedangkan Deep Analyst membedah data modul menjadi fakta, dugaan berlabel, diagram fishbone 6M, catatan kualitas data, dan langkah verifikasi.',
+    std: ['AIAG CQI-20 edisi 2 (2018), Effective Problem Solving', 'ISO 7870-2:2023 dan aturan Western Electric / Nelson untuk pola peta kendali', 'AIAG MSA edisi 4 (2010) untuk sistem pengukuran', 'Diagram Ishikawa (6M) untuk pengelompokan penyebab'],
+    steps: [
+      'Tombol Explain di kepala halaman modul membuka formulir cerita masalah, awal kejadian, lokasi, perubahan sebelum masalah, dampak, dan tindakan yang sudah dicoba. Semua isian bersifat opsional.',
+      'Awal kejadian dapat ditulis sebagai tanggal (misalnya 19 November 2026) atau nomor subgrup (misalnya subgrup 19) agar sistem dapat mencocokkannya dengan titik perubahan pada data.',
+      'Tombol Deep Analyst menjalankan analisis atas data modul yang sedang aktif, misalnya hasil peta kendali terakhir, dataset yang sedang dibuka, studi MSA, hasil Pareto, register NCR, PFMEA, atau Control Plan.',
+      'Deep Analyst di Beranda merangkum dugaan dan catatan kualitas data dari semua modul yang memiliki data.',
+      'Hasil analisis tersedia dalam format PDF lengkap dengan diagram fishbone.'
+    ],
+    read: [
+      'Temuan cerita merangkum fakta utama, keterangan pengguna, arah dugaan, dan jumlah catatan kualitas data.',
+      'Fakta data berisi hasil yang terukur beserta dasar perhitungannya, misalnya uji t dua segmen, ANOVA satu arah, atau aturan peta kendali.',
+      'Keterangan pengguna berisi kalimat dari Explain beserta kategori 6M yang terkait, dan tampil terpisah dari fakta data.',
+      'Setiap dugaan berlabel Dugaan dengan tingkat dukungan. Dukungan kuat menandai data dan keterangan pengguna yang mengarah ke hal yang sama, dukungan sedang menandai dugaan yang didukung data, dan perlu verifikasi menandai dugaan dengan dukungan terbatas.',
+      'Diagram fishbone memuat kategori 6M yang memiliki fakta, dugaan, atau keterangan. Kategori tanpa data tidak ditampilkan.',
+      'Catatan kualitas data memuat pola data yang perlu dicek, misalnya nilai tidak terbaca, salah posisi desimal, data tersalin, pembulatan saat pencatatan, atau nilai yang menumpuk tepat di batas spesifikasi.'
+    ],
+    tips: [
+      'Dugaan menjadi akar masalah setelah terbukti melalui verifikasi data atau uji ulang.',
+      'Cerita yang menyebut waktu, lokasi, dan perubahan secara spesifik menghasilkan pencocokan yang lebih tajam.',
+      'Perbaikan data pada catatan kualitas data diikuti dengan menjalankan ulang Deep Analyst.'
+    ],
+    sample: 'Data contoh peta kendali dan NCR menyertakan cerita Explain contoh, sehingga Deep Analyst langsung menampilkan pencocokan antara data dan keterangan pengguna.'
+  },
   pustaka: {
     route: 'pustaka', icon: 'lib', title: 'Pustaka Standar',
     summary: 'Modul ini berisi basis pengetahuan standar yang dipakai mesin rekomendasi SQMC, mencakup ruang lingkup (parafrase), status edisi, tautan katalog resmi, dan ringkasan PDF.',
@@ -3507,8 +3563,8 @@ const GUIDES = {
     sample: 'Pustaka sudah berisi 65 standar sehingga modul ini tidak memerlukan data contoh.'
   }
 };
-const GUIDE_ORDER = ['alur', 'spesifikasi', 'fmea', 'control-plan', 'input-data', 'peta-kendali', 'msa', 'pareto', 'ncr', 'pustaka'];
-const ROUTE_GUIDE = Object.fromEntries(Object.entries(GUIDES).map(([k, g]) => [g.route, k]));
+const GUIDE_ORDER = ['alur', 'spesifikasi', 'fmea', 'control-plan', 'input-data', 'peta-kendali', 'msa', 'pareto', 'ncr', 'deep', 'pustaka'];
+const ROUTE_GUIDE = Object.fromEntries(Object.entries(GUIDES).filter(([, g]) => !g.noRoute).map(([k, g]) => [g.route, k]));
 
 /* =====================================================================
    v1.4, TEMA GELAP/TERANG
@@ -3745,19 +3801,25 @@ const SAMPLE = {
   },
   pareto() { const P = App.state.pareto = Object.assign({ src: 'paste', by: 'n', text: '', res: null }, App.state.pareto || {}); P.src = 'paste'; P.text = PARETO_DEMO; const T = gridTable(parseGrid(P.text)); P.res = paretoCalc(T.rows.map(r => ({ cat: r[0], n: parseNum(r[1]), cost: parseNum(r[1]) * parseNum(r[2]) })), P.by); P.res.source = 'Data contoh'; }
 };
+const SAMPLE_EXPLAIN = {
+  'peta-kendali': { story: 'Sejak 19 November berat elbow terasa lebih berat dan beberapa unit mendekati USL saat ditimbang di lini. Pada tanggal yang sama gudang mulai mengeluarkan lot resin baru dari pemasok. Satu pengukuran tinggi pada 10 November sempat dicatat operator shift 2.', start: '19 November 2026', where: 'Mesin INJ-03, cetakan elbow 1/2 inci', change: 'Lot resin baru mulai dipakai pada 19 November.', impact: 'Belum ada unit di luar spesifikasi, tetapi rata-rata mendekati batas atas.', tried: 'Tekanan holding diturunkan sedikit pada 21 November, belum terlihat perubahan.' },
+  ncr: { story: 'Keluhan pelanggan tentang socket bocor dan dimensi socket muncul dalam dua bulan terakhir. Tim menemukan resin basah karena heater dryer rusak. Cacat flash juga berulang pada cetakan C-01.', start: 'Oktober 2026', where: 'Lini injeksi, cetakan C-01 dan C-03', change: 'Cetakan baru C-03 mulai dipakai.', impact: 'Retur dari proyek pelanggan dan biaya rework.', tried: 'Trimming 100% dan penahanan lot terdampak.' }
+};
+async function sampleExplain(key) { const o = Object.assign({ id: 'ex-' + key, key, updatedAt: Date.now(), sample: true }, SAMPLE_EXPLAIN[key]); if (!exFilled(exGet(key)) || (exGet(key) || {}).sample) await Store.put('explain', o); }
 const SAMPLE_LOAD = {
   async spesifikasi() { const s = await SAMPLE.spec(); App.state.specResult = s; App.state.specFormFromResult = true; App.go('spesifikasi'); },
   async fmea() { const f = await SAMPLE.fmea(); App.state.fmeaEdit = f.id; App.go('fmea'); },
   async 'control-plan'() { const c = await SAMPLE.cplan(); App.state.cpEdit = c.id; App.go('control-plan'); },
   async 'input-data'() { const d = await SAMPLE.datasets(); App.state.dsEdit = (d.find(x => x.kind === 'variable') || d[0]).id; App.go('input-data'); },
-  async 'peta-kendali'() { const d = await SAMPLE.datasets(); openDatasetInSPC((d.find(x => x.kind === 'variable') || d[0]).id); },
+  async 'peta-kendali'() { await sampleExplain('peta-kendali'); const d = await SAMPLE.datasets(); openDatasetInSPC((d.find(x => x.kind === 'variable') || d[0]).id); },
   async msa() { await SAMPLE.msa(); App.go('msa'); },
   async pareto() { SAMPLE.pareto(); App.go('pareto'); },
-  async ncr() { await SAMPLE.ncr(); App.state.ncrFilter = 'semua'; App.state.ncrEdit = null; App.go('ncr'); },
+  async ncr() { await sampleExplain('ncr'); await SAMPLE.ncr(); App.state.ncrFilter = 'semua'; App.state.ncrEdit = null; App.go('ncr'); },
+  async deep() { await SAMPLE_LOAD['peta-kendali'](); },
   async alur() { await SAMPLE_ALL(); }
 };
 async function SAMPLE_ALL() {
-  await SAMPLE.spec(); await SAMPLE.datasets(); await SAMPLE.fmea(); await SAMPLE.cplan(); await SAMPLE.ncr(); await SAMPLE.msa(); SAMPLE.pareto();
+  await SAMPLE.spec(); await SAMPLE.datasets(); await SAMPLE.fmea(); await SAMPLE.cplan(); await SAMPLE.ncr(); await SAMPLE.msa(); SAMPLE.pareto(); await sampleExplain('peta-kendali'); await sampleExplain('ncr');
   toast('Semua data contoh dimuat. Item contoh ditandai (contoh) pada namanya.', 'ok'); App.refresh();
 }
 const sampleCount = () => STORE_KINDS.reduce((n, k) => n + (Store.data[k] || []).filter(o => o && o.sample).length, 0);
@@ -3770,18 +3832,639 @@ async function clearSamples() {
 }
 /* ---------- tombol "Muat data contoh" & "Panduan" disisipkan ke setiap kepala halaman modul ---------- */
 function injectModTools() {
+  if (App.route === 'beranda') markExplainBtn();
   const ph = $('#app .page-head'); if (!ph || ph.dataset.modtools) return;
   ph.dataset.modtools = '1';
   const key = ROUTE_GUIDE[App.route]; if (!key || App.route === 'beranda' || App.route === 'panduan') return;
   const editing = (App.route === 'fmea' && App.state.fmeaEdit) || (App.route === 'control-plan' && App.state.cpEdit) || (App.route === 'ncr' && App.state.ncrEdit);
   let row = ph.querySelector(':scope > .row'); if (!row) { row = document.createElement('div'); row.className = 'row'; ph.appendChild(row); }
   const old = row.querySelector('#samples'); if (old) old.outerHTML = `<button class="btn sec" id="samples" data-sample="input-data">${ICON.plus} Muat data contoh</button>`;
-  const html = `${!editing && key !== 'pustaka' && !old ? `<button class="btn sm sec" data-sample="${key}">${ICON.plus} Muat data contoh</button>` : ''}<a class="btn sm ghost" href="#panduan-${key}">${ICON.guide} Panduan</a>`;
-  row.insertAdjacentHTML('beforeend', html);
+  const da = DA[App.route] ? `<button class="btn sm sec da-btn" data-explain="${App.route}">Explain</button><button class="btn sm sec da-btn" data-deep="${App.route}">Deep Analyst</button>` : '';
+  const html = `${!editing && key !== 'pustaka' && !old ? `<button class="btn sm sec" data-sample="${key}">${ICON.plus} Muat data contoh</button>` : ''}${da}<a class="btn sm ghost" href="#panduan-${key}">${ICON.guide} Panduan</a>`;
+  row.insertAdjacentHTML('beforeend', html); markExplainBtn();
 }
 document.addEventListener('click', async (e) => {
   const s = e.target.closest('[data-sample]'); if (s) { e.preventDefault(); s.disabled = true; try { await SAMPLE_LOAD[s.dataset.sample](); if (s.dataset.sample !== 'alur') toast('Data contoh dimuat', 'ok'); } catch (er) { console.error(er); toast('Gagal memuat data contoh: ' + er.message, 'err'); } finally { s.disabled = false; } return; }
   const g = e.target.closest('[data-guidepdf]'); if (g) { e.preventDefault(); pdfGuide(g.dataset.guidepdf); }
+});
+
+/* =====================================================================
+   v1.5 EXPLAIN & DEEP ANALYST (mesin analisis berbasis aturan, dapat ditelusuri)
+   ===================================================================== */
+const SIXM = { man: 'Man (manusia)', machine: 'Machine (mesin)', method: 'Method (metode)', material: 'Material (bahan)', measure: 'Measurement (pengukuran)', env: 'Environment (lingkungan)' };
+const SIXM_ORDER = ['man', 'machine', 'method', 'material', 'measure', 'env'];
+const SIXM_KW = {
+  man: /operator|karyawan|pekerja|\bshift|orang baru|anak baru|training|pelatihan|lelah|lembur|kurang teliti|inspektor|petugas|manusia/i,
+  machine: /mesin|cetakan|\bmold|mould|\bdies?\b|nozzle|heater|screw|barrel|pompa|\btool|\baus\b|rusak|breakdown|maintenance|perawatan|\bpm\b|hidrolik|clamp|cavity|dryer/i,
+  method: /prosedur|\bsop\b|instruksi|metode|cara kerja|urutan|parameter|resep|setting|siklus|waktu tahan|holding|first.?piece|tekanan injeksi/i,
+  material: /bahan baku|resin|\blot\b|pemasok|supplier|vendor|material|campuran|regrind|daur ulang|kadar air|\bbatch|masterbatch|kompon/i,
+  measure: /alat ukur|kalibrasi|jangka sorong|caliper|timbangan|gauge|mikrometer|salah baca|salah catat|salah ukur|ukur ulang|resolusi|cara ukur|metode ukur|sistem ukur/i,
+  env: /suhu ruang|udara panas|lembap|lembab|hujan|debu|listrik|tegangan|musim|ruangan|\bac\b|kelembapan|cuaca|getaran/i
+};
+const DA_STEPS = {
+  material: 'Bandingkan data per lot bahan baku sebelum dan sesudah titik perubahan, lalu cocokkan dengan COA lot terkait.',
+  machine: 'Periksa catatan setting, perawatan, dan kondisi mesin atau cetakan di sekitar titik perubahan, lalu lakukan uji ulang pada setting standar.',
+  method: 'Bandingkan parameter proses aktual dengan lembar setting dan audit penerapan instruksi kerja di lini.',
+  man: 'Stratifikasi data per operator dan shift, lalu observasi langsung cara kerja pada titik kritis.',
+  measure: 'Ukur ulang sampel tersimpan dengan alat terkalibrasi, lalu jalankan studi Type-1 atau Gage R&R pada alat yang dipakai.',
+  env: 'Catat suhu dan kelembapan saat produksi, lalu korelasikan dengan data pengukuran.'
+};
+/* ---------- statistik pendukung ---------- */
+function gammaQ(a, x) {
+  if (!(x > 0)) return 1;
+  const lg = -x + a * Math.log(x) - lgamma(a);
+  if (x < a + 1) { let ap = a, s = 1 / a, d = s; for (let n = 0; n < 500; n++) { ap++; d *= x / ap; s += d; if (Math.abs(d) < Math.abs(s) * 1e-14) break; } return Math.max(0, 1 - s * Math.exp(lg)); }
+  let b = x + 1 - a, c = 1e300, d = 1 / b, h = d;
+  for (let i = 1; i < 500; i++) { const an = -i * (i - a); b += 2; d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300; c = b + an / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-14) break; }
+  return Math.exp(lg) * h;
+}
+const chi2Sf = (x, k) => gammaQ(k / 2, x / 2);
+const median = (a) => { const s = a.filter(isNum).slice().sort((x, y) => x - y), n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : NaN; };
+function oneWay(groups) { // groups: [{name, vals}]
+  const G = groups.filter(g => g.vals.length >= 2); if (G.length < 2) return null;
+  const all = G.flatMap(g => g.vals), m = avg(all), N = all.length, k = G.length;
+  const ssb = sum(G.map(g => g.vals.length * (avg(g.vals) - m) ** 2)), ssw = sum(G.map(g => sum(g.vals.map(v => (v - avg(g.vals)) ** 2))));
+  if (N - k < 1) return null; const F = (ssb / (k - 1)) / (ssw / (N - k));
+  return { F, p: ssw > 0 ? fSurv(F, k - 1, N - k) : 0, means: G.map(g => ({ name: g.name, n: g.vals.length, mean: avg(g.vals) })), sw: Math.sqrt(ssw / (N - k)) };
+}
+function changePoint(series, minSeg = 5) {
+  const x = series.map((v, i) => ({ v, i })).filter(o => isNum(o.v)); const n = x.length; if (n < 2 * minSeg) return null;
+  let best = null;
+  for (let j = minSeg; j <= n - minSeg; j++) {
+    const a = x.slice(0, j).map(o => o.v), b = x.slice(j).map(o => o.v);
+    const sp = Math.sqrt(((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / (n - 2)); if (!(sp > 0)) continue;
+    const t = Math.abs(avg(b) - avg(a)) / (sp * Math.sqrt(1 / a.length + 1 / b.length));
+    if (!best || t > best.t) best = { t, idx: x[j].i, before: avg(a), after: avg(b), sp };
+  }
+  if (!best) return null; best.p = tP2(best.t, n - 2); return best;
+}
+function trendTest(series) {
+  const x = series.map((v, i) => [i, v]).filter(o => isNum(o[1])); const n = x.length; if (n < 8) return null;
+  const mx = avg(x.map(o => o[0])), my = avg(x.map(o => o[1]));
+  const sxx = sum(x.map(o => (o[0] - mx) ** 2)), sxy = sum(x.map(o => (o[0] - mx) * (o[1] - my)));
+  const b = sxy / sxx, res = x.map(o => o[1] - (my + b * (o[0] - mx))), se = Math.sqrt(sum(res.map(r => r * r)) / (n - 2) / sxx);
+  return se > 0 ? { slope: b, t: b / se, p: tP2(Math.abs(b / se), n - 2) } : null;
+}
+function catOfName(h) { const s = String(h || '').toLowerCase(); return /operator|\bop\b|inspektor|petugas|pengukur|penilai/.test(s) ? 'man' : /shift|regu/.test(s) ? 'man' : /mesin|machine|lini|line|cavity|cetakan|mold|mould|stasiun/.test(s) ? 'machine' : /lot|batch|bahan|material|supplier|pemasok|resin/.test(s) ? 'material' : /alat|gauge|instrumen/.test(s) ? 'measure' : /suhu|lembap|cuaca/.test(s) ? 'env' : null; }
+const pv = (p) => p < 0.001 ? 'p < 0,001' : `p = ${fmtFix(p, 3)}`;
+const LV = { strong: 'Dukungan kuat', mid: 'Dukungan sedang', weak: 'Perlu verifikasi' };
+
+/* ---------- Explain: penyimpanan & pemetaan cerita ke 6M ---------- */
+const EX_FIELDS = [['story', 'Cerita masalah', 'Apa yang terjadi, kapan disadari, seberapa sering, dan bagaimana dampaknya.', 5], ['start', 'Kapan mulai terjadi', 'mis. 19 November 2026, subgrup 19, atau lot L2611-07', 1], ['where', 'Lokasi', 'mis. Mesin INJ-03, cetakan C-03, shift 2', 1],
+  ['change', 'Perubahan sebelum masalah muncul', 'mis. lot resin baru, operator baru, setting diubah, alat ukur diganti', 2], ['impact', 'Dampak', 'mis. 37 unit bocor, keluhan pelanggan, scrap naik', 1], ['tried', 'Tindakan yang sudah dicoba', 'mis. tekanan holding diturunkan', 2]];
+const exGet = (key) => Store.get('explain', 'ex-' + key) || null;
+const exFilled = (ex) => !!(ex && EX_FIELDS.some(([k]) => String(ex[k] || '').trim()));
+function storyItems(ex) {
+  if (!exFilled(ex)) return [];
+  const out = [];
+  EX_FIELDS.forEach(([k, label]) => {
+    String(ex[k] || '').split(/(?<=[.!?])\s+|\n+/).map(t => t.trim()).filter(Boolean).forEach(t => {
+      const ms = k === 'where' || k === 'impact' ? [] : SIXM_ORDER.filter(m => SIXM_KW[m].test(t));
+      out.push({ field: k, label, text: t, ms });
+    });
+  });
+  return out;
+}
+function startIndexFromExplain(ex, labels) {
+  if (!ex || !ex.start) return null;
+  const s = String(ex.start);
+  const m = /(?:subgrup|sampel|titik|observasi)\s*(?:ke-?)?\s*(\d+)/i.exec(s); if (m) return +m[1] - 1;
+  if (labels) { const iso = /(\d{4}-\d{2}-\d{2})/.exec(s); if (iso) { const i = labels.findIndex(l => String(l).startsWith(iso[1])); if (i >= 0) return i; } }
+  const bulan = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
+  const d = /(\d{1,2})\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)(?:\s+(\d{4}))?/i.exec(s);
+  if (d && labels) { const y = d[3] || new Date().getFullYear(), iso = `${y}-${String(bulan.indexOf(d[2].toLowerCase()) + 1).padStart(2, '0')}-${String(d[1]).padStart(2, '0')}`; const i = labels.findIndex(l => String(l).startsWith(iso)); if (i >= 0) return i; }
+  return null;
+}
+
+/* ---------- pemeriksaan kualitas data seri variabel ---------- */
+function varDataChecks(o) { // o: {groups, labels, lsl, usl, xLabel, rowsDropped, dropRows}
+  const miss = [], facts = [], hyps = [];
+  const vals = o.groups.flat().filter(isNum), xL = o.xLabel || 'Subgrup';
+  if (o.rowsDropped) miss.push({ text: `${o.rowsDropped} baris tidak terbaca sebagai angka dan tidak ikut dianalisis.`, where: o.dropRows ? `Baris ${o.dropRows.slice(0, 10).join(', ')}${o.dropRows.length > 10 ? ', dst.' : ''}` : '', fix: 'Periksa sel kosong, teks, atau pemisah desimal pada baris tersebut.' });
+  const sizes = o.groups.map(g => g.filter(isNum).length), modeN = (() => { const c = {}; sizes.forEach(n => c[n] = (c[n] || 0) + 1); return +Object.entries(c).sort((a, b) => b[1] - a[1])[0][0]; })();
+  const odd = sizes.map((n, i) => n !== modeN ? i : -1).filter(i => i >= 0);
+  if (modeN > 1 && odd.length) miss.push({ text: `${odd.length} ${xL.toLowerCase()} berisi jumlah data berbeda dari ukuran umum (n = ${modeN}).`, where: `${xL} ${odd.slice(0, 10).map(i => o.labels[i] || i + 1).join(', ')}`, fix: 'Lengkapi pengukuran yang terlewat atau pastikan pembagian subgrup sesuai urutan produksi.' });
+  if (vals.length < 20) miss.push({ text: `Jumlah data ${vals.length} nilai masih sedikit untuk kesimpulan stabilitas dan kapabilitas.`, where: '', fix: 'Kumpulkan minimal 20 sampai 25 subgrup (sekitar 100 nilai) sebelum menetapkan batas kendali.' });
+  const med = median(vals), mad = median(vals.map(v => Math.abs(v - med))) * 1.4826;
+  if (mad > 0) {
+    const out = []; o.groups.forEach((g, i) => g.forEach((v, j) => { if (isNum(v) && Math.abs(v - med) > 6 * mad) out.push({ i, j, v }); }));
+    out.slice(0, 6).forEach(e => {
+      const r = Math.abs(med) > 0 ? e.v / med : NaN, slip = [10, 0.1, 100, 0.01, 1000, 0.001].find(f => isNum(r) && Math.abs(r / f - 1) < 0.15);
+      miss.push({ text: `Nilai ${fmt(e.v, 5)} berjarak dari median ${fmt(med, 5)} (${fmtFix(Math.abs(e.v - med) / mad, 1)} kali sebaran robust).${slip ? ` Rasio terhadap median sekitar ${slip}, pola yang lazim muncul pada salah posisi desimal atau satuan.` : ''}`, where: `${xL} ${o.labels[e.i] || e.i + 1}, data ke-${e.j + 1}`, fix: 'Cocokkan dengan catatan asli; bila nilai benar, perlakukan sebagai kejadian khusus dan telusuri penyebabnya.' });
+    });
+  }
+  let dup = []; for (let i = 1; i < o.groups.length; i++) { const a = o.groups[i - 1], b = o.groups[i]; if (a.length > 1 && a.length === b.length && a.every((v, j) => v === b[j])) dup.push(i); }
+  if (dup.length) miss.push({ text: `${dup.length} ${xL.toLowerCase()} identik persis dengan ${xL.toLowerCase()} sebelumnya.`, where: `${xL} ${dup.slice(0, 10).map(i => o.labels[i] || i + 1).join(', ')}`, fix: 'Periksa kemungkinan data tersalin dua kali.' });
+  const flat = o.groups.map((g, i) => g.length >= 3 && new Set(g).size === 1 ? i : -1).filter(i => i >= 0);
+  if (flat.length && new Set(vals).size > 3) miss.push({ text: `${flat.length} ${xL.toLowerCase()} berisi nilai yang semuanya sama.`, where: `${xL} ${flat.slice(0, 10).map(i => o.labels[i] || i + 1).join(', ')}`, fix: 'Ukur setiap unit secara terpisah.' });
+  const step = (() => { const u = [...new Set(vals.map(v => +v.toFixed(6)))].sort((a, b) => a - b); let m = Infinity; for (let i = 1; i < u.length; i++) m = Math.min(m, u[i] - u[i - 1]); return isFinite(m) ? m : null; })();
+  const tol = isNum(o.lsl) && isNum(o.usl) ? o.usl - o.lsl : null;
+  if (step && tol && step > tol / 10) miss.push({ text: `Resolusi data sekitar ${fmt(step, 5)}, lebih besar dari 1/10 toleransi (${fmt(tol / 10, 5)}).`, where: '', fix: 'Gunakan alat ukur atau pencatatan dengan resolusi lebih halus.' });
+  if (vals.length >= 50) {
+    const dec = Math.min(4, Math.max(0, ...vals.map(v => { const s = String(v); return s.includes('.') ? s.split('.')[1].length : 0; })));
+    const ld = vals.map(v => Math.abs(Math.round(v * 10 ** dec)) % 10), used = [...new Set(ld)].sort();
+    if (used.every(d => d % 5 === 0) && used.length <= 2) facts.push({ m: 'measure', text: `Digit terakhir data terdiri dari ${used.join(' dan ')}, menandakan resolusi pencatatan ${fmt(5 / 10 ** dec, 4)}.`, ev: `${vals.length} nilai` });
+    else if (used.every(d => d % 2 === 0)) facts.push({ m: 'measure', text: `Digit terakhir data selalu genap, menandakan resolusi pencatatan ${fmt(2 / 10 ** dec, 4)}.`, ev: `${vals.length} nilai` });
+    else {
+      const cnt = Array(10).fill(0); ld.forEach(d => cnt[d]++); const e = vals.length / 10, chi = sum(cnt.map(c => (c - e) ** 2 / e)), p = chi2Sf(chi, 9);
+      if (p < 0.001) { const top = cnt.map((c, d) => [d, c]).sort((a, b) => b[1] - a[1]).slice(0, 2); miss.push({ text: `Sebaran digit terakhir tidak merata (uji chi-kuadrat, ${pv(p)}); digit ${top[0][0]} dan ${top[1][0]} paling sering muncul. Dugaan pembulatan saat pencatatan atau nilai yang tidak dibaca langsung dari alat.`, where: `${vals.length} nilai`, fix: 'Catat nilai sesuai tampilan alat tanpa pembulatan; bila memakai alat digital, pertimbangkan perekaman otomatis.', dugaan: true }); }
+    }
+  }
+  if (tol) {
+    const atL = vals.filter(v => Math.abs(v - o.lsl) < 1e-9).length, atU = vals.filter(v => Math.abs(v - o.usl) < 1e-9).length, outN = vals.filter(v => v < o.lsl || v > o.usl).length;
+    const m = avg(vals), s = sd(vals), exp = vals.length * ((o.lsl !== null ? Phi((o.lsl - m) / s) : 0) + (o.usl !== null ? 1 - Phi((o.usl - m) / s) : 0));
+    if (atL + atU >= 3 && outN === 0 && exp >= 3) miss.push({ text: `${atL + atU} nilai tepat sama dengan batas spesifikasi, sementara sebaran data memperkirakan sekitar ${fmtFix(exp, 1)} nilai berada di luar batas dan yang tercatat 0. Dugaan sebagian nilai disesuaikan ke batas saat pencatatan.`, where: `LSL ${fmt(o.lsl)} sebanyak ${atL}, USL ${fmt(o.usl)} sebanyak ${atU}`, fix: 'Bandingkan dengan catatan mentah atau ukur ulang sampel tersimpan.', dugaan: true });
+  } else miss.push({ text: 'LSL dan USL belum diisi sehingga kapabilitas proses tidak dihitung.', where: '', fix: 'Isi batas spesifikasi dari menu Spesifikasi Standar atau dokumen gambar produk.' });
+  if (vals.length && vals.some(v => v < 0) && vals.filter(v => v > 0).length > vals.length * 0.9) miss.push({ text: `${vals.filter(v => v < 0).length} nilai negatif pada karakteristik yang umumnya bernilai positif.`, where: '', fix: 'Periksa tanda minus atau kesalahan input.' });
+  if (o.labels && o.labels.length > 1) {
+    const seen = {}, dupL = []; o.labels.forEach((l, i) => { if (l && seen[l] !== undefined && /\d{4}-\d{2}-\d{2}/.test(l) === false) dupL.push(l); seen[l] = i; });
+    const iso = o.labels.filter(l => /^\d{4}-\d{2}-\d{2}/.test(l)); let back = 0; for (let i = 1; i < iso.length; i++) if (iso[i] < iso[i - 1]) back++;
+    if (back) miss.push({ text: `${back} tanggal tercatat lebih awal dari tanggal sebelumnya.`, where: '', fix: 'Urutkan data sesuai urutan produksi; peta kendali membaca urutan waktu.' });
+    if (dupL.length) miss.push({ text: `${dupL.length} label ${xL.toLowerCase()} muncul lebih dari sekali.`, where: dupL.slice(0, 8).join(', '), fix: 'Pastikan setiap subgrup memiliki identitas unik.' });
+  }
+  return { miss, facts, hyps };
+}
+
+/* ---------- penyusun laporan bersama ---------- */
+const DA_STOP = new Set(['yang', 'dengan', 'pada', 'untuk', 'dari', 'atau', 'dugaan', 'misalnya', 'sekitar', 'proses', 'alat', 'ukur', 'ukuran', 'hasil', 'data', 'nilai', 'perlu', 'belum', 'sudah', 'ulang', 'masih', 'lebih', 'karena', 'sejak', 'tanggal', 'sama', 'juga', 'beberapa', 'satu', 'terjadi', 'mulai', 'cara', 'berbeda', 'baru', 'kondisi', 'masalah']);
+const daStem = (w) => w.replace(/^(di|ter|me|ber|pe|ke)(?=[a-z]{5,})/, '').replace(/(kan|nya|an)$/, '');
+const daWords = (t) => new Set(normTxt(t).split(' ').filter(w => w.length > 3 && !DA_STOP.has(w)).map(daStem).filter(w => w.length > 3 && !DA_STOP.has(w)));
+function daFinish(key, r) {
+  const ex = exGet(key), story = storyItems(ex);
+  r.story = story; r.ex = ex; r.key = key; r.at = Date.now();
+  r.facts = r.facts || []; r.hyps = r.hyps || []; r.miss = r.miss || []; r.steps = r.steps || [];
+  const factCats = new Set(r.facts.filter(f => f.m && !f.neg).map(f => f.m)), negCats = new Set(r.facts.filter(f => f.neg && f.m).map(f => f.m));
+  r.hyps.forEach(h => { h.basis = h.basis || []; h.cand = (h.ms || [h.m]).filter(Boolean); });
+  // 1. kecocokan waktu: keterangan yang menyebut tanggal atau subgrup yang sama dengan titik temuan
+  if (r.labels) story.forEach(st => { const i = startIndexFromExplain({ start: st.text }, r.labels); if (i === null) return; st.ti = i; });
+  r.hyps.forEach(h => { if (!h.idx) return; const st = story.find(x => isNum(x.ti) && h.idx.some(j => Math.abs(j - x.ti) <= 1)); if (!st) return; const mm = h.cand.find(m => st.ms.includes(m)); if (mm) h.m = mm; h.level = 'strong'; h.story = h.timeHit = true; st.used = true; h.basis.push(`Waktu kejadian sesuai keterangan pengguna, "${st.text}"`); });
+  // 2. kecocokan kategori 6M dan kata kunci
+  const storyCats = {}; story.forEach(s => s.ms.forEach(m => { (storyCats[m] = storyCats[m] || []).push(s); }));
+  const groups = {}; r.hyps.forEach(h => { if (h.timeHit) return; const hit = h.cand.find(m => storyCats[m]); if (hit) (groups[hit] = groups[hit] || []).push(h); });
+  Object.entries(groups).forEach(([m, hs]) => {
+    const scored = hs.map(h => { const hw = daWords(h.text); const best = storyCats[m].map(st => ({ st, ov: [...daWords(st.text)].filter(w => hw.has(w)).length })).sort((a, b) => b.ov - a.ov)[0]; return { h, best }; });
+    const anyOv = scored.some(x => x.best.ov > 0);
+    scored.forEach((x, k) => { const h = x.h; h.m = m; h.story = true;
+      if (x.best.ov > 0 || (!anyOv && k === 0)) { h.level = h.level === 'weak' ? 'mid' : 'strong'; h.basis.push(`Selaras dengan keterangan pengguna, "${x.best.st.text}"`); x.best.st.used = true; }
+      else h.basis.push('Kategori yang sama juga disebut dalam keterangan pengguna.'); });
+  });
+  r.hyps.forEach(h => { if (!h.story && h.m && negCats.has(h.m)) { const alt = h.cand.find(m => !negCats.has(m)); if (alt) h.m = alt; } if (!h.m && h.cand.length) h.m = h.cand[0]; delete h.cand; });
+  // 3. keterangan yang belum terhubung ke temuan data menjadi dugaan tersendiri
+  Object.entries(storyCats).forEach(([m, items]) => {
+    if (r.hyps.some(h => h.m === m)) return;
+    const free = items.filter(x => !x.used); if (!free.length) return;
+    const neg = negCats.has(m);
+    r.hyps.push({ m, text: `Keterangan pengguna mengarah ke kategori ${SIXM[m]}, yaitu "${free[0].text}"`, basis: [neg ? 'Data di modul ini belum menunjukkan perbedaan pada kategori ini, sehingga keterangan ini perlu dicek ulang di lapangan.' : factCats.has(m) ? 'Ada temuan data pada kategori yang sama.' : 'Data di modul ini belum dapat menguji kategori ini.'], level: !neg && factCats.has(m) ? 'mid' : 'weak', story: true });
+  });
+  const order = { strong: 0, mid: 1, weak: 2 }; r.hyps.sort((a, b) => order[a.level] - order[b.level]);
+  const cats = [...new Set(r.hyps.map(h => h.m).filter(Boolean))];
+  r.steps = [...r.steps, ...cats.map(m => DA_STEPS[m])];
+  if (r.miss.length) r.steps.push('Perbaiki data pada daftar catatan kualitas data, lalu jalankan ulang Deep Analyst.');
+  r.steps = [...new Set(r.steps)];
+  r.narrative = daNarrative(r);
+  return r;
+}
+function daNarrative(r) {
+  const P = [], clean = (t) => String(t).replace(/\.\s*$/, '');
+  if (r.problem) P.push(r.problem);
+  const kf = r.facts.filter(f => !f.neg), shown = kf.slice(0, 4).map(f => clean(f.text) + '.');
+  if (shown.length) P.push(`${shown.join(' ')}${kf.length > 4 ? ` Terdapat ${kf.length - 4} fakta lain pada daftar fakta data.` : ''}`);
+  const ng = r.facts.filter(f => f.neg).map(f => clean(f.text)); if (ng.length) P.push(`${ng.join('. ')}.`);
+  if (r.story.length) { const cs = [...new Set(r.story.flatMap(s => s.ms))]; P.push(`Keterangan pengguna ${cs.length ? `menyinggung kategori ${cs.map(m => SIXM[m].split(' ')[0]).join(', ')}` : 'belum menyinggung kategori 6M secara spesifik'}${r.ex && r.ex.start ? `, dengan awal kejadian ${r.ex.start}` : ''}.`); }
+  const hs = r.hyps.filter(x => x.level === 'strong'), h = hs.length ? hs : r.hyps.filter(x => x.level === 'mid');
+  const joinDan = (a) => a.length > 1 ? a.slice(0, -1).join(', ') + ' dan ' + a[a.length - 1] : a[0];
+  if (h.length) P.push(`Dugaan dengan dukungan ${hs.length ? 'kuat' : 'terbesar'} mengarah ke ${joinDan([...new Set(h.slice(0, 3).map(x => x.m ? SIXM[x.m] : 'kejadian khusus'))])}. Dugaan menjadi akar masalah setelah terbukti melalui verifikasi data atau uji ulang.`);
+  else if (r.hyps.length) P.push('Dugaan yang tersedia masih memerlukan verifikasi karena dukungan datanya belum cukup.');
+  if (r.miss.length) P.push(`Terdapat ${r.miss.length} catatan kualitas data${r.miss.some(m => m.dugaan) ? ', termasuk pola yang perlu dicocokkan dengan catatan asli' : ''}. Kesimpulan lebih andal setelah catatan tersebut diperiksa.`);
+  if (!P.length) P.push('Data yang tersedia belum menunjukkan temuan khusus.');
+  return P;
+}
+
+/* ---------- inti analisis seri variabel (dipakai Peta Kendali & Input Data) ---------- */
+let DA_DP = 4;
+const fmtD = (v) => fmt(v, DA_DP);
+function daSetDP(vals) { const d = Math.max(0, ...vals.filter(isNum).slice(0, 500).map(v => { const t = String(v); return t.includes('.') ? t.split('.')[1].length : 0; })); DA_DP = Math.min(5, d + 1); }
+const TEST_INFO = {
+  1: ['titik di luar batas kendali', 'Titik di luar batas kendali menandakan penyebab khusus sesaat', ['machine', 'material', 'measure']],
+  2: ['9 titik berturut di satu sisi garis tengah', 'Pola ini menandakan pergeseran rata-rata proses', ['material', 'method', 'machine']],
+  3: ['6 titik naik atau turun berturut', 'Pola tren lazim muncul pada keausan alat, pemanasan mesin, atau perubahan bertahap', ['machine', 'measure']],
+  4: ['14 titik naik turun bergantian', 'Pola bergantian lazim muncul bila dua sumber dipakai bergantian, misalnya dua mesin, dua cetakan, atau dua operator', ['machine', 'man']],
+  5: ['2 dari 3 titik di zona A satu sisi', 'Pola ini menandakan pergeseran rata-rata', ['material', 'method']],
+  6: ['4 dari 5 titik di zona B atau lebih satu sisi', 'Pola ini menandakan pergeseran rata-rata kecil', ['material', 'method']],
+  7: ['15 titik berturut di zona C', 'Pola ini menandakan stratifikasi; subgrup kemungkinan mencampur beberapa sumber sehingga batas kendali terlalu lebar, atau data mengalami penyesuaian', ['measure', 'method']],
+  8: ['8 titik berturut di luar zona C', 'Pola ini menandakan campuran dua populasi, misalnya dua lot bahan atau dua mesin', ['material', 'machine']]
+};
+const listIdx = (idx, labels, max = 8) => idx.slice(0, max).map(i => labels[i] || String(i + 1)).join(', ') + (idx.length > max ? `, dan ${idx.length - max} lainnya` : '');
+function daStrat(recs, facts, hyps, cp) {
+  const cols = recs.length ? Object.keys(recs[0].c) : [];
+  cols.forEach(col => {
+    const map = new Map(); recs.forEach((r, k) => { const key = String(r.c[col] ?? '').trim(); if (!key) return; if (!map.has(key)) map.set(key, { name: key, vals: [], pos: [] }); map.get(key).vals.push(r.v); map.get(key).pos.push(r.t); });
+    const G = [...map.values()]; if (G.length < 2 || G.length > 10 || G.some(g => g.vals.length < 3)) return;
+    const a = oneWay(G); if (!a) return; const m = catOfName(col);
+    const ml = a.means.slice().sort((x, y) => y.mean - x.mean), desc = ml.map(x => `${col} ${x.name} rata-rata ${fmtD(x.mean)} (n ${x.n})`).join(', ');
+    if (a.p < 0.01) {
+      facts.push({ m, text: `Rata-rata berbeda antar ${col}, yaitu ${desc}.`, ev: `ANOVA satu arah, ${pv(a.p)}` });
+      const basis = [`Perbedaan rata-rata antar ${col} bermakna secara statistik (${pv(a.p)}).`];
+      if (cp) { const conf = G.find(g => g.pos.filter(t => t >= cp.idx).length / g.pos.length > 0.8 && g.pos.length < recs.length * 0.6); if (conf) basis.push(`Sebagian besar data ${col} ${conf.name} berada setelah titik perubahan, sehingga pengaruh waktu dan ${col} belum dapat dipisahkan.`); }
+      hyps.push({ m, ms: m ? [m] : ['method'], text: `Dugaan perbedaan ${col} ikut membentuk variasi; ${col} ${ml[0].name} memiliki rata-rata tertinggi dan ${ml[ml.length - 1].name} terendah.`, basis, level: basis.length > 1 ? 'weak' : 'mid' });
+    } else if (a.p >= 0.05 && m) facts.push({ m, neg: true, text: `Rata-rata antar ${col} tidak berbeda bermakna (${desc})`, ev: `ANOVA satu arah, ${pv(a.p)}` });
+  });
+}
+function daVarCore(o) { // o: {groups, labels, lsl, usl, unit, xLabel, recs, notes, dropped, dropRows, sigmaW, exKey}
+  daSetDP(o.groups.flat());
+  const chk = varDataChecks({ groups: o.groups, labels: o.labels, lsl: o.lsl, usl: o.usl, xLabel: o.xLabel, rowsDropped: o.dropped, dropRows: o.dropRows });
+  const facts = chk.facts, hyps = chk.hyps, miss = chk.miss, xL = o.xLabel || 'Subgrup', u = o.unit ? ' ' + o.unit : '';
+  const series = o.groups.map(g => g.length ? avg(g) : NaN), sW = o.sigmaW;
+  const cp = changePoint(series, Math.max(4, Math.min(6, Math.floor(series.length / 5))));
+  const ex = exGet(o.exKey), exIdx = startIndexFromExplain(ex, o.labels);
+  let cpOk = null;
+  if (cp && cp.p < 0.001 && isNum(sW) && sW > 0 && Math.abs(cp.after - cp.before) >= 0.5 * sW) {
+    cpOk = cp; const d = cp.after - cp.before, lab = o.labels[cp.idx] || String(cp.idx + 1);
+    facts.push({ m: null, text: `Rata-rata ${d > 0 ? 'naik' : 'turun'} dari ${fmtD(cp.before)}${u} menjadi ${fmtD(cp.after)}${u} mulai ${xL.toLowerCase()} ${lab} (selisih ${fmt(Math.abs(d), 4)}${u}, setara ${fmtFix(Math.abs(d) / sW, 1)} sigma dalam subgrup).`, ev: `Uji t dua segmen, ${pv(cp.p)}` });
+    const basis = [`Perubahan rata-rata terdeteksi mulai ${xL.toLowerCase()} ${lab}.`]; let level = 'mid';
+    if (exIdx !== null && Math.abs(exIdx - cp.idx) <= 2) { basis.push(`Waktu perubahan cocok dengan keterangan pengguna (mulai ${ex.start}).`); level = 'strong'; }
+    else if (exIdx !== null) basis.push(`Keterangan pengguna menyebut awal kejadian ${ex.start}, berbeda ${Math.abs(exIdx - cp.idx)} ${xL.toLowerCase()} dari titik perubahan data.`);
+    hyps.push({ idx: [cp.idx], m: 'material', ms: ['material', 'method', 'machine'], text: `Dugaan ada perubahan input proses sekitar ${xL.toLowerCase()} ${lab}, misalnya pergantian lot bahan, perubahan setting, atau pergantian cetakan.`, basis, level });
+    (o.notes || []).forEach((n, i) => { if (n && Math.abs(i - cp.idx) <= 1) facts.push({ m: SIXM_ORDER.find(m => SIXM_KW[m].test(n)) || null, text: `Catatan pada ${xL.toLowerCase()} ${o.labels[i] || i + 1} berbunyi "${n}".`, ev: 'Kolom catatan data' }); });
+  }
+  const tr = trendTest(series);
+  if (!cpOk && tr && tr.p < 0.01 && isNum(sW) && sW > 0 && Math.abs(tr.slope) * series.length >= 0.5 * sW) {
+    facts.push({ m: null, text: `Rata-rata subgrup bergerak ${tr.slope > 0 ? 'naik' : 'turun'} bertahap sekitar ${fmt(Math.abs(tr.slope), 3)}${u} per ${xL.toLowerCase()}.`, ev: `Regresi linear terhadap urutan, ${pv(tr.p)}` });
+    hyps.push({ m: 'machine', ms: ['machine', 'measure', 'env'], text: 'Dugaan ada faktor yang berubah bertahap, misalnya keausan cetakan atau alat, kenaikan suhu mesin, atau drift alat ukur.', basis: ['Tren bertahap terdeteksi pada urutan data.'], level: 'mid' });
+  }
+  if (o.recs && o.recs.length) daStrat(o.recs, facts, hyps, cpOk);
+  return { facts, hyps, miss, cp: cpOk };
+}
+function attrChecks(rows, labels, type, xL) {
+  const miss = [];
+  const over = rows.map((r, i) => isNum(r.d) && isNum(r.n) && r.d > r.n ? i : -1).filter(i => i >= 0);
+  if (over.length && type !== 'c' && type !== 'u') miss.push({ text: `${over.length} baris mencatat jumlah cacat lebih besar dari jumlah diperiksa.`, where: `${xL} ${listIdx(over, labels)}`, fix: 'Periksa kemungkinan kolom tertukar atau salah ketik.' });
+  const noN = rows.map((r, i) => !isNum(r.n) || r.n <= 0 ? i : -1).filter(i => i >= 0);
+  if (noN.length && type !== 'c') miss.push({ text: `${noN.length} baris tanpa jumlah diperiksa yang valid.`, where: `${xL} ${listIdx(noN, labels)}`, fix: 'Isi jumlah unit yang diperiksa pada setiap sampel.' });
+  const neg = rows.map((r, i) => isNum(r.d) && r.d < 0 ? i : -1).filter(i => i >= 0);
+  if (neg.length) miss.push({ text: `${neg.length} baris berisi jumlah cacat negatif.`, where: `${xL} ${listIdx(neg, labels)}`, fix: 'Perbaiki nilai negatif pada data.' });
+  const ns = [...new Set(rows.map(r => r.n).filter(isNum))];
+  if ((type === 'np' || type === 'c') && ns.length > 1) miss.push({ text: `Peta ${type.toUpperCase()} dipakai dengan ukuran sampel yang berbeda-beda (${ns.length} ukuran).`, where: '', fix: `Gunakan peta ${type === 'np' ? 'P' : 'U'} untuk ukuran sampel yang bervariasi.` });
+  if (rows.length < 20) miss.push({ text: `Data baru ${rows.length} sampel; batas kendali atribut lebih stabil dengan 20 sampel atau lebih.`, where: '', fix: 'Lanjutkan pengumpulan data sebelum menetapkan batas kendali tetap.' });
+  return miss;
+}
+
+/* ---------- analyzer per modul ---------- */
+const DA = {};
+DA['peta-kendali'] = () => {
+  const S = App.state.spc; if (!S || !S.result) return { empty: 'Jalankan peta kendali terlebih dulu agar Deep Analyst dapat membaca hasil dan data mentahnya.' };
+  const res = S.result, c = S.cfg || {}, ds = S.source === 'dataset' && S.ds ? Store.get('dataset', S.ds) : null;
+  let G = null; try { G = buildGroups(); } catch (e) { G = null; }
+  const labels = res.labels || (G && G.labels) || [], xL = res.xLabel || 'Subgrup';
+  let dropped = 0; const dropRows = [];
+  if (ds) ds.rows.forEach((r, i) => { const v = ds.kind === 'variable' ? (r.vals || []).filter(isNum) : [r.defects].filter(isNum); if (!v.length) { dropped++; dropRows.push(i + 1); } });
+  else if (S.table) { const cols = c.dataKind === 'variable' ? (c.layout === 'wide' ? c.valCols : [c.valCol]) : [c.cntCol]; S.table.rows.forEach((r, i) => { if (!cols.some(ci => isNum(parseNum(r[ci])))) { dropped++; dropRows.push(i + 2); } }); }
+  const out = { labels: (S.result.labels || []), title: 'Peta Kendali', scope: `${res.title || 'Peta kendali'}${res.sourceName ? ', sumber ' + res.sourceName : ''}`, facts: [], hyps: [], miss: [] };
+  const pts = res.main.points, flags = res.main.flags || [];
+  const byTest = {}; flags.forEach((f, i) => f.forEach(t => (byTest[t] = byTest[t] || []).push(i)));
+  const nFlag = flags.filter(f => f.length).length;
+  out.problem = `Analisis ${res.title || 'peta kendali'} untuk ${res.varName || 'data'}${res.unit ? ' (' + res.unit + ')' : ''} dengan ${pts.length} ${xL.toLowerCase()}. ${nFlag ? `${nFlag} titik memenuhi aturan penyebab khusus.` : 'Tidak ada titik yang memenuhi aturan penyebab khusus pada tes yang aktif.'}`;
+  const notes = ds ? ds.rows.map(r => String(r.note || '').trim()) : [];
+  const testHyps = [];
+  Object.keys(byTest).sort((a, b) => a - b).forEach(t => {
+    const idx = byTest[t], info = TEST_INFO[t]; if (!info) return;
+    out.facts.push({ m: null, text: `Tes ${t} (${info[0]}) terpenuhi pada ${idx.length} titik, yaitu ${xL.toLowerCase()} ${listIdx(idx, labels)}.`, ev: `Aturan Western Electric / Nelson, ${res.title || ''}`.trim() });
+    const basis = [`${info[1]}.`]; idx.forEach(i => { if (notes[i]) basis.push(`Catatan ${xL.toLowerCase()} ${labels[i] || i + 1} berbunyi "${notes[i]}"`); });
+    testHyps.push({ t: +t, idx, h: { idx, m: info[2][0], ms: info[2], text: `Dugaan penyebab khusus pada ${xL.toLowerCase()} ${listIdx(idx, labels, 4)}. ${info[1]}.`, basis, level: +t === 1 && idx.length === 1 ? 'weak' : 'mid' } });
+  });
+  if (res.disp && res.disp.flags) { const di = res.disp.flags.map((f, i) => f.length ? i : -1).filter(i => i >= 0); if (di.length) { const nm = res.dispName || 'sebaran'; out.facts.push({ m: null, text: `Peta ${nm} memiliki ${di.length} titik di luar batas kendali, yaitu ${xL.toLowerCase()} ${listIdx(di, labels)}.`, ev: `Peta ${nm}` }); testHyps.push({ t: 0, idx: di, h: { idx: di, m: 'measure', ms: ['measure', 'material', 'machine'], text: `Dugaan variasi dalam subgrup meningkat sesaat pada ${xL.toLowerCase()} ${listIdx(di, labels, 4)}. Satu nilai yang menyimpang di dalam subgrup lazim berasal dari salah ukur, salah catat, atau unit dengan cacat lokal.`, basis: [`Rentang atau simpangan subgrup melebihi batas kendali peta ${nm}.`].concat(di.map(i => { const g = (G && G.kind === 'variable' ? G.groups : [])[i]; if (!g || g.length < 3) return ''; const m = median(g), far = g.reduce((a, v) => Math.abs(v - m) > Math.abs(a - m) ? v : a, g[0]); return `Nilai paling menyimpang di ${xL.toLowerCase()} ${labels[i] || i + 1} adalah ${fmtD(far)} (median subgrup ${fmtD(m)}).`; }).filter(Boolean).slice(0, 3)), level: 'mid' } }); } }
+  if (res.kind === 'variable') {
+    const groups = G && G.kind === 'variable' ? G.groups : (res.values || []).map(v => [v]);
+    const lsl = res.cap ? res.cap.lsl : numOrNull(c.lsl), usl = res.cap ? res.cap.usl : numOrNull(c.usl);
+    let recs = [];
+    if (ds) ds.rows.forEach((r, t) => (r.vals || []).filter(isNum).forEach(v => recs.push({ v, t, c: { Shift: r.shift, Operator: r.operator, Mesin: r.machine } })));
+    else if (S.table && c.dataKind === 'variable' && c.layout !== 'subcol') {
+      const used = new Set([...(c.layout === 'wide' ? c.valCols : [c.valCol]), c.labelCol]);
+      const rows = S.table.rows.filter(r => (c.layout === 'wide' ? c.valCols : [c.valCol]).some(i => isNum(parseNum(r[i]))));
+      const catCols = S.table.headers.map((h, i) => i).filter(i => !used.has(i) && (() => { const vs = new Set(rows.map(r => String(r[i] ?? '').trim()).filter(Boolean)); return vs.size >= 2 && vs.size <= 10 && vs.size < rows.length / 2 && (catOfName(S.table.headers[i]) || rows.some(r => !isNum(parseNum(r[i])) && String(r[i] ?? '').trim())); })());
+      const k = Math.max(1, c.subSize || 1);
+      rows.forEach((r, ri) => { const t = c.layout === 'wide' ? ri : Math.floor(ri / k); (c.layout === 'wide' ? c.valCols : [c.valCol]).forEach(i => { const v = parseNum(r[i]); if (isNum(v)) recs.push({ v, t, c: Object.fromEntries(catCols.map(ci => [S.table.headers[ci] || 'Kolom ' + (ci + 1), r[ci]])) }); }); });
+    }
+    const core = daVarCore({ groups, labels, lsl, usl, unit: res.unit, xLabel: xL, recs, notes, dropped, dropRows, sigmaW: res.sigmaWithin, exKey: 'peta-kendali' });
+    out.facts.push(...core.facts); out.miss.push(...core.miss);
+    const cpH = core.cp ? core.hyps.find(h => /perubahan input proses/.test(h.text)) : null;
+    testHyps.forEach(th => { if (cpH && [1, 2, 5, 6, 8].includes(th.t) && th.idx.every(i => i >= core.cp.idx - 2)) cpH.basis.push(`Tes ${th.t} pada ${xL.toLowerCase()} ${listIdx(th.idx, labels, 4)} sejalan dengan pergeseran ini.`); else out.hyps.push(th.h); });
+    out.hyps.push(...core.hyps);
+    const cap = res.cap;
+    if (cap && isNum(cap.Cpk)) {
+      const parts = [isNum(cap.Cp) ? `Cp ${fmtFix(cap.Cp, 2)}` : '', `Cpk ${fmtFix(cap.Cpk, 2)}`, isNum(cap.Ppk) ? `Ppk ${fmtFix(cap.Ppk, 2)}` : ''].filter(Boolean).join(', ');
+      const obs = cap.ppmObs ? Math.round(cap.ppmObs.tot / 1e6 * cap.N) : 0;
+      out.facts.push({ m: null, text: `Kapabilitas proses ${parts}${obs ? `; ${obs} nilai berada di luar spesifikasi` : ''}.`, ev: `${cap.N} nilai, sigma dalam subgrup ${fmt(cap.sigmaW, 4)}` });
+      if (isNum(cap.Cp) && cap.Cp >= 1.33 && cap.Cpk < 1.33) out.hyps.push({ m: 'method', ms: ['method', 'machine'], text: `Dugaan rata-rata proses belum berada di tengah toleransi. Sebaran proses sudah memadai (Cp ${fmtFix(cap.Cp, 2)}), sedangkan Cpk ${fmtFix(cap.Cpk, 2)} karena rata-rata ${fmtD(cap.mean)} bergeser dari titik tengah ${fmtD((cap.lsl + cap.usl) / 2)}.`, basis: ['Selisih Cp dan Cpk berasal dari posisi rata-rata terhadap titik tengah toleransi.'], level: 'mid' });
+      else if (isNum(cap.Cp) && cap.Cp < 1.33) out.hyps.push({ m: 'machine', ms: ['machine', 'material', 'measure'], text: `Dugaan sebaran proses terlalu lebar untuk toleransi (Cp ${fmtFix(cap.Cp, 2)}). Sumber variasi dapat berasal dari mesin, bahan, atau sistem pengukuran.`, basis: ['Cp di bawah 1,33.', 'Gage R&R dapat memisahkan porsi variasi dari alat ukur.'], level: 'weak' });
+      if (isNum(cap.Cp) && isNum(cap.Pp) && cap.Pp / cap.Cp < 0.8) out.facts.push({ m: null, text: `Variasi total lebih besar dari variasi dalam subgrup (Pp/Cp ${fmtFix(cap.Pp / cap.Cp, 2)}), menandakan perbedaan antar waktu atau antar subgrup.`, ev: 'Perbandingan sigma total dan sigma dalam subgrup' });
+    }
+    if (res.ad && res.ad.p < 0.05) out.facts.push({ m: null, text: `Data tidak mengikuti distribusi normal (Anderson-Darling ${pv(res.ad.p)})${core.cp ? ', sejalan dengan adanya dua tingkat rata-rata' : ''}. Estimasi ppm berbasis normal menjadi kurang akurat.`, ev: `A² ${fmtFix(res.ad.A2, 3)}` });
+  } else {
+    testHyps.forEach(th => out.hyps.push(th.h));
+    const rows = G && G.kind === 'attribute' ? G.rows : [];
+    out.miss.push(...attrChecks(rows, labels, res.type, xL));
+    if (dropped) out.miss.unshift({ text: `${dropped} baris tidak terbaca sebagai angka dan tidak ikut dianalisis.`, where: `Baris ${dropRows.slice(0, 10).join(', ')}`, fix: 'Periksa sel kosong atau teks pada kolom jumlah cacat.' });
+    const rate = rows.map(r => isNum(r.d) && isNum(r.n) && r.n > 0 ? r.d / r.n : (isNum(r.d) && res.type === 'c' ? r.d : NaN));
+    const tot = sum(rows.map(r => isNum(r.d) ? r.d : 0)), totN = sum(rows.map(r => isNum(r.n) ? r.n : 0));
+    if (totN > 0 && res.type !== 'c') out.facts.push({ m: null, text: `Proporsi cacat rata-rata ${fmtFix(tot / totN * 100, 2)}% (${tot} cacat dari ${totN} unit).`, ev: `${rows.length} sampel` });
+    const cp = changePoint(rate, 5);
+    if (cp && cp.p < 0.001) {
+      const lab = labels[cp.idx] || cp.idx + 1, ex = exGet('peta-kendali'), exIdx = startIndexFromExplain(ex, labels);
+      out.facts.push({ m: null, text: `Tingkat cacat ${cp.after > cp.before ? 'naik' : 'turun'} dari ${fmtFix(cp.before * (res.type === 'c' ? 1 : 100), 2)}${res.type === 'c' ? '' : '%'} menjadi ${fmtFix(cp.after * (res.type === 'c' ? 1 : 100), 2)}${res.type === 'c' ? '' : '%'} mulai sampel ${lab}.`, ev: `Uji t dua segmen, ${pv(cp.p)}` });
+      const basis = [`Perubahan tingkat cacat terdeteksi mulai sampel ${lab}.`]; let level = 'mid';
+      if (exIdx !== null && Math.abs(exIdx - cp.idx) <= 2) { basis.push(`Waktu perubahan cocok dengan keterangan pengguna (mulai ${ex.start}).`); level = 'strong'; }
+      out.hyps.push({ m: 'material', ms: ['material', 'method', 'machine'], text: `Dugaan ada perubahan input proses sekitar sampel ${lab}.`, basis, level });
+    }
+    const low = (res.main.lcl || []).map((l, i) => isNum(l) && isNum(pts[i]) && pts[i] < l ? i : -1).filter(i => i >= 0);
+    if (low.length) out.hyps.push({ m: 'measure', ms: ['measure', 'man'], text: `Dugaan titik di bawah batas bawah pada sampel ${listIdx(low, labels, 4)} berasal dari inspeksi yang melonggar atau pencatatan yang tidak lengkap, bila tidak ada perbaikan proses pada waktu tersebut.`, basis: ['Titik di bawah LCL menandakan perubahan, baik perbaikan nyata maupun perubahan cara inspeksi.'], level: 'weak' });
+  }
+  return out;
+};
+DA['input-data'] = () => {
+  const one = App.state.dsEdit ? Store.get('dataset', App.state.dsEdit) : null, list = one ? [one] : Store.list('dataset');
+  if (!list.length) return { empty: 'Belum ada dataset. Simpan data pengukuran atau inspeksi terlebih dulu.' };
+  const out = { title: 'Input Data', scope: one ? one.name : `${list.length} dataset`, facts: [], hyps: [], miss: [] };
+  if (list.length === 1 && list[0].kind === 'variable') out.labels = list[0].rows.filter(r => (r.vals || []).some(isNum)).map((r, i) => r.date || String(i + 1));
+  list.slice(0, 12).forEach(ds => {
+    const pre = list.length > 1 ? `[${ds.name}] ` : '', labels = ds.rows.map((r, i) => r.date || String(i + 1));
+    if (ds.kind === 'variable') {
+      const groups = ds.rows.map(r => (r.vals || []).filter(isNum)), dropped = groups.filter(g => !g.length).length;
+      const gs = groups.filter(g => g.length > 1), sW = gs.length ? Math.sqrt(sum(gs.map(g => (g.length - 1) * sd(g) ** 2)) / sum(gs.map(g => g.length - 1))) : (() => { const v = groups.flat(); const mr = v.slice(1).map((x, i) => Math.abs(x - v[i])); return avg(mr) / 1.128; })();
+      const recs = []; ds.rows.forEach((r, t) => (r.vals || []).filter(isNum).forEach(v => recs.push({ v, t, c: { Shift: r.shift, Operator: r.operator, Mesin: r.machine } })));
+      const core = daVarCore({ groups: groups.filter(g => g.length), labels: labels.filter((l, i) => groups[i].length), lsl: numOrNull(ds.lsl), usl: numOrNull(ds.usl), unit: ds.unit, xLabel: 'Subgrup', recs, notes: ds.rows.filter((r, i) => groups[i].length).map(r => String(r.note || '').trim()), dropped, dropRows: groups.map((g, i) => g.length ? -1 : i + 1).filter(i => i > 0), sigmaW: sW, exKey: 'input-data' });
+      const nV = groups.flat().length;
+      out.facts.push({ m: null, text: `${pre}${ds.rows.length} subgrup dengan ${nV} nilai; rata-rata ${fmt(avg(groups.flat()), 5)}${ds.unit ? ' ' + ds.unit : ''}, simpangan baku dalam subgrup ${fmt(sW, 4)}.`, ev: ds.characteristic || 'Dataset variabel' });
+      core.facts.forEach(f => out.facts.push(Object.assign(f, { text: pre + f.text }))); core.hyps.forEach(h => out.hyps.push(Object.assign(h, { text: pre + h.text }))); core.miss.forEach(m => out.miss.push(Object.assign(m, { text: pre + m.text })));
+      if (!ds.rows.some(r => r.operator) || !ds.rows.some(r => r.machine)) out.miss.push({ text: `${pre}Kolom ${[!ds.rows.some(r => r.operator) ? 'operator' : '', !ds.rows.some(r => r.machine) ? 'mesin' : ''].filter(Boolean).join(' dan ')} belum diisi, sehingga stratifikasi per sumber tidak dapat dilakukan.`, where: '', fix: 'Isi identitas operator dan mesin pada setiap subgrup.' });
+    } else {
+      const rows = ds.rows.map(r => ({ d: isNum(r.defects) ? r.defects : NaN, n: isNum(r.inspected) ? r.inspected : NaN }));
+      attrChecks(rows, labels, 'p', 'Sampel').forEach(m => out.miss.push(Object.assign(m, { text: pre + m.text })));
+      const tot = sum(rows.map(r => isNum(r.d) ? r.d : 0)), totN = sum(rows.map(r => isNum(r.n) ? r.n : 0));
+      if (totN) out.facts.push({ m: null, text: `${pre}Proporsi cacat ${fmtFix(tot / totN * 100, 2)}% dari ${totN} unit diperiksa.`, ev: ds.defType || 'Dataset atribut' });
+    }
+  });
+  return out;
+};
+DA.msa = () => {
+  const M = App.state.msa || {}, r = M.grr, t = M.t1, gages = Store.list('gage');
+  if (!r && !t && !gages.length) return { empty: 'Belum ada hasil studi Gage R&R, studi Type-1, atau register alat ukur untuk dianalisis.' };
+  const out = { title: 'MSA & Kalibrasi', scope: [r ? 'Gage R&R' : '', t ? 'Type-1' : '', gages.length ? `${gages.length} alat ukur` : ''].filter(Boolean).join(', '), facts: [], hyps: [], miss: [] };
+  if (r) {
+    const g = r.comps[0], st = (x) => x < 10 ? 'dapat diterima' : x <= 30 ? 'dapat diterima bersyarat' : 'belum dapat diterima';
+    out.problem = `Studi Gage R&R ${r.p} part, ${r.q} operator, ${r.r} ulangan.`;
+    out.facts.push({ m: 'measure', text: `%GRR terhadap variasi studi ${fmtFix(g.psv, 1)}% (${st(g.psv)} menurut AIAG MSA)${isNum(g.ptol) ? `, terhadap toleransi ${fmtFix(g.ptol, 1)}%` : ''}; ndc ${isFinite(r.ndc) ? r.ndc : 'tak hingga'}.`, ev: 'ANOVA Gage R&R' });
+    if (g.psv >= 10 || (isNum(g.ptol) && g.ptol >= 10)) {
+      if (r.sd.rep >= r.sd.repro) out.hyps.push({ m: 'measure', text: 'Dugaan sumber variasi pengukuran berasal dari alat ukur (repeatability), misalnya kondisi alat, cara penjepitan, kebersihan permukaan, atau resolusi.', basis: [`Simpangan repeatability ${fmt(r.sd.rep, 4)} lebih besar dari reproducibility ${fmt(r.sd.repro, 4)}.`], level: 'mid' });
+      else out.hyps.push({ m: 'man', text: 'Dugaan perbedaan cara ukur antar operator (reproducibility); instruksi ukur dan pelatihan perlu diseragamkan.', basis: [`Simpangan reproducibility ${fmt(r.sd.repro, 4)} lebih besar dari repeatability ${fmt(r.sd.rep, 4)}.`], level: 'mid' });
+    }
+    if (r.sd.repro < r.sd.rep * 0.5) out.facts.push({ m: 'man', neg: true, text: `Perbedaan antar operator kecil; simpangan reproducibility ${fmt(r.sd.repro, 4)} kurang dari separuh repeatability ${fmt(r.sd.rep, 4)}`, ev: 'ANOVA Gage R&R' });
+    const om = r.om.map((v, j) => ({ op: r.ops[j], v })).sort((a, b) => b.v - a.v);
+    if (r.q >= 2 && r.sd.repro > r.sd.rep * 0.5) out.facts.push({ m: 'man', text: `Rata-rata hasil ukur per operator adalah ${om.map(o => `${o.op} ${fmtD(o.v)}`).join(', ')}.`, ev: 'Rata-rata per operator' });
+    if (!r.pooled && isNum(r.pPO) && r.pPO < 0.05) out.hyps.push({ m: 'man', ms: ['man', 'method'], text: 'Dugaan operator mengukur part tertentu dengan cara berbeda, misalnya posisi titik ukur atau titik referensi.', basis: [`Interaksi operator dan part bermakna (${pv(r.pPO)}).`], level: 'mid' });
+    if (r.lim) { const hi = []; r.Rk.forEach((row, i) => row.forEach((v, j) => { if (v > r.lim.rU) hi.push(`part ${r.parts[i]} oleh ${r.ops[j]} (${fmt(v, 4)})`); })); if (hi.length) out.miss.push({ text: `${hi.length} rentang ulangan melebihi batas atas peta R (${fmt(r.lim.rU, 4)}).`, where: hi.slice(0, 8).join('; '), fix: 'Periksa kemungkinan salah baca atau salah tulis, lalu ulangi pengukuran pada sel tersebut.' }); }
+    const pr = Math.max(...r.pm) - Math.min(...r.pm);
+    if (r.tol && pr < 0.5 * r.tol) out.miss.push({ text: `Sebaran rata-rata part sampel sebesar ${fmtFix(pr / r.tol * 100, 0)}% dari toleransi; part belum mewakili rentang variasi proses sehingga %GRR terhadap variasi studi dan ndc cenderung tampak buruk.`, where: '', fix: 'Pilih part yang mencakup rentang variasi proses, atau nilai sistem ukur berdasarkan %toleransi.' });
+    if (r.p < 10) out.miss.push({ text: `Studi memakai ${r.p} part; AIAG MSA menganjurkan sekitar 10 part.`, where: '', fix: 'Tambah jumlah part bila memungkinkan.' });
+  }
+  if (t) {
+    out.facts.push({ m: 'measure', text: `Studi Type-1 menghasilkan Cg ${fmtFix(t.Cg, 2)}, Cgk ${fmtFix(t.Cgk, 2)}, bias ${fmt(t.bias, 4)} terhadap referensi ${fmtD(t.ref)}.`, ev: `${t.n} pengukuran berulang` });
+    if (t.p < 0.05) out.hyps.push({ m: 'measure', text: 'Dugaan alat ukur memiliki bias sistematis; kalibrasi alat dan nilai referensi master perlu dicek.', basis: [`Bias bermakna secara statistik (${pv(t.p)}).`], level: 'mid' });
+    if (t.Cgk < 1.33) out.hyps.push({ m: 'measure', text: 'Dugaan kemampuan alat belum memadai untuk toleransi karakteristik ini.', basis: [`Cgk ${fmtFix(t.Cgk, 2)} di bawah 1,33.`], level: 'mid' });
+    if (t.n < 25) out.miss.push({ text: `Studi Type-1 memakai ${t.n} pengukuran; praktik umum memakai 25 sampai 50 pengukuran.`, where: '', fix: 'Ulangi studi dengan minimal 25 pengukuran.' });
+    if (isNum(t.resPct) && t.resPct > 5) out.miss.push({ text: `Resolusi alat ${fmtFix(t.resPct, 1)}% dari toleransi, di atas batas umum 5%.`, where: '', fix: 'Gunakan alat dengan resolusi lebih halus.' });
+  }
+  if (gages.length) {
+    const st = gages.map(g => ({ g, s: calStatus(g) })), over = st.filter(x => x.s.st === 'over'), na = st.filter(x => x.s.st === 'na');
+    if (over.length) { out.facts.push({ m: 'measure', text: `${over.length} alat ukur melewati jatuh tempo kalibrasi, yaitu ${over.slice(0, 6).map(x => x.g.code || x.g.name).join(', ')}.`, ev: 'Register alat ukur' }); out.hyps.push({ m: 'measure', text: 'Dugaan hasil ukur dari alat yang lewat jatuh tempo kalibrasi belum dapat dipastikan ketertelusurannya.', basis: ['ISO 10012 dan IATF 16949 klausul 7.1.5 mensyaratkan alat terkalibrasi.'], level: 'mid' }); }
+    if (na.length) out.miss.push({ text: `${na.length} alat ukur belum memiliki tanggal kalibrasi terakhir atau interval.`, where: na.slice(0, 8).map(x => x.g.code || x.g.name).join(', '), fix: 'Lengkapi tanggal kalibrasi dan interval pada register.' });
+  }
+  return out;
+};
+const normTxt = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function lev(a, b) { const m = a.length, n = b.length; if (Math.abs(m - n) > 3) return 9; const d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+function nearDup(names) { const out = []; const N = names.map(normTxt); for (let i = 0; i < N.length; i++) for (let j = i + 1; j < N.length; j++) { if (!N[i] || !N[j]) continue; if (N[i] === N[j] || (N[i].length > 5 && lev(N[i], N[j]) <= 2)) out.push([names[i], names[j]]); } return out; }
+const sameText = (a, b) => { const x = normTxt(a), y = normTxt(b); if (!x || !y) return false; if (x === y || (Math.min(x.length, y.length) >= 5 && (x.includes(y) || y.includes(x)))) return true; const A = new Set(x.split(' ').filter(w => w.length > 2)), B = new Set(y.split(' ').filter(w => w.length > 2)); const I = [...A].filter(w => B.has(w)).length; return I >= 2 && I / Math.min(A.size, B.size) >= 0.6; };
+DA.pareto = () => {
+  const P = App.state.pareto || {}, r = P.res; if (!r || !r.items || !r.items.length) return { empty: 'Jalankan analisis Pareto terlebih dulu.' };
+  const out = { title: 'Analisis Pareto', scope: r.source || 'Pareto', facts: [], hyps: [], miss: [] };
+  const vital = r.items.filter(i => i.vital), top = r.items[0];
+  out.problem = `Pareto ${r.items.length} kategori dengan total ${fmt(r.total, 0)} ${P.by === 'cost' ? 'biaya' : 'kejadian'}.`;
+  out.facts.push({ m: null, text: `${vital.length} kategori teratas (${vital.map(i => i.cat).join(', ')}) mencakup ${fmtFix(vital.length ? vital[vital.length - 1].cum : 0, 0)}% dari total.`, ev: 'Prinsip Pareto 80%' });
+  if (top.pct >= 40) out.facts.push({ m: null, text: `Kategori ${top.cat} sendiri mencakup ${fmtFix(top.pct, 0)}% dari total.`, ev: 'Konsentrasi kategori teratas' });
+  if (r.hasCost) { const byN = r.items.slice().sort((a, b) => b.n - a.n)[0], byC = r.items.slice().sort((a, b) => b.cost - a.cost)[0]; if (byN.cat !== byC.cat) out.facts.push({ m: null, text: `Urutan berdasarkan jumlah dan biaya berbeda; kejadian terbanyak pada ${byN.cat}, biaya terbesar pada ${byC.cat}.`, ev: 'Perbandingan dua basis Pareto' }); const noCost = r.items.filter(i => !(i.cost > 0)); if (noCost.length) out.miss.push({ text: `${noCost.length} kategori tanpa data biaya.`, where: noCost.slice(0, 8).map(i => i.cat).join(', '), fix: 'Lengkapi biaya agar Pareto biaya tidak bias.' }); }
+  const tot = sum(r.items.map(i => i.n || 0)); if (tot < 50) out.miss.push({ text: `Total kejadian ${tot}; dengan jumlah kecil, urutan kategori dapat berubah oleh beberapa kejadian saja.`, where: '', fix: 'Perpanjang periode data sebelum menetapkan prioritas.' });
+  const un = r.items.find(i => i.cat === '(tanpa kategori)'); if (un) out.miss.push({ text: `${fmt(un.n, 0)} kejadian tanpa nama kategori.`, where: '', fix: 'Isi kategori cacat pada data sumber.' });
+  nearDup(r.items.map(i => i.cat)).slice(0, 6).forEach(([a, b]) => out.miss.push({ text: `Kategori "${a}" dan "${b}" memiliki penulisan mirip. Dugaan keduanya merujuk ke cacat yang sama sehingga porsinya terpecah.`, where: '', fix: 'Seragamkan nama kategori di data sumber.', dugaan: true }));
+  const ncr = Store.list('ncr');
+  vital.slice(0, 3).forEach(v => { const rel = ncr.filter(n => sameText(n.defect, v.cat)); SIXM_ORDER.forEach(m => { const txt = rel.map(n => n.d4 && String(n.d4[m] || '').trim()).filter(Boolean); if (txt.length) out.hyps.push({ m, text: `Dugaan penyebab ${v.cat} pada kategori ${SIXM[m]}, yaitu ${txt[0]}.`, basis: [`Tercatat di D4 pada ${txt.length} NCR terkait (${rel.filter(n => n.d4 && n.d4[m]).map(n => n.no).slice(0, 3).join(', ')}).`, rel.some(n => n.d6verify) ? 'Sebagian NCR terkait sudah memiliki verifikasi efektivitas.' : 'Belum ada verifikasi efektivitas tindakan pada NCR terkait.'], level: rel.some(n => n.d4root && n.d6verify) ? 'strong' : 'mid' }); }); });
+  if (!ncr.length) out.steps = ['Buka NCR untuk kategori teratas agar akar masalah tercatat dan dapat ditautkan ke Pareto.'];
+  return out;
+};
+function ncrOne(n, all) {
+  const out = { title: 'NCR & 8D', scope: `${n.no}${n.defect ? ', ' + n.defect : ''}`, facts: [], hyps: [], miss: [] };
+  const qC = numOrNull(n.qtyCheck), qN = numOrNull(n.qtyNC);
+  out.problem = `${n.no} mencatat ${n.defect || 'cacat yang belum dinamai'}${n.product ? ' pada ' + n.product : ''}${n.lot ? ', lot ' + n.lot : ''}. Sumber temuan ${NCR_SRC[n.source] || '-'}, status ${NCR_STATUS[n.status][0].toLowerCase()}.`;
+  if (isNum(qN)) out.facts.push({ m: null, text: `${fmt(qN, 0)} unit tidak sesuai${isNum(qC) && qC > 0 ? ` dari ${fmt(qC, 0)} diperiksa (${fmtFix(qN / qC * 100, 2)}%)` : ''}.`, ev: 'D2' });
+  if (isNum(qN) && isNum(qC) && qN > qC) out.miss.push({ text: 'Jumlah tidak sesuai lebih besar dari jumlah diperiksa.', where: 'D2', fix: 'Periksa kembali kedua angka.' });
+  const dsum = sum(Object.values(n.disp || {}).map(numOrNull).filter(isNum)); if (dsum && isNum(qN) && Math.abs(dsum - qN) > 0.5) out.miss.push({ text: `Total disposisi ${fmt(dsum, 0)} unit berbeda dari jumlah tidak sesuai ${fmt(qN, 0)} unit.`, where: 'Disposisi', fix: 'Pastikan semua unit tidak sesuai memiliki disposisi.' });
+  if (n.closedAt && n.date && n.closedAt < n.date) out.miss.push({ text: 'Tanggal penutupan lebih awal dari tanggal temuan.', where: 'D8', fix: 'Perbaiki tanggal.' });
+  if (n.due && n.date && n.due < n.date) out.miss.push({ text: 'Target selesai lebih awal dari tanggal temuan.', where: 'Header', fix: 'Perbaiki tanggal target.' });
+  if (ncrLate(n)) out.facts.push({ m: null, text: `NCR melewati target selesai ${dateID(n.due)} (umur ${ncrAge(n)} hari).`, ev: 'Status register' });
+  if (n.source === 'customer' || n.source === 'final') { out.facts.push({ m: 'measure', text: `Cacat terdeteksi pada ${NCR_SRC[n.source].toLowerCase()}; kontrol deteksi pada tahap sebelumnya belum menahan cacat ini.`, ev: 'Sumber temuan' }); if (!String(n.d4esc || '').trim()) out.miss.push({ text: 'Titik lolos (escape point) belum diisi pada D4.', where: 'D4', fix: 'Tentukan tahap kontrol yang seharusnya mendeteksi cacat.' }); }
+  const d4 = n.d4 || {};
+  SIXM_ORDER.forEach(m => { const v = String(d4[m] || '').trim(); if (v) out.hyps.push({ m, text: `Dugaan penyebab pada kategori ${SIXM[m]}, yaitu ${v}.`, basis: ['Isian fishbone D4 oleh tim.', n.d4root && (sameText(n.d4root, v) || SIXM_KW[m].test(n.d4root)) ? 'Selaras dengan akar masalah yang tercatat.' : ''].filter(Boolean), level: n.d4root && n.d6verify && (sameText(n.d4root, v) || SIXM_KW[m].test(n.d4root)) ? 'strong' : n.d4root && SIXM_KW[m].test(n.d4root) ? 'mid' : 'weak' }); });
+  const why = (d4.why || []).filter(w => String(w || '').trim()).length;
+  if (n.d4root && n.d6verify) out.facts.push({ m: SIXM_ORDER.find(m => SIXM_KW[m].test(n.d4root)) || null, text: `Akar masalah tercatat dan tindakan sudah diverifikasi, yaitu ${n.d4root}.`, ev: 'D4 dan D6' });
+  if (n.d4root && why < 3) out.miss.push({ text: `Analisis 5 Why baru ${why} tingkat sementara akar masalah sudah diisi.`, where: 'D4', fix: 'Lanjutkan pertanyaan mengapa sampai penyebab sistemik ditemukan.' });
+  if (n.status === 'closed' && !String(n.d4root || '').trim()) out.miss.push({ text: 'NCR ditutup tanpa akar masalah terverifikasi.', where: 'D4', fix: 'Lengkapi akar masalah sebelum penutupan.' });
+  if (n.status === 'closed' && !String(n.d6verify || '').trim()) out.miss.push({ text: 'NCR ditutup tanpa bukti verifikasi efektivitas tindakan.', where: 'D6', fix: 'Isi data verifikasi, misalnya tingkat cacat setelah tindakan.' });
+  if (!SIXM_ORDER.some(m => String(d4[m] || '').trim()) && n.status !== 'open') out.miss.push({ text: 'Fishbone D4 belum diisi.', where: 'D4', fix: 'Isi kemungkinan penyebab per kategori 6M.' });
+  const same = all.filter(o => o.id !== n.id && sameText(o.defect, n.defect));
+  if (same.length) { out.facts.push({ m: null, text: `Cacat serupa tercatat pada ${same.length} NCR lain, yaitu ${same.slice(0, 5).map(o => o.no).join(', ')}.`, ev: 'Register NCR' }); const prev = same.filter(o => o.status === 'closed' && (o.closedAt || o.date) <= (n.date || localISO())); if (prev.length) out.hyps.push({ m: 'method', text: `Dugaan tindakan korektif pada ${prev.map(o => o.no).slice(0, 3).join(', ')} belum mencegah kejadian berulang.`, basis: ['Cacat serupa muncul kembali setelah NCR sebelumnya ditutup.'], level: 'mid' }); }
+  return out;
+}
+DA.ncr = () => {
+  const all = Store.list('ncr'); if (!all.length) return { empty: 'Belum ada NCR untuk dianalisis.' };
+  const one = App.state.ncrEdit ? Store.get('ncr', App.state.ncrEdit) : null; if (one) return ncrOne(one, all);
+  const out = { title: 'NCR & 8D', scope: `Register ${all.length} NCR`, facts: [], hyps: [], miss: [] };
+  const open = all.filter(n => n.status !== 'closed'), late = all.filter(ncrLate), cust = all.filter(n => n.source === 'customer');
+  out.problem = `Register berisi ${all.length} NCR, ${open.length} masih terbuka${late.length ? ` dan ${late.length} melewati target` : ''}.`;
+  if (late.length) out.facts.push({ m: null, text: `${late.length} NCR melewati target selesai, yaitu ${late.slice(0, 5).map(n => n.no).join(', ')}.`, ev: 'Status register' });
+  if (cust.length) out.facts.push({ m: 'measure', text: `${cust.length} dari ${all.length} NCR berasal dari keluhan pelanggan.`, ev: 'Sumber temuan' });
+  const grp = {}; all.forEach(n => { const k = Object.keys(grp).find(g => sameText(g, n.defect)) || n.defect || '(tanpa nama)'; (grp[k] = grp[k] || []).push(n); });
+  Object.entries(grp).filter(([, v]) => v.length >= 2).forEach(([k, v]) => { out.facts.push({ m: null, text: `Cacat ${k} tercatat ${v.length} kali (${v.map(n => n.no).slice(0, 4).join(', ')}).`, ev: 'Pengelompokan nama cacat' }); const sorted = v.slice().sort((a, b) => (a.date || '').localeCompare(b.date || '')); if (sorted.some((n, i) => i > 0 && sorted.slice(0, i).some(p => p.status === 'closed'))) out.hyps.push({ m: 'method', text: `Dugaan tindakan korektif untuk ${k} belum efektif mencegah kejadian berulang.`, basis: ['Kejadian baru tercatat setelah NCR sebelumnya ditutup.'], level: 'mid' }); });
+  const cnt = {}; all.forEach(n => SIXM_ORDER.forEach(m => { if (n.d4 && String(n.d4[m] || '').trim()) (cnt[m] = cnt[m] || []).push(n); }));
+  const rank = Object.entries(cnt).sort((a, b) => b[1].length - a[1].length);
+  if (rank.length) { out.facts.push({ m: null, text: `Kategori 6M yang paling sering tercatat di D4 adalah ${rank.slice(0, 3).map(([m, v]) => `${SIXM[m]} (${v.length} NCR)`).join(', ')}.`, ev: 'Agregasi fishbone D4' }); rank.slice(0, 3).forEach(([m, v]) => out.hyps.push({ m, text: `Dugaan penyebab berulang pada kategori ${SIXM[m]}, misalnya ${String(v[0].d4[m]).trim()}.`, basis: [`Tercatat pada ${v.length} NCR (${v.slice(0, 3).map(n => n.no).join(', ')}).`], level: v.length >= 2 ? 'mid' : 'weak' })); }
+  all.forEach(n => { const q = numOrNull(n.qtyNC), c = numOrNull(n.qtyCheck); if (isNum(q) && isNum(c) && q > c) out.miss.push({ text: 'Jumlah tidak sesuai lebih besar dari jumlah diperiksa.', where: n.no, fix: 'Periksa kembali angka D2.' }); if (n.status === 'closed' && (!String(n.d4root || '').trim() || !String(n.d6verify || '').trim())) out.miss.push({ text: `NCR ditutup tanpa ${!String(n.d4root || '').trim() ? 'akar masalah' : 'verifikasi efektivitas'}.`, where: n.no, fix: 'Lengkapi D4 dan D6 sebelum penutupan.' }); if (!String(n.defect || '').trim()) out.miss.push({ text: 'Nama cacat kosong.', where: n.no, fix: 'Isi nama cacat sesuai katalog.' }); });
+  nearDup(Object.keys(grp)).slice(0, 5).forEach(([a, b]) => out.miss.push({ text: `Nama cacat "${a}" dan "${b}" mirip. Dugaan merujuk ke cacat yang sama.`, where: '', fix: 'Seragamkan nama cacat agar Pareto dan pengulangan terbaca benar.', dugaan: true }));
+  return out;
+};
+function fmeaDocs() { const one = App.state.fmeaEdit ? Store.get('fmea', App.state.fmeaEdit) : null; return one ? [one] : Store.list('fmea'); }
+DA.fmea = () => {
+  const docs = fmeaDocs(); if (!docs.length) return { empty: 'Belum ada dokumen PFMEA.' };
+  const out = { title: 'PFMEA', scope: docs.length === 1 ? docs[0].name : `${docs.length} dokumen`, facts: [], hyps: [], miss: [] };
+  const ncr = Store.list('ncr');
+  docs.forEach(f => {
+    const pre = docs.length > 1 ? `[${f.name}] ` : '', st = fmeaStats(f);
+    out.facts.push({ m: null, text: `${pre}${st.n} baris; AP H ${st.H}, M ${st.M}, L ${st.L}${st.hNoAct ? `; ${st.hNoAct} baris AP H tanpa tindakan` : ''}.`, ev: 'Action Priority AIAG & VDA 2019' });
+    if (st.blank) out.miss.push({ text: `${pre}${st.blank} baris belum lengkap rating S, O, atau D.`, where: f.rows.map((r, i) => !rowAP(r) ? i + 1 : 0).filter(Boolean).slice(0, 10).map(i => 'baris ' + i).join(', '), fix: 'Lengkapi rating agar AP dapat dihitung.' });
+    f.rows.forEach((r, i) => {
+      const lab = `${pre}Baris ${i + 1}${r.fm ? ' (' + r.fm + ')' : ''}`;
+      if (rowAP(r) && (!String(r.pc || '').trim() || !String(r.dc || '').trim())) out.miss.push({ text: `${lab}: rating diisi tanpa ${!String(r.pc || '').trim() ? 'kontrol pencegahan' : 'kontrol deteksi'}.`, where: '', fix: 'Rating O dan D mengacu ke kontrol yang ada; isi kontrolnya.' });
+      if (r.st === 'done' && !(r.o2 || r.d2)) out.miss.push({ text: `${lab}: tindakan berstatus selesai tanpa rating setelah tindakan.`, where: '', fix: 'Isi O dan D setelah tindakan.' });
+      const rel = ncr.filter(n => sameText(n.defect, r.fm)); if (!rel.length) return;
+      const O = +r.o, D = +r.d, S = +r.s;
+      if (O && O <= 3 && rel.length >= 2) out.hyps.push({ m: 'method', text: `Dugaan rating O ${O} pada ${lab} lebih rendah dari kejadian aktual.`, basis: [`Mode kegagalan serupa tercatat di ${rel.length} NCR (${rel.slice(0, 3).map(n => n.no).join(', ')}).`], level: 'mid' });
+      const esc2 = rel.filter(n => n.source === 'customer' || n.source === 'final');
+      if (D && D <= 4 && esc2.length) out.hyps.push({ m: 'measure', text: `Dugaan kontrol deteksi pada ${lab} (D ${D}) belum efektif.`, basis: [`Cacat serupa lolos sampai ${esc2.map(n => NCR_SRC[n.source].toLowerCase()).filter((v, k, a) => a.indexOf(v) === k).join(' dan ')} (${esc2.slice(0, 3).map(n => n.no).join(', ')}).`], level: 'mid' });
+      if (S && S < 9 && rel.some(n => /kritis/i.test(n.cls))) out.hyps.push({ m: 'method', text: `Dugaan rating S ${S} pada ${lab} lebih rendah dari klasifikasi cacat di lapangan.`, basis: ['NCR terkait mengklasifikasikan cacat sebagai kritis.'], level: 'mid' });
+    });
+  });
+  return out;
+};
+DA['control-plan'] = () => {
+  const one = App.state.cpEdit ? Store.get('cplan', App.state.cpEdit) : null, docs = one ? [one] : Store.list('cplan');
+  if (!docs.length) return { empty: 'Belum ada Control Plan.' };
+  const out = { title: 'Control Plan', scope: docs.length === 1 ? (docs[0].part || docs[0].no || 'Control Plan') : `${docs.length} dokumen`, facts: [], hyps: [], miss: [] };
+  const req = [['spec', 'spesifikasi'], ['eval', 'teknik evaluasi'], ['size', 'ukuran sampel'], ['freq', 'frekuensi'], ['reaction', 'rencana reaksi']];
+  docs.forEach(c => {
+    const pre = docs.length > 1 ? `[${c.part || c.no || 'Control Plan'}] ` : '';
+    out.facts.push({ m: null, text: `${pre}${c.rows.length} karakteristik terkendali; ${c.rows.filter(r => String(r.sc || '').trim()).length} ditandai karakteristik khusus.`, ev: 'Control Plan' });
+    req.forEach(([k, l]) => { const e = c.rows.map((r, i) => String(r[k] || '').trim() ? 0 : i + 1).filter(Boolean); if (e.length) out.miss.push({ text: `${pre}${e.length} baris tanpa ${l}.`, where: e.slice(0, 10).map(i => 'baris ' + i).join(', '), fix: `Lengkapi kolom ${l} sesuai AIAG Control Plan.` }); });
+    const f = c.fmeaId ? Store.get('fmea', c.fmeaId) : null, fl = f ? [f] : Store.list('fmea');
+    const crit = fl.flatMap(d => d.rows.filter(r => rowAP(r) === 'H' || String(r.sc || '').trim()));
+    const absent = crit.filter(r => !c.rows.some(x => sameText(x.prodChar, r.fm) || sameText(x.prodChar, r.func) || sameText(x.procChar, r.fc) || sameText(x.method, r.dc)));
+    if (absent.length) out.miss.push({ text: `${pre}${absent.length} baris PFMEA dengan AP H atau karakteristik khusus belum ditemukan padanannya di Control Plan. Dugaan belum tercakup, atau tercakup dengan nama berbeda.`, where: absent.slice(0, 5).map(r => r.fm || r.func).join('; '), fix: 'Tambahkan karakteristik dan metode kendalinya, atau seragamkan penamaan.', dugaan: true });
+  });
+  const over = Store.list('gage').filter(g => calStatus(g).st === 'over');
+  if (over.length) out.facts.push({ m: 'measure', text: `${over.length} alat ukur di register melewati jatuh tempo kalibrasi, yaitu ${over.slice(0, 5).map(g => g.code || g.name).join(', ')}.`, ev: 'Register alat ukur' });
+  return out;
+};
+DA.spesifikasi = () => {
+  const s = App.state.specResult; if (!s) return { empty: 'Buat atau buka spesifikasi terlebih dulu.' };
+  const inp = s.input || {}, out = { title: 'Spesifikasi Standar', scope: inp.name || s.materialName, facts: [], hyps: [], miss: [] };
+  out.problem = `Spesifikasi ${inp.name || 'produk'} berbahan ${s.materialName}, proses ${s.processName}, dengan ${s.standards.length} standar acuan.`;
+  (s.warnings || []).filter(w => w.lvl !== 'info').forEach(w => { out.facts.push({ m: 'material', text: `${w.title ? w.title + '. ' : ''}${w.text}`, ev: 'Pemeriksaan kecocokan material dan aplikasi' }); if (w.lvl === 'bad') out.hyps.push({ m: 'material', ms: ['material', 'env'], text: `Dugaan risiko ketidaksesuaian material untuk kondisi pakai, terkait ${w.title || w.text}.`, basis: ['Hasil aturan kecocokan material terhadap fluida, suhu, dan tekanan.'], level: 'mid' }); });
+  [['name', 'nama produk'], ['code', 'kode produk']].forEach(([k, l]) => { if (!String(inp[k] || '').trim()) out.miss.push({ text: `Kolom ${l} kosong.`, where: 'Form spesifikasi', fix: `Isi ${l} agar dokumen dapat ditelusuri.` }); });
+  if (!(inp.fluids || []).length) out.miss.push({ text: 'Fluida atau media pakai belum dipilih, sehingga pemeriksaan kecocokan material belum lengkap.', where: 'Form spesifikasi', fix: 'Pilih media pakai produk.' });
+  if (numOrNull(inp.tmax) === null) out.miss.push({ text: 'Suhu kerja maksimum belum diisi.', where: 'Form spesifikasi', fix: 'Isi suhu kerja maksimum.' });
+  return out;
+};
+DA.beranda = () => {
+  const keys = ['spesifikasi', 'fmea', 'control-plan', 'input-data', 'peta-kendali', 'msa', 'pareto', 'ncr'], out = { title: 'Ringkasan lintas modul', scope: 'Semua modul', facts: [], hyps: [], miss: [] };
+  keys.forEach(k => { let r; try { r = DA[k](); } catch (e) { return; } if (!r || r.empty) return; r = daFinish(k, r); const lab = (ROUTES.find(x => x[0] === k) || [])[1] || k;
+    out.facts.push({ m: null, text: `${lab} memiliki ${r.hyps.length} dugaan dan ${r.miss.length} catatan kualitas data.`, ev: r.scope });
+    r.hyps.filter(h => h.level !== 'weak').slice(0, 2).forEach(h => out.hyps.push(Object.assign({}, h, { text: `[${lab}] ${h.text}`, ms: null, basis: h.basis.slice() })));
+    r.miss.slice(0, 2).forEach(m => out.miss.push(Object.assign({}, m, { text: `[${lab}] ${m.text}` }))); });
+  if (!out.facts.length) return { empty: 'Belum ada data di modul mana pun. Muat data contoh atau isi modul terlebih dulu.' };
+  out.problem = 'Ringkasan dugaan dan catatan kualitas data dari setiap modul yang memiliki data.';
+  return out;
+};
+function runDeep(key) { const f = DA[key]; if (!f) return { empty: 'Modul ini belum memiliki Deep Analyst.' }; const r = f(); if (!r || r.empty) return r || { empty: 'Belum ada data.' }; return daFinish(key, r); }
+
+/* ---------- fishbone ---------- */
+function fishItems(r) {
+  const B = {}; SIXM_ORDER.forEach(m => B[m] = []);
+  const short = (t) => String(t).replace(/^(\[[^\]]+\]\s*)?Dugaan\s+/i, '$1').replace(/^Keterangan pengguna mengarah ke kategori [^,]+(\([^)]*\))?,\s*yaitu\s*/, '').replace(/^"|"$/g, '');
+  r.facts.filter(f => f.m && !f.neg).forEach(f => B[f.m].push(['Fakta', f.text]));
+  r.hyps.filter(h => h.m).forEach(h => { const t = short(h.text); B[h.m].push([/^Keterangan pengguna/.test(h.text) ? 'Keterangan' : 'Dugaan', t.charAt(0).toUpperCase() + t.slice(1)]); });
+  r.story.filter(s => !s.used).forEach(s => s.ms.forEach(m => { if (!r.hyps.some(h => h.m === m && h.story)) B[m].push(['Keterangan', s.text]); }));
+  return SIXM_ORDER.filter(m => B[m].length).map(m => ({ m, items: B[m].slice(0, 3) }));
+}
+function wrapTxt(t, n, lines) { const w = String(t).split(/\s+/), out = []; let cur = ''; for (const x of w) { if ((cur + ' ' + x).trim().length > n) { out.push(cur.trim()); cur = x; if (out.length === lines) break; } else cur += ' ' + x; } if (out.length < lines && cur.trim()) out.push(cur.trim()); const full = out.join(' ').length < String(t).trim().length - 1; if (full && out.length) out[out.length - 1] = out[out.length - 1].replace(/\s*\S*$/, '') + '...'; return out.slice(0, lines); }
+function fishboneSVG(r, C) {
+  C = C || { ink: 'var(--g-100)', mut: 'var(--g-70)', line: 'var(--g-50)', head: 'var(--brand-900)', headTxt: '#fff', tagF: 'var(--info)', tagD: 'var(--warn)', tagK: 'var(--ok)' };
+  const bones = fishItems(r); if (!bones.length) return '';
+  const top = bones.filter((b, i) => i % 2 === 0), bot = bones.filter((b, i) => i % 2 === 1), cols = Math.max(top.length, bot.length);
+  const colW = 330, X0 = 16, spineY = 300, H = 600, headX = X0 + cols * colW, xe = (v) => esc(String(v));
+  let g = `<line x1="${X0}" y1="${spineY}" x2="${headX}" y2="${spineY}" stroke="${C.line}" stroke-width="3"/>`;
+  const draw = (b, i, up) => {
+    const xb = X0 + (i + 1) * colW - 10, yEnd = up ? 50 : H - 50, xEnd = xb - 90;
+    let s = `<line x1="${xb}" y1="${spineY}" x2="${xEnd}" y2="${yEnd}" stroke="${C.line}" stroke-width="2"/><text x="${xEnd}" y="${up ? yEnd - 14 : yEnd + 24}" text-anchor="middle" font-size="14" font-weight="600" fill="${C.ink}">${xe(SIXM[b.m])}</text>`;
+    b.items.forEach((it, k) => {
+      const t = (k + 0.75) / (b.items.length + 0.5), yy = spineY + (yEnd - spineY) * t, xx = xb + (xEnd - xb) * t, x1 = xx - 225, tc = it[0] === 'Fakta' ? C.tagF : it[0] === 'Dugaan' ? C.tagD : C.tagK;
+      const L = wrapTxt(it[1], 40, 3);
+      s += `<line x1="${xx}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="${C.line}" stroke-width="1"/><text x="${x1}" y="${yy - 5}" font-size="11" font-weight="600" fill="${tc}">${it[0]}</text>` + L.map((ln, q) => `<text x="${x1}" y="${yy + 13 + q * 13}" font-size="11" fill="${C.mut}">${xe(ln)}</text>`).join('');
+    });
+    return s;
+  };
+  top.forEach((b, i) => g += draw(b, i, true)); bot.forEach((b, i) => g += draw(b, i, false));
+  const P = wrapTxt(r.title || 'Masalah', 20, 2);
+  g += `<rect x="${headX}" y="${spineY - 40}" width="180" height="80" rx="8" fill="${C.head}"/><text x="${headX + 90}" y="${spineY - 12}" text-anchor="middle" font-size="13" font-weight="600" fill="${C.headTxt}">Masalah</text>` + P.map((ln, q) => `<text x="${headX + 90}" y="${spineY + 8 + q * 15}" text-anchor="middle" font-size="12" fill="${C.headTxt}">${xe(ln)}</text>`).join('');
+  const w = headX + 196;
+  return `<svg viewBox="0 0 ${w} ${H}" width="${w}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" role="img" aria-label="Diagram fishbone 6M">${g}</svg>`;
+}
+function svgToPNG(svg, scale = 2) { return new Promise((res) => { const m = /width="(\d+)" height="(\d+)"/.exec(svg), w = +m[1], h = +m[2]; const img = new Image(); img.onload = () => { const c = document.createElement('canvas'); c.width = w * scale; c.height = h * scale; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height); res({ data: c.toDataURL('image/png'), w, h }); }; img.onerror = () => res(null); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); }
+
+/* ---------- drawer ---------- */
+function openDrawer(title, html, wide) {
+  closeDrawer();
+  const bg = document.createElement('div'); bg.className = 'drawer-bg'; bg.id = 'drawerBg';
+  bg.innerHTML = `<aside class="drawer${wide ? ' wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="drawer-head"><h3>${esc(title)}</h3><button class="icon-btn" data-dclose aria-label="Tutup"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="drawer-body">${html}</div></aside>`;
+  bg.addEventListener('click', e => { if (e.target === bg || e.target.closest('[data-dclose]')) closeDrawer(); });
+  document.body.appendChild(bg); document.body.classList.add('drawer-open');
+  const f = bg.querySelector('.drawer-body textarea, .drawer-body input') || bg.querySelector('[data-dclose]'); if (f) setTimeout(() => { f.focus({ preventScroll: true }); bg.querySelector('.drawer-body').scrollTop = 0; }, 30);
+  return bg;
+}
+function closeDrawer() { const d = $('#drawerBg'); if (d) d.remove(); document.body.classList.remove('drawer-open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#drawerBg')) closeDrawer(); });
+const modLabel = (key) => key === 'beranda' ? 'Semua modul' : ((ROUTES.find(r => r[0] === key) || [])[1] || key);
+function openExplain(key) {
+  const ex = exGet(key) || {};
+  const html = `<p class="hint" style="margin:0 0 12px">Bagian ini opsional. Cerita yang diisi menjadi keterangan pengguna untuk Deep Analyst dan tampil terpisah dari fakta data. Pengolahan data berjalan dengan atau tanpa isian ini.</p>
+    ${EX_FIELDS.map(([k, l, ph, rows]) => `<div class="field"><label class="f" for="ex_${k}">${esc(l)}</label>${rows > 1 ? `<textarea id="ex_${k}" rows="${rows}" placeholder="${esc(ph)}">${esc(ex[k] || '')}</textarea>` : `<input type="text" id="ex_${k}" placeholder="${esc(ph)}" value="${esc(ex[k] || '')}">`}</div>`).join('')}
+    ${ex.updatedAt ? `<p class="muted" style="font-size:.75rem">Terakhir diperbarui ${dateID(ex.updatedAt)}${ex.sample ? ', cerita contoh' : ''}</p>` : ''}
+    <div class="row drawer-actions"><button class="btn acc" id="exRun">Simpan dan jalankan Deep Analyst</button><button class="btn sec" id="exSave">Simpan</button>${ex.updatedAt ? '<button class="btn ghost" id="exDel">Hapus cerita</button>' : ''}</div>`;
+  const d = openDrawer(`Explain, ${modLabel(key)}`, html);
+  const collect = () => { const o = { id: 'ex-' + key, key, updatedAt: Date.now() }; EX_FIELDS.forEach(([k]) => o[k] = $('#ex_' + k, d).value.trim()); return o; };
+  const save = async () => { const o = collect(); if (!exFilled(o)) { if (exGet(key)) await Store.del('explain', 'ex-' + key); } else await Store.put('explain', o); markExplainBtn(); };
+  $('#exSave', d).onclick = async () => { await save(); toast('Cerita masalah tersimpan', 'ok'); closeDrawer(); };
+  $('#exRun', d).onclick = async () => { await save(); openDeep(key); };
+  const del = $('#exDel', d); if (del) del.onclick = async () => { await Store.del('explain', 'ex-' + key); markExplainBtn(); toast('Cerita dihapus'); closeDrawer(); };
+}
+const LVC = { strong: 'b-ok', mid: 'b-info', weak: 'b-warn' };
+function deepHTML(r) {
+  const tag = (m) => m ? `<span class="badge b-gray">${esc(SIXM[m].split(' ')[0])}</span>` : '';
+  const facts = r.facts.filter(f => !f.neg), negs = r.facts.filter(f => f.neg);
+  const sec = (t, body) => body ? `<section class="da-sec"><h4>${esc(t)}</h4>${body}</section>` : '';
+  return `<div class="da-meta muted">${esc(r.scope || '')} | dianalisis ${new Date(r.at).toLocaleString('id-ID')}</div>
+    ${sec('Temuan cerita', r.narrative.map(p => `<p>${esc(p)}</p>`).join(''))}
+    ${sec('Fakta data', facts.length || negs.length ? `<ul class="da-list">${facts.map(f => `<li>${tag(f.m)} ${esc(f.text)}${f.ev ? `<div class="da-ev">${esc(f.ev)}</div>` : ''}</li>`).join('')}${negs.map(f => `<li>${tag(f.m)} ${esc(f.text)}.<div class="da-ev">${esc(f.ev || '')}</div></li>`).join('')}</ul>` : '')}
+    ${sec('Keterangan pengguna', r.story.length ? `<ul class="da-list">${r.story.map(s => `<li><span class="badge b-gray">${esc(s.label)}</span> ${esc(s.text)}${s.ms.length ? `<div class="da-ev">Kategori terkait ${s.ms.map(m => SIXM[m]).join(', ')}</div>` : ''}</li>`).join('')}</ul>` : '')}
+    ${sec('Dugaan', r.hyps.length ? r.hyps.map(h => `<div class="da-hyp"><div class="row" style="gap:6px;margin:0 0 4px"><span class="badge b-warn">Dugaan</span><span class="badge ${LVC[h.level]}">${LV[h.level]}</span>${tag(h.m)}</div><div>${esc(h.text.replace(/^(\[[^\]]+\]\s*)?Dugaan\s+/i, (a, p) => (p || '')))}</div>${h.basis && h.basis.length ? `<ul class="da-basis">${h.basis.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}</div>`).join('') + '<p class="hint">Tingkat dukungan menggambarkan kesesuaian antara data dan keterangan pengguna. Dugaan ditetapkan sebagai akar masalah setelah verifikasi.</p>' : '')}
+    ${(() => { const s = fishboneSVG(r); return s ? sec('Diagram fishbone 6M', `<div class="da-fish">${s}</div><p class="hint">Diagram memuat kategori yang memiliki data, dugaan, atau keterangan.</p>`) : ''; })()}
+    ${sec('Catatan kualitas data', r.miss.length ? `<ul class="da-list">${r.miss.map(m => `<li>${m.dugaan ? '<span class="badge b-warn">Dugaan</span> ' : ''}${esc(m.text)}${m.where ? `<div class="da-ev">Lokasi ${esc(m.where)}</div>` : ''}${m.fix ? `<div class="da-fix">${esc(m.fix)}</div>` : ''}</li>`).join('')}</ul>` : '')}
+    ${sec('Langkah verifikasi', r.steps.length ? `<ol class="da-steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : '')}`;
+}
+function openDeep(key) {
+  let r; try { r = runDeep(key); } catch (e) { console.error(e); r = { empty: `Analisis belum dapat dijalankan (${e.message}).` }; }
+  if (r.empty) { const d = openDrawer(`Deep Analyst, ${modLabel(key)}`, `<div class="empty">${esc(r.empty)}</div><div class="row drawer-actions"><button class="btn sec" id="daEx">Isi Explain</button></div>`, true); $('#daEx', d).onclick = () => openExplain(key); return; }
+  App.state.deep = r;
+  const d = openDrawer(`Deep Analyst, ${r.title}`, deepHTML(r) + `<div class="row drawer-actions"><button class="btn acc" id="daPdf">${ICON.dl} Unduh PDF</button><button class="btn sec" id="daEx">${exFilled(r.ex) ? 'Ubah Explain' : 'Isi Explain'}</button><button class="btn ghost" data-dclose>Tutup</button></div>`, true);
+  $('#daPdf', d).onclick = () => pdfDeep(r);
+  $('#daEx', d).onclick = () => openExplain(key);
+}
+async function pdfDeep(r) {
+  if (!pdfReady()) return; const doc = pdfDoc('p'); if (!doc) return;
+  let y = pdfHeader(doc, `Deep Analyst - ${r.title}`, `${r.scope || ''} | ${new Date(r.at).toLocaleString('id-ID')}`);
+  const H = doc.internal.pageSize.getHeight();
+  y = secTitle(doc, y, 'Temuan cerita'); y += 3; r.narrative.forEach(p => { y = pdfPara(doc, y, p); }); y += 2;
+  if (r.facts.length) { y = secTitle(doc, y, 'Fakta data'); y = AT(doc, y, ['Kategori', 'Fakta', 'Dasar'], r.facts.map(f => [f.m ? SIXM[f.m].split(' ')[0] : '-', f.text, f.ev || '']), { columnStyles: { 0: { cellWidth: 24 }, 2: { cellWidth: 45 } } }); }
+  if (r.story.length) { y = secTitle(doc, y, 'Keterangan pengguna'); y = AT(doc, y, ['Bagian', 'Keterangan', 'Kategori terkait'], r.story.map(s => [s.label, s.text, s.ms.map(m => SIXM[m].split(' ')[0]).join(', ') || '-']), { columnStyles: { 0: { cellWidth: 32 }, 2: { cellWidth: 34 } } }); }
+  if (r.hyps.length) { y = secTitle(doc, y, 'Dugaan'); y = AT(doc, y, ['Label', 'Kategori', 'Dugaan', 'Dasar', 'Dukungan'], r.hyps.map(h => ['Dugaan', h.m ? SIXM[h.m].split(' ')[0] : '-', h.text, (h.basis || []).join(' '), LV[h.level]]), { columnStyles: { 0: { cellWidth: 16, fontStyle: 'bold' }, 1: { cellWidth: 22 }, 3: { cellWidth: 55 }, 4: { cellWidth: 22 } } }); }
+  const svg = fishboneSVG(r, { ink: '#0f1b2d', mut: '#4a5768', line: '#8a97a8', head: '#0a1f44', headTxt: '#ffffff', tagF: '#0043ce', tagD: '#8e6a00', tagK: '#198038' });
+  if (svg) { const img = await svgToPNG(svg); if (img) { const W = doc.internal.pageSize.getWidth() - 24, h = W * img.h / img.w; if (y + h + 10 > H - 16) { doc.addPage(); y = 16; } y = secTitle(doc, y, 'Diagram fishbone 6M'); doc.addImage(img.data, 'PNG', 12, y + 2, W, h, undefined, 'FAST'); y += h + 8; } }
+  if (r.miss.length) { y = secTitle(doc, y, 'Catatan kualitas data'); y = AT(doc, y, ['Temuan', 'Lokasi', 'Perbaikan'], r.miss.map(m => [(m.dugaan ? 'Dugaan. ' : '') + m.text, m.where || '-', m.fix || '']), { columnStyles: { 1: { cellWidth: 40 }, 2: { cellWidth: 55 } } }); }
+  if (r.steps.length) { y = secTitle(doc, y, 'Langkah verifikasi'); y += 3; r.steps.forEach((s, i) => { y = pdfPara(doc, y, `${i + 1}. ${s}`); }); }
+  y += 2; pdfPara(doc, y, 'Dugaan pada laporan ini disusun dari aturan statistik dan keterangan pengguna. Penetapan akar masalah dilakukan setelah verifikasi oleh tim QA/QC.', { size: 8, color: [102, 118, 138] });
+  pdfFooter(doc, 'Deep Analyst SQMC.'); saveFile(`SQMC-deep-analyst-${slug(r.title)}-${localISO()}.pdf`, doc.output('blob'), 'application/pdf');
+}
+function markExplainBtn() { $$('[data-explain]').forEach(b => b.classList.toggle('on', exFilled(exGet(b.dataset.explain)))); }
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('[data-explain]'); if (a) { e.preventDefault(); openExplain(a.dataset.explain); return; }
+  const b = e.target.closest('[data-deep]'); if (b) { e.preventDefault(); openDeep(b.dataset.deep); }
 });
 
 (async function boot() {
@@ -3797,7 +4480,7 @@ document.addEventListener('click', async (e) => {
   App.refresh();
 })();
 // ekspor untuk pengujian otomatis
-window.SQMC = { computeVariable, computeAttribute, capability, andersonDarling, aqlPlan, iso2768Tol, buildSpec, consts, runTests, parseNum, Phi, gageRR, gageType1, apAIAGVDA, paretoCalc, computeSmallShift, fSurv, tP2, calStatus, addMonthsISO, buildControlPlan, fmeaRowsFromSpec, GUIDES, Theme, SAMPLE, SAMPLE_ALL, sampleCount };
+window.SQMC = { computeVariable, computeAttribute, capability, andersonDarling, aqlPlan, iso2768Tol, buildSpec, consts, runTests, parseNum, Phi, gageRR, gageType1, apAIAGVDA, paretoCalc, computeSmallShift, fSurv, tP2, calStatus, addMonthsISO, buildControlPlan, fmeaRowsFromSpec, GUIDES, Theme, SAMPLE, SAMPLE_ALL, sampleCount, runDeep, DA, changePoint, oneWay, gammaQ, chi2Sf, varDataChecks, storyItems, fishboneSVG };
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-# SQMC — Standard Quality Mutu Controller
+# SQMC (Standard Quality Mutu Controller)
 
 Web app pengendali mutu untuk industri manufaktur (contoh awal: **sambungan pipa / fitting**).
 Satu file `index.html`, tanpa build step, siap di-deploy ke Cloudflare Pages / GitHub Pages / hosting statis apa pun.
@@ -9,6 +9,18 @@ Satu file `index.html`, tanpa build step, siap di-deploy ke Cloudflare Pages / G
 - **UI shell ala IBM Carbon:** header putih 56 px, panel navigasi kiri dikelompokkan per tahap PDCA (Plan / Do / Check / Act / Referensi), dan menu hamburger di layar < 1056 px.
 - **Pola SAP Fiori:** *dynamic page header* dengan breadcrumb, *launchpad tiles* di Beranda, *object page anchor bar* pada hasil spesifikasi, dan *analytical list page* (panel konfigurasi sticky + konten analisis) pada Peta Kendali.
 - **Komponen gaya Carbon:** field input, data table, inline notification, tag, dan progress indicator. Palet warna diambil dari logo (navy `#0A1F44`, biru `#1E7AE5`, abu `#DFE3E7`).
+
+## Baru di v1.5
+
+Setiap modul memiliki tombol Explain dan Deep Analyst di kepala halaman, dan Beranda memiliki versi lintas modul.
+
+Explain menampung cerita masalah dari pengguna, yaitu kronologi, awal kejadian, lokasi, perubahan sebelum masalah, dampak, dan tindakan yang sudah dicoba. Isian bersifat opsional dan tersimpan per modul.
+
+Deep Analyst membaca data modul yang sedang aktif lalu menyusun temuan cerita, fakta data beserta dasar perhitungannya, keterangan pengguna, dugaan berlabel dengan tingkat dukungan, diagram fishbone 6M, catatan kualitas data, dan langkah verifikasi. Hasilnya dapat diunduh sebagai PDF.
+
+Analisis berbasis aturan yang dapat ditelusuri, antara lain aturan Western Electric / Nelson, deteksi titik perubahan dengan uji t dua segmen, regresi tren, ANOVA satu arah untuk stratifikasi shift, operator, dan mesin, komponen Gage R&R, Cg/Cgk, status kalibrasi, pengulangan NCR, dan pencocokan PFMEA dengan NCR. Catatan kualitas data mencakup nilai tidak terbaca, subgrup tidak lengkap, pencilan robust, dugaan salah posisi desimal, data tersalin, digit terakhir yang tidak merata (uji chi-kuadrat), resolusi kasar, dan nilai yang menumpuk tepat di batas spesifikasi.
+
+Kategori tanpa data tidak ditampilkan. Dugaan ditetapkan sebagai akar masalah setelah verifikasi oleh tim QA/QC.
 
 ## Baru di v1.4
 
@@ -35,7 +47,7 @@ Satu file `index.html`, tanpa build step, siap di-deploy ke Cloudflare Pages / G
 ## Catatan penting
 
 - **Standar baru di v1.3 (dicek Nov 2026):** ISO 7870-4:2021, ISO 7870-6:2024, ISO 22514-7:2026 (edisi ke-3, Sep 2026), ISO/IEC 17025:2017 (dikonfirmasi 2023), IATF 16949:2016 (Revisi 2 sedang disusun), AIAG MSA edisi 4 (2010), VDA 5 edisi 3 (2021), AIAG & VDA FMEA Handbook (2019, errata 2020), AIAG Control Plan edisi 1 (2024), AIAG APQP edisi 3 (2024), AIAG CQI-20 edisi 2 (2018).
-- **Validasi numerik v1.3:** Gage R&R ANOVA (p-value F, komponen varians, %SV, %Tol, ndc; 3 skenario termasuk interaksi signifikan), Type-1 (Cg, Cgk, uji t), EWMA, dan CUSUM dicocokkan dengan numpy/scipy — selisih < 1e-9.
+- **Validasi numerik v1.3:** Gage R&R ANOVA (p-value F, komponen varians, %SV, %Tol, ndc; 3 skenario termasuk interaksi signifikan), Type-1 (Cg, Cgk, uji t), EWMA, dan CUSUM dicocokkan dengan numpy/scipy, selisih < 1e-9.
 - Nilai awal Severity dari katalog cacat, teks rencana reaksi Control Plan, dan target NCR adalah **saran awal SQMC**; keputusan akhir milik tim lintas fungsi.
 
 - **Dokumen standar resmi tidak disertakan.** ISO/SNI/ASME/ASTM/EN berhak cipta dan dijual oleh penerbitnya. SQMC menautkan ke halaman resmi dan membuat *ringkasan* PDF sendiri.
@@ -45,12 +57,12 @@ Satu file `index.html`, tanpa build step, siap di-deploy ke Cloudflare Pages / G
 
 ## Penyimpanan data
 
-Urutan: database akun Claude (bila dibuka sebagai artifact claude.ai) → `localStorage` browser → memori sementara.
+Urutan: database akun Claude (bila dibuka sebagai artifact claude.ai), lalu `localStorage` browser, lalu memori sementara.
 Saat di-deploy mandiri (Cloudflare Pages), data tersimpan di browser pengguna. Gunakan **Ekspor cadangan semua modul (JSON)** di menu Input Data untuk backup/pindah perangkat (spesifikasi, dataset, PFMEA, Control Plan, NCR, studi MSA, register alat ukur).
 
 ## Deploy ke Cloudflare Pages
 
-1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → pilih repo `SQMC`.
+1. Buka Cloudflare dashboard, pilih **Workers & Pages**, **Create**, **Pages**, **Connect to Git**, lalu pilih repo `SQMC`.
 2. Framework preset **None**, build command dikosongkan, build output directory `/`.
 3. Deploy. Setiap push ke `main` otomatis ter-deploy ulang.
 
